@@ -20,12 +20,16 @@ db.sqlite3
 *sublime-workspace
 *.sublime*
 
-# tests 
+# tests
 tests/coverage_html/
 tests/.coverage
 
 # build
 build/
 
-# uploads 
+# uploads
 
+# python compiled files
+*.pyc
+
+geckodriver.log
