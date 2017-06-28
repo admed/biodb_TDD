@@ -1,0 +1,1 @@
+* zastąpić time.sleep funkcją waiter
