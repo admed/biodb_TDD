@@ -39,7 +39,8 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'easy_thumbnails',
-    'biodb'
+    'biodb',
+    'accounts'
 )
 
 MIDDLEWARE_CLASSES = (
