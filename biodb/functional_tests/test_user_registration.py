@@ -27,10 +27,13 @@ class UserRegistrationTests(LiveServerTestCase):
             "App that helps you manage your biological research"
         )
         login_form = self.browser.find_element_by_id("login_form")
-        inputs = login_form.find_elements_by_tag_name("input")
-        inputs_id = [input_.get_attribute("id") for input_ in inputs]
+        form_inputs = login_form.find_elements_by_tag_name("input")
+        form_inputs_id = [input_.get_attribute("id") for input_ in form_inputs]
         for ID in ["login_input", "password_input"]:
-            self.assertIn(ID, inputs_id)
+            self.assertIn(ID, form_inputs_id)
+
+        link = self.browser.find_element_by_id("sign_up_link")
+        self.assertEqual(link.text, "Sign up")
 
         self.fail("Finish test!")
 

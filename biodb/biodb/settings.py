@@ -38,9 +38,8 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
-    'userena',
-    'guardian',
-    'easy_thumbnails'
+    'easy_thumbnails',
+    'biodb'
 )
 
 MIDDLEWARE_CLASSES = (
