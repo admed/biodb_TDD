@@ -16,6 +16,9 @@ class UserRegistrationTests(LiveServerTestCase):
         # adress leads him to welcome page. Welcome page contains welcome
         # message, login form with two fields and link to sign up form.
         self.browser.get(self.live_server_url)
+        self.assertEqual(
+            self.browser.current_url, self.live_server_url + "/accounts/login/"
+        )
         header = self.browser.find_element_by_id("header")
         description = self.browser.find_element_by_id("description")
         self.assertEqual(
