@@ -6,4 +6,4 @@ class WelcomeViewTests(TestCase):
     def test_uses_welcome_template(self):
         response = self.client.get("/accounts/login/")
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "biodb/welcome.html")
+        self.assertTemplateUsed(response, "accounts/login.html")

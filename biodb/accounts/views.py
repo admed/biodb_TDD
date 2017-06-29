@@ -3,6 +3,6 @@ from django.views.generic import View
 
 # Create your views here.
 
-class WelcomeView(View):
+class LoginView(View):
     def get(self, request, **kwargs):
-        return render(request, "biodb/welcome.html")
+        return render(request, "accounts/login.html")
