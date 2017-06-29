@@ -50,13 +50,28 @@ class UserRegistrationTests(LiveServerTestCase):
         # User noticed new form with several fields: username, email adress,
         # password and repeat password. Each has its own placeholder
 
-        # sign_up_form = self.browser.find_element_by_id("sign_up_form")
-        # username_input = sign_up_form.find_element_by_id("username_input")
-        # email_input = sign_up_form.find_element_by_id("email_input")
-        # password_input = sign_up_form.find_element_by_id("password_input")
-        # repeat_input = sign_up_form.find_element_by_id("repeat_input")
+        sign_up_form = self.browser.find_element_by_id("sign_up_form")
+        username_input = sign_up_form.find_element_by_id("username_input")
+        email_input = sign_up_form.find_element_by_id("email_input")
+        password_input = sign_up_form.find_element_by_id("password_input")
+        repeat_input = sign_up_form.find_element_by_id("repeat_input")
 
-
+        self.assertEqual(
+            username_input.get_attribute("placeholder"),
+            "username"
+        )
+        self.assertEqual(
+            email_input.get_attribute("placeholder"),
+            "email"
+        )
+        self.assertEqual(
+            password_input.get_attribute("placeholder"),
+            "password"
+        )
+        self.assertEqual(
+            repeat_input.get_attribute("placeholder"),
+            "repeat password"
+        )
 
         # Distracted user accidentaly clicks submit button before fill any
         # field. Every field is requried so now he sees error messages bound
