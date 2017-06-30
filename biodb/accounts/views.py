@@ -11,3 +11,10 @@ class LoginView(View):
 class SignUpView(View):
     def get(self, request, **kwargs):
         return render(request, "accounts/sign_up.html", {"form":SignUpForm})
+
+    def post(self, request, **kwargs):
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            pass
+        else:
+            return render(request, "accounts/sign_up.html", {"form":form})

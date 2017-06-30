@@ -76,15 +76,24 @@ class UserRegistrationTests(LiveServerTestCase):
         self.assertEqual(submit_button.text, "Submit")
 
         # Distracted user accidentaly clicks submit button before fill any
-        # field. Every field is requried so now he sees error messages bound
-        # with any field.
-        self.fail("Finish test!")
+        # field. Instead of redirect he stays in the same page.
+        current_url = self.browser.current_url
+        submit_button.click()
+        self.assertEqual(current_url, self.browser.current_url)
+
+        # Now user sees error messages bound to every field.
+        for el in ["username", "email", "password", "confirm_password"]:
+            self.assertEqual(
+                self.browser.find_element_by_id("{}_errorlist".format(el)).text,
+                "This field is required."
+            )
 
         # Immediately decides to repair his mistake and starts to fill the form
         # with data. But he dont know that user with such username, email and
         # password already exists in database. He quickly learns about it when
         # he clicks submit button. Above every field now appear message with
         # appropriate message: 'user with such <field> already exists'.
+        self.fail("Finish test!")
 
         # User fills form with new data and clicks submit button once again.
         # Success! He is redirected to a welcome page.

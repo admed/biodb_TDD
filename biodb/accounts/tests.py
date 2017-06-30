@@ -18,3 +18,17 @@ class SignUpViewTests(TestCase):
     def test_form_passed_to_template_context(self):
         response = self.client.get("/accounts/sign-up/")
         self.assertEqual(response.context["form"], SignUpForm)
+
+    def test_display_errors_when_invalid_form_on_post(self):
+        post_data = {
+            "username": "",
+            "email": "",
+            "password": "",
+            "confirm": ""
+        }
+        response = self.client.post("/accounts/sign-up/", post_data)
+        self.assertTemplateUsed("accounts/sign-up.html")
+
+        error_msg = "This field is required."
+        for form_field in ["username", "email", "password", "confirm_password"]:
+            self.assertFormError(response, "form", form_field, error_msg)

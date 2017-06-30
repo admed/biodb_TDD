@@ -5,8 +5,18 @@
     <title></title>
   </head>
   <body>
-    <form id="sign_up_form" action="index.html" method="post">
-      {{ form.as_p }}
+    <form id="sign_up_form" action="" method="post">
+      {% csrf_token %}
+      {% for field in form %}
+        {% if field.errors %}
+          <ul id="{{ field.name }}_errorlist">
+            {% for error in field.errors %}
+              <li><strong>{{ error|escape }}</strong></li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+        {{ field }}
+      {% endfor %}
       <button id="submit_button">Submit</button>
     </form>
   </body>

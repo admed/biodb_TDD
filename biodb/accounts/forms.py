@@ -18,7 +18,7 @@ class SignUpForm(forms.Form):
             "placeholder": "password"
             })
         )
-    confirm_password = forms.CharField(
+    confirm_password = forms.CharField( 
             widget=forms.TextInput(attrs={
             "id":"confirm_input",
             "placeholder": "confirm password"
