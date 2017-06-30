@@ -17,7 +17,7 @@ class SignUpViewTests(TestCase):
 
     def test_form_passed_to_template_context(self):
         response = self.client.get("/accounts/sign-up/")
-        self.assertEqual(response.context["form"], SignUpForm)
+        self.assertEqual(response.context["form"].__class__, SignUpForm)
 
     def test_display_errors_when_invalid_form_on_post(self):
         post_data = {
