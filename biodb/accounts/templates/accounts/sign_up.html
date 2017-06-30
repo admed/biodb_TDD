@@ -6,10 +6,7 @@
   </head>
   <body>
     <form id="sign_up_form" action="index.html" method="post">
-      <input id="username_input" placeholder="username" name="" value="">
-      <input id="email_input" placeholder="email" name="" value="">
-      <input id="password_input" placeholder="password" name="" value="">
-      <input id="confirm_input" placeholder="confirm password" name="" value="">
+      {{ form.as_p }}
       <button id="submit_button">Submit</button>
     </form>
   </body>
