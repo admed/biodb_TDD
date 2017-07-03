@@ -2,16 +2,10 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import unittest
 import time
-from django.test import LiveServerTestCase
+from functional_tests.base import FunctionalTest
 
-class UserRegistrationTests(LiveServerTestCase):
-    def setUp(self):
-        self.browser = webdriver.Firefox()
-
-    def tearDown(self):
-        self.browser.quit()
-
-    def test_user_registration(self):
+class UserRegistrationTests(FunctionalTest):
+    def test_registration_form(self):
         # User heard about biodb app and decide to visit this website. Received
         # adress leads him to welcome page. Welcome page contains welcome
         # message, login form with two fields and link to sign up form.
@@ -48,7 +42,8 @@ class UserRegistrationTests(LiveServerTestCase):
         )
 
         # User noticed new form with several fields: username, email adress,
-        # password and repeat password and submit button. Each has its own placeholder
+        # password and repeat password and submit button. Each has its own
+        # placeholder.
 
         sign_up_form = self.browser.find_element_by_id("sign_up_form")
         username_input = sign_up_form.find_element_by_id("username_input")
