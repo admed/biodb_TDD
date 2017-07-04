@@ -1,4 +1,0 @@
-* zastąpić time.sleep funkcją waiter
-* przetestować ograniczenie dostępu dla nie zalogowanych użytkowników (przekie-
-rowanie do welcome page)
-* zmienić nazwę welcome page na login page
