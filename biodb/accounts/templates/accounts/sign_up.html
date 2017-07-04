@@ -7,6 +7,7 @@
   <body>
     <form id="sign_up_form" action="" method="post">
       {% csrf_token %}
+      {{ form.non_field_errors }}
       {% for field in form %}
         {% if field.errors %}
           <ul id="{{ field.name }}_errorlist">

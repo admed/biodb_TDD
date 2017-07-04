@@ -39,6 +39,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'easy_thumbnails',
+    'django_extensions',
     'biodb',
     'accounts'
 )
