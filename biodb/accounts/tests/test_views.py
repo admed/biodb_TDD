@@ -32,3 +32,13 @@ class SignUpViewTests(TestCase):
         error_msg = "This field is required."
         for form_field in ["username", "email", "password", "confirm_password"]:
             self.assertFormError(response, "form", form_field, error_msg)
+
+    def test_redirect_when_form_valid(self):
+        credentials = {
+            "username": "Pope Francis",
+            "email": "holy@father.vt",
+            "password": "habemus_papam",
+            "confirm_password": "habemus_papam"
+        }
+        response = self.client.post("/accounts/sign-up/", credentials)
+        self.assertRedirects(response, "/accounts/login/")

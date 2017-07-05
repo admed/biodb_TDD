@@ -70,8 +70,24 @@ class UserRegistrationTests(FunctionalTest):
         "confirm password"
         )
         self.assertEqual(submit_button.text, "Submit")
+        # User is first user ever who sign-up to BioDB. He fills form with data
+        # and click submit.
+        credentials = {
+            "username": "John Lenon",
+            "email": "john.lennon@beatles.uk",
+            "password": "i_m_the_best_beatle_paul",
+        }
+        username_input.send_keys(credentials["username"])
+        email_input.send_keys(credentials["email"])
+        password_input.send_keys(credentials["password"])
+        confirm_input.send_keys(credentials["password"])
+        submit_button.click()
 
-        # Success! He is redirected to a welcome page.
+        # Success! He is redirected to a login page.
+        self.assertEqual(
+            self.browser.current_url,
+            self.live_server_url + "/accounts/login/"
+        )
 
     def test_user_encounters_form_validation(self):
         # User goes stright to sign-up form page.
