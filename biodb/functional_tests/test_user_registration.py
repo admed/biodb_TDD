@@ -6,23 +6,23 @@ from functional_tests.base import FunctionalTest
 from django.contrib.auth.models import User
 
 class UserRegistrationTests(FunctionalTest):
-    def test_registration_form(self):
+    def test_user_use_sign_up_form_without_problems(self):
         # User heard about biodb app and decide to visit this website. Received
         # adress leads him to welcome page. Welcome page contains welcome
         # message, login form with two fields and link to sign up form.
         self.browser.get(self.live_server_url)
         self.assertEqual(
-            self.browser.current_url, self.live_server_url + "/accounts/login/"
+        self.browser.current_url, self.live_server_url + "/accounts/login/"
         )
         header = self.browser.find_element_by_id("header")
         description = self.browser.find_element_by_id("description")
         self.assertEqual(
-            header.text,
-            "Welcome to BioDB"
+        header.text,
+        "Welcome to BioDB"
         )
         self.assertEqual(
-            description.text,
-            "App that helps you manage your biological research"
+        description.text,
+        "App that helps you manage your biological research"
         )
         login_form = self.browser.find_element_by_id("login_form")
         form_inputs = login_form.find_elements_by_tag_name("input")
@@ -54,25 +54,34 @@ class UserRegistrationTests(FunctionalTest):
         submit_button = sign_up_form.find_element_by_id("submit_button")
 
         self.assertEqual(
-            username_input.get_attribute("placeholder"),
-            "username"
+        username_input.get_attribute("placeholder"),
+        "username"
         )
         self.assertEqual(
-            email_input.get_attribute("placeholder"),
-            "email"
+        email_input.get_attribute("placeholder"),
+        "email"
         )
         self.assertEqual(
-            password_input.get_attribute("placeholder"),
-            "password"
+        password_input.get_attribute("placeholder"),
+        "password"
         )
         self.assertEqual(
-            confirm_input.get_attribute("placeholder"),
-            "confirm password"
+        confirm_input.get_attribute("placeholder"),
+        "confirm password"
         )
         self.assertEqual(submit_button.text, "Submit")
 
-        # Distracted user accidentaly clicks submit button before fill any
-        # field. Instead of redirect he stays in the same page.
+        # Success! He is redirected to a welcome page.
+
+    def test_user_encounters_form_validation(self):
+        # User goes stright to sign-up form page.
+        self.browser.get(self.live_server_url + "/accounts/sign-up/")
+
+        # Curoius user wants to know what will happend when he clicks submit
+        # button before fill any field. Instead of redirect he stays in the same
+        # page.
+        sign_up_form = self.browser.find_element_by_id("sign_up_form")
+        submit_button = sign_up_form.find_element_by_id("submit_button")
         current_url = self.browser.current_url
         submit_button.click()
         self.assertEqual(current_url, self.browser.current_url)
@@ -84,10 +93,9 @@ class UserRegistrationTests(FunctionalTest):
                 "This field is required."
             )
 
-        # Immediately decides to repair his mistake and starts to fill the form
-        # with data. But he dont know that user with such username already
-        # exists in database. He quickly learns about it when he clicks submit
-        # button. Above form appears following message:
+        # He suspect that form has data duplication validation. His close fellow
+        # Bilbo Baggins has account in BioDB and user knows his credentials.
+        # First he checks for username. Above form appears following message:
         # 'User with such username or email already exists'.
 
         ## create user inside DB
@@ -119,8 +127,7 @@ class UserRegistrationTests(FunctionalTest):
         )
 
         # Curoius user decides to check if the same goes for email input. He
-        # knows his fellow has account in BioDB and he knows his email. User
-        # enter this email and looks for errors.
+        #  User enters Bilbo's email and looks for errors.
 
         ## refresh page to delete previous form errors
         self.browser.get(self.live_server_url + "/accounts/sign-up/")
@@ -138,6 +145,3 @@ class UserRegistrationTests(FunctionalTest):
             error,
             "User with such username or email already exists".format(el)
         )
-
-        # User fills form with new data and clicks submit button once again.
-        # Success! He is redirected to a welcome page.
