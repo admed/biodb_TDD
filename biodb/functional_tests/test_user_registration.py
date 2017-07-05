@@ -6,6 +6,19 @@ from functional_tests.base import FunctionalTest
 from django.contrib.auth.models import User
 
 class UserRegistrationTests(FunctionalTest):
+    def setUp(self):
+        super(UserRegistrationTests, self).setUp()
+        sign_up_form = lambda: self.browser.find_element_by_id("sign_up_form")
+        self.username_input = lambda: sign_up_form().find_element_by_id(
+                                                               "username_input")
+        self.email_input = lambda: sign_up_form().find_element_by_id(
+                                                                  "email_input")
+        self.password_input = lambda: sign_up_form().find_element_by_id(
+                                                               "password_input")
+        self.confirm_input = lambda: sign_up_form().find_element_by_id(
+                                                                "confirm_input")
+        self.submit_button = lambda: sign_up_form().find_element_by_id(
+                                                                "submit_button")
     def test_user_use_sign_up_form_without_problems(self):
         # User heard about biodb app and decide to visit this website. Received
         # adress leads him to welcome page. Welcome page contains welcome
@@ -46,30 +59,23 @@ class UserRegistrationTests(FunctionalTest):
         # password and repeat password and submit button. Each has its own
         # placeholder.
 
-        sign_up_form = self.browser.find_element_by_id("sign_up_form")
-        username_input = sign_up_form.find_element_by_id("username_input")
-        email_input = sign_up_form.find_element_by_id("email_input")
-        password_input = sign_up_form.find_element_by_id("password_input")
-        confirm_input = sign_up_form.find_element_by_id("confirm_input")
-        submit_button = sign_up_form.find_element_by_id("submit_button")
-
         self.assertEqual(
-        username_input.get_attribute("placeholder"),
+        self.username_input().get_attribute("placeholder"),
         "username"
         )
         self.assertEqual(
-        email_input.get_attribute("placeholder"),
+        self.email_input().get_attribute("placeholder"),
         "email"
         )
         self.assertEqual(
-        password_input.get_attribute("placeholder"),
+        self.password_input().get_attribute("placeholder"),
         "password"
         )
         self.assertEqual(
-        confirm_input.get_attribute("placeholder"),
+        self.confirm_input().get_attribute("placeholder"),
         "confirm password"
         )
-        self.assertEqual(submit_button.text, "Submit")
+        self.assertEqual(self.submit_button().text, "Submit")
         # User is first user ever who sign-up to BioDB. He fills form with data
         # and click submit.
         credentials = {
@@ -77,11 +83,11 @@ class UserRegistrationTests(FunctionalTest):
             "email": "john.lennon@beatles.uk",
             "password": "i_m_the_best_beatle_paul",
         }
-        username_input.send_keys(credentials["username"])
-        email_input.send_keys(credentials["email"])
-        password_input.send_keys(credentials["password"])
-        confirm_input.send_keys(credentials["password"])
-        submit_button.click()
+        self.username_input().send_keys(credentials["username"])
+        self.email_input().send_keys(credentials["email"])
+        self.password_input().send_keys(credentials["password"])
+        self.confirm_input().send_keys(credentials["password"])
+        self.submit_button().click()
 
         # Success! He is redirected to a login page.
         self.assertEqual(
@@ -96,10 +102,8 @@ class UserRegistrationTests(FunctionalTest):
         # Curoius user wants to know what will happend when he clicks submit
         # button before fill any field. Instead of redirect he stays in the same
         # page.
-        sign_up_form = self.browser.find_element_by_id("sign_up_form")
-        submit_button = sign_up_form.find_element_by_id("submit_button")
         current_url = self.browser.current_url
-        submit_button.click()
+        self.submit_button().click()
         self.assertEqual(current_url, self.browser.current_url)
 
         # Now user sees error messages bound to every field.
@@ -128,11 +132,8 @@ class UserRegistrationTests(FunctionalTest):
         self.browser.get(self.live_server_url + "/accounts/sign-up/")
 
 
-        sign_up_form = self.browser.find_element_by_id("sign_up_form")
-        submit_button = sign_up_form.find_element_by_id("submit_button")
-        input_ = sign_up_form.find_element_by_id("username_input")
-        input_.send_keys('Bilbo')
-        submit_button.click()
+        self.username_input().send_keys('Bilbo')
+        self.submit_button().click()
 
         error = self.browser.find_element_by_css_selector(
                                                       ".errorlist.nonfield").text
@@ -148,11 +149,8 @@ class UserRegistrationTests(FunctionalTest):
         ## refresh page to delete previous form errors
         self.browser.get(self.live_server_url + "/accounts/sign-up/")
 
-        sign_up_form = self.browser.find_element_by_id("sign_up_form")
-        submit_button = sign_up_form.find_element_by_id("submit_button")
-        input_ = sign_up_form.find_element_by_id("email_input")
-        input_.send_keys('bilbo@baggins.shire.mde')
-        submit_button.click()
+        self.email_input().send_keys('bilbo@baggins.shire.mde')
+        self.submit_button().click()
 
         error = self.browser.find_element_by_css_selector(
                                                       ".errorlist.nonfield").text
@@ -165,15 +163,11 @@ class UserRegistrationTests(FunctionalTest):
         # Finally user want to check password validation. He enters different
         # passwords in confirm password field and looks for error.
         self.browser.get(self.live_server_url + "/accounts/sign-up/")
-        sign_up_form = self.browser.find_element_by_id("sign_up_form")
-        submit_button = sign_up_form.find_element_by_id("submit_button")
-        password_input = sign_up_form.find_element_by_id("password_input")
-        confirm_input = sign_up_form.find_element_by_id("confirm_input")
 
-        password_input.send_keys("top_secret")
-        confirm_input.send_keys("less_secret")
+        self.password_input().send_keys("top_secret")
+        self.confirm_input().send_keys("less_secret")
 
-        submit_button.send_keys(Keys.ENTER)
+        self.submit_button().send_keys(Keys.ENTER)
         error = self.browser.find_element_by_css_selector(
                                                      ".errorlist.nonfield").text
         self.assertEqual(error, "Passwords doesn't match.")
@@ -183,16 +177,11 @@ class UserRegistrationTests(FunctionalTest):
         # and looks for errors.
 
         self.browser.get(self.live_server_url + "/accounts/sign-up/")
-        sign_up_form = self.browser.find_element_by_id("sign_up_form")
-        submit_button = sign_up_form.find_element_by_id("submit_button")
-        username_input = sign_up_form.find_element_by_id("username_input")
-        password_input = sign_up_form.find_element_by_id("password_input")
-        confirm_input = sign_up_form.find_element_by_id("confirm_input")
 
-        username_input.send_keys('Bilbo')
-        password_input.send_keys("top_secret")
-        confirm_input.send_keys("less_secret")
-        submit_button.click()
+        self.username_input().send_keys('Bilbo')
+        self.password_input().send_keys("top_secret")
+        self.confirm_input().send_keys("less_secret")
+        self.submit_button().click()
 
         errors = self.wait_for(
             lambda: self.browser.find_element_by_css_selector(
