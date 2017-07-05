@@ -36,3 +36,6 @@ geckodriver.log
 
 # tasks
 tasks.txt
+
+# email settings (those can't be send to GitHub)
+email_settings.py
