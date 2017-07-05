@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext as _
+from django.db.models import Q
 class SignUpForm(forms.Form):
     username = forms.CharField(
             widget=forms.TextInput(attrs={
@@ -34,18 +35,10 @@ class SignUpForm(forms.Form):
         email = cleaned_data.get("email")
         password = cleaned_data.get("password")
         confirm_password = cleaned_data.get("confirm_password")
-        message = "User with such username or email already exists"
-        try:
-            User.objects.get(username=username)
-            raise ValidationError(_(message))
-        except User.DoesNotExist:
-            pass
-        try:
-            User.objects.get(email=email)
-            raise ValidationError(_(message))
-        except User.DoesNotExist:
-            pass
 
-        finally:
-            if password != confirm_password:
-                raise ValidationError(_("Passwords doesn't match."))
+        users = User.objects.filter(Q(username=username) | Q(email=email))
+        if users:
+            self.add_error(None,
+                              "User with such username or email already exists")
+        if password != confirm_password:
+            self.add_error(None, "Passwords doesn't match.")

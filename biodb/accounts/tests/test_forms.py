@@ -61,3 +61,19 @@ class SignUpFormTests(TestCase):
             "Passwords doesn't match.",
             f.errors["__all__"]
         )
+
+    def test_validate_multiple_nonfield_errors(self):
+        u = User.objects.create_user(username="Julius Cesar")
+        f = SignUpForm({
+            "username":"Julius Cesar",
+            "password":"password_A",
+            "confirm_password":"password_B"
+        })
+        self.assertIn(
+            "Passwords doesn't match.",
+            f.errors["__all__"]
+        )
+        self.assertIn(
+            "User with such username or email already exists",
+            f.errors["__all__"]
+        )
