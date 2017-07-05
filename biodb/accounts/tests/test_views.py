@@ -46,6 +46,20 @@ class SignUpViewTests(TestCase):
         response = self.client.post("/accounts/sign-up/", credentials)
         self.assertRedirects(response, "/accounts/login/")
 
+    def test_create_inactive_user_on_form_valid(self):
+        credentials = {
+            "username": "Pope Francis",
+            "email": "holy@father.vt",
+            "password": "habemus_papam",
+            "confirm_password": "habemus_papam"
+        }
+        response = self.client.post("/accounts/sign-up/", credentials)
+        user = User.objects.last()
+        self.assertEqual(user.username, credentials["username"])
+        self.assertEqual(user.email, credentials["email"])
+        self.assertEqual(user.password, credentials["password"])
+        self.assertFalse(user.is_active)
+
     def test_send_email_on_form_valid(self):
         credentials = {
             "username": "Pope Francis",

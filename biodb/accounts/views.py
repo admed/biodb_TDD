@@ -16,7 +16,7 @@ class SignUpView(FormView):
 
     def form_valid(self, form):
         form.cleaned_data.pop("confirm_password", "None")
-        user = User.objects.create(**form.cleaned_data)
+        user = User.objects.create(is_active=False, **form.cleaned_data)
         subject = "New user request for activation."
         message = "User with id={} request for activation.".format(user.id)
         mail_admins(subject, message)
