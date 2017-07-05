@@ -32,6 +32,8 @@ class SignUpForm(forms.Form):
         cleaned_data = super(SignUpForm, self).clean()
         username = cleaned_data.get("username")
         email = cleaned_data.get("email")
+        password = cleaned_data.get("password")
+        confirm_password = cleaned_data.get("confirm_password")
         message = "User with such username or email already exists"
         try:
             User.objects.get(username=username)
@@ -43,3 +45,7 @@ class SignUpForm(forms.Form):
             raise ValidationError(_(message))
         except User.DoesNotExist:
             pass
+
+        finally:
+            if password != confirm_password:
+                raise ValidationError(_("Passwords doesn't match."))

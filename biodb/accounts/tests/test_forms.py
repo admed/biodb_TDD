@@ -51,3 +51,13 @@ class SignUpFormTests(TestCase):
             "User with such username or email already exists",
             f.errors["__all__"]
         )
+
+    def test_validate_passwords_doesnt_match(self):
+        f = SignUpForm({
+            "password":"password_A",
+            "confirm_password":"password_B"
+        })
+        self.assertIn(
+            "Passwords doesn't match.",
+            f.errors["__all__"]
+        )

@@ -159,5 +159,21 @@ class UserRegistrationTests(FunctionalTest):
 
         self.assertEqual(
             error,
-            "User with such username or email already exists".format(el)
+            "User with such username or email already exists"
         )
+
+        # Finally user want to check password validation. He enters different
+        # passwords in confirm password field and looks for error.
+        self.browser.get(self.live_server_url + "/accounts/sign-up/")
+        sign_up_form = self.browser.find_element_by_id("sign_up_form")
+        submit_button = sign_up_form.find_element_by_id("submit_button")
+        password_input = sign_up_form.find_element_by_id("password_input")
+        confirm_input = sign_up_form.find_element_by_id("confirm_input")
+
+        password_input.send_keys("top_secret")
+        confirm_input.send_keys("less_secret")
+
+        submit_button.send_keys(Keys.ENTER)
+        error = self.browser.find_element_by_css_selector(
+                                                     ".errorlist.nonfield").text
+        self.assertEqual(error, "Passwords doesn't match.")
