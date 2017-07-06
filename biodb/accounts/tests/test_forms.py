@@ -4,6 +4,9 @@ from django.contrib.auth.models import User
 from django import forms
 
 class SignUpFormTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username="Julius Cesar",
+                                                      email="veni_vidi@vici.it")
     def assert_custom_field_attribute(self, field, attr, value):
         f = SignUpForm()
         field_id = f.fields[field].widget.attrs[attr]
@@ -40,7 +43,6 @@ class SignUpFormTests(TestCase):
                        f.fields["confirm_password"].widget, forms.PasswordInput)
 
     def test_validate_username_duplication(self):
-        u = User.objects.create_user(username="Julius Cesar")
         f = SignUpForm({"username":"Julius Cesar"})
         self.assertFalse(f.is_valid())
         self.assertIn(
@@ -49,8 +51,6 @@ class SignUpFormTests(TestCase):
         )
 
     def test_validate_email_duplication(self):
-        u = User.objects.create_user(username="Julius Cesar",
-                                                      email="veni_vidi@vici.it")
         f = SignUpForm({"email":"veni_vidi@vici.it"})
         self.assertFalse(f.is_valid())
         self.assertIn(
@@ -69,7 +69,6 @@ class SignUpFormTests(TestCase):
         )
 
     def test_validate_multiple_nonfield_errors(self):
-        u = User.objects.create_user(username="Julius Cesar")
         f = SignUpForm({
             "username":"Julius Cesar",
             "password":"password_A",

@@ -81,7 +81,7 @@ class UserRegistrationTests(FunctionalTest):
         self.assertEqual(
                         self.password_input().get_attribute("type"), "password")
         self.assertEqual(self.confirm_input().get_attribute("type"), "password")
-        
+
         # User is first user ever who sign-up to BioDB. He fills form with data
         # and click submit.
         credentials = {
@@ -174,8 +174,10 @@ class UserRegistrationTests(FunctionalTest):
         self.confirm_input().send_keys("less_secret")
 
         self.submit_button().send_keys(Keys.ENTER)
-        error = self.browser.find_element_by_css_selector(
+        error = self.wait_for(
+            lambda: self.browser.find_element_by_css_selector(
                                                      ".errorlist.nonfield").text
+        )
         self.assertEqual(error, "Passwords doesn't match.")
 
         # Ok that works. But user wonders what will happen if he commit two
