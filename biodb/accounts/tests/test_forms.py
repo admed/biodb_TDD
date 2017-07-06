@@ -31,7 +31,13 @@ class SignUpFormTests(TestCase):
         self.assert_custom_field_attribute("password", "placeholder", "password")
 
     def test_custom_confirm_password_field_placeholder(self):
-        self.assert_custom_field_attribute("confirm_password", "placeholder", "confirm password")
+        self.assert_custom_field_attribute("confirm_password", "placeholder",
+                                                             "confirm password")
+    def test_widget_of_passwords_fields(self):
+        f = SignUpForm()
+        self.assertIsInstance(f.fields["password"].widget, forms.PasswordInput)
+        self.assertIsInstance(
+                       f.fields["confirm_password"].widget, forms.PasswordInput)
 
     def test_validate_username_duplication(self):
         u = User.objects.create_user(username="Julius Cesar")

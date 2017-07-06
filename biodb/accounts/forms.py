@@ -17,13 +17,13 @@ class SignUpForm(forms.Form):
             })
         )
     password = forms.CharField(
-            widget=forms.TextInput(attrs={
+            widget=forms.PasswordInput(attrs={
             "id":"password_input",
             "placeholder": "password"
             })
         )
     confirm_password = forms.CharField(
-            widget=forms.TextInput(attrs={
+            widget=forms.PasswordInput(attrs={
             "id":"confirm_input",
             "placeholder": "confirm password"
             })

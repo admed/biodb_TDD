@@ -114,5 +114,5 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
-ADMINS = (("Mateusz", "mateusz.kirmuc@gmail.com"), )
+ADMINS = (("Adrian", DEFAULT_TO_EMAIL), )
 EMAIL_SUBJECT_PREFIX = "[BioDB] "

@@ -76,6 +76,12 @@ class UserRegistrationTests(FunctionalTest):
         "confirm password"
         )
         self.assertEqual(self.submit_button().text, "Submit")
+
+        # Passwords fields are of type "password".
+        self.assertEqual(
+                        self.password_input().get_attribute("type"), "password")
+        self.assertEqual(self.confirm_input().get_attribute("type"), "password")
+        
         # User is first user ever who sign-up to BioDB. He fills form with data
         # and click submit.
         credentials = {
