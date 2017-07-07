@@ -10,6 +10,9 @@ class LoginView(View):
     def get(self, request, **kwargs):
         return render(request, "accounts/login.html")
 
+    def post(self, request, **kwargs):
+        return redirect("/projects/")
+
 class SignUpView(FormView):
     template_name = "accounts/sign_up.html"
     form_class = SignUpForm

@@ -1,5 +1,6 @@
 from functional_tests.base import FunctionalTest
 from django.contrib.auth.models import User
+import time
 class UserSignInTests(FunctionalTest):
     def test_user_encounters_login_page(self):
         # User heard about biodb app and decide to visit this website. Received
@@ -35,8 +36,13 @@ class UserSignInTests(FunctionalTest):
         self.assertEqual(link.text, "Sign up")
 
     def test_user_logs_in_without_problems(self):
+        ## Create user inside Django DB
         user = User.objects.create_user(
                                username="VitoCorleone", password="cosa_nostra")
+        # User goes to BioDB adress. He is already signed-up so enters his
+        # username and password and hit submit button. After succesful login
+        # he get access to first BioDB page: "/projects/".
+        self.browser.get(self.live_server_url)
         login_input = self.browser.find_element_by_id("login_input")
         password_input = self.browser.find_element_by_id("password_input")
         submit_button = self.browser.find_element_by_id("submit_button")
@@ -45,7 +51,8 @@ class UserSignInTests(FunctionalTest):
         password_input.send_keys("cosa_nostra")
         submit_button.click()
 
-        self.assertEqual(self.browser.current_url, "/projects/")
+        self.assertEqual(
+                  self.browser.current_url, self.live_server_url + "/projects/")
 
     def test_user_encounters_login_form_validation(self):
         pass

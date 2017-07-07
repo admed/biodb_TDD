@@ -7,10 +7,18 @@ from django.contrib.auth.models import User
 # Create your tests here.
 
 class LoginViewTests(TestCase):
-    def test_uses_welcome_template(self):
+    def test_renders_welcome_template_on_get(self):
         response = self.client.get("/accounts/login/")
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "accounts/login.html")
+
+    def test_redirect_after_valid_post(self):
+        response = self.client.post("/accounts/login/", {
+            "username":"NapoleonBonaparte",
+            "password":"liberte!"
+        })
+        self.assertRedirects(response, "/projects/")
+
 
 class SignUpViewTests(TestCase):
     def test_render_valid_template_on_get(self):
