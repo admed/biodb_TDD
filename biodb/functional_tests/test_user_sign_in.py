@@ -50,9 +50,29 @@ class UserSignInTests(FunctionalTest):
         login_input.send_keys("VitoCorleone")
         password_input.send_keys("cosa_nostra")
         submit_button.click()
-
         self.assertEqual(
                   self.browser.current_url, self.live_server_url + "/projects/")
 
-    def test_user_encounters_login_form_validation(self):
+    def test_user_encounters_invalid_credentials_validation(self):
+        # User goes to BioDB application. He dont have account in BioDB but he
+        # is curious what will happend when he enters fake user data. He sees
+        # validation error above form.
+        self.browser.get(self.live_server_url)
+        login_input = self.browser.find_element_by_id("login_input")
+        password_input = self.browser.find_element_by_id("password_input")
+        submit_button = self.browser.find_element_by_id("submit_button")
+
+        login_input.send_keys("KingLion")
+        password_input.send_keys("wrrrrau")
+        submit_button.click()
+
+        error_div = self.browser.find_element_by_class_name("nonfield")
+        self.assertEqual(
+            "Invalid username or password.",
+            error_div.text
+        )
+
+        # User decides to sign-up and take another test with login form. He
+        # enters valid username and fake password and vice versa. He sees
+        # excacly the same error in both cases.
         pass

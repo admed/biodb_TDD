@@ -11,7 +11,12 @@ class LoginView(View):
         return render(request, "accounts/login.html")
 
     def post(self, request, **kwargs):
-        return redirect("/projects/")
+        user = User.objects.filter(username=request.POST.get("username"))
+        if user:
+            return redirect("/projects/")
+        else:
+            return render(request, "accounts/login.html", {
+                                      "error": "Invalid username or password."})
 
 class SignUpView(FormView):
     template_name = "accounts/sign_up.html"

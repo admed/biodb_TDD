@@ -7,10 +7,13 @@
   <body>
     <h1 id="header">Welcome to BioDB</h1>
     <p id="description">App that helps you manage your biological research</p>
+    <div class="nonfield">
+      {{ error }}
+    </div>
     <form id="login_form" action="" method="post">
       {% csrf_token %}
-      <input id="login_input" name="" value="">
-      <input id="password_input" type="text" name="" value="">
+      <input id="login_input" name="username" value="">
+      <input id="password_input" type="text" name="password" value="">
       <button id="submit_button">Sign up</button>
     </form>
     <a id="sign_up_link" href="/accounts/sign-up/">Sign up</a>
