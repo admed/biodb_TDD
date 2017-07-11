@@ -7,6 +7,12 @@ from django.contrib.auth.models import User
 # Create your tests here.
 
 class LoginViewTests(TestCase):
+    def send_login_request(self):
+        response = self.client.post("/accounts/login/", {
+            "username":"NapoleonBonaparte",
+            "password":"liberte!"
+        })
+        return response
     def test_renders_welcome_template_on_get(self):
         response = self.client.get("/accounts/login/")
         self.assertEqual(response.status_code, 200)
@@ -17,24 +23,15 @@ class LoginViewTests(TestCase):
             username = "NapoleonBonaparte",
             password = "liberte!"
         )
-        response = self.client.post("/accounts/login/", {
-            "username":"NapoleonBonaparte",
-            "password":"liberte!"
-        })
+        response = self.send_login_request()
         self.assertRedirects(response, "/projects/")
 
     def test_render_proper_template_if_validation_fails(self):
-        response = self.client.post("/accounts/login/", {
-            "username":"NapoleonBonaparte",
-            "password":"liberte!"
-        })
+        response = self.send_login_request()
         self.assertTemplateUsed(response, "accounts/login.html")
 
     def test_credentials_validation(self):
-        response = self.client.post("/accounts/login/", {
-            "username":"NapoleonBonaparte",
-            "password":"liberte!"
-        })
+        response = self.send_login_request()
         self.assertContains(response, "Invalid username or password.")
 
     def test_password_is_checked_during_credential_validation(self):
