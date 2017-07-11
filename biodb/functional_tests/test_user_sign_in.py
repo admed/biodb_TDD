@@ -4,8 +4,8 @@ import time
 class UserSignInTests(FunctionalTest):
     def __init__(self, *args, **kwargs):
         super(UserSignInTests, self).__init__(*args, **kwargs)
-        self.login_input = lambda: self.browser.find_element_by_id(
-                                                                  "login_input")
+        self.username_input = lambda: self.browser.find_element_by_id(
+                                                                  "username_input")
         self.password_input = lambda: self.browser.find_element_by_id(
                                                                "password_input")
         self.submit_button = lambda: self.browser.find_element_by_id(
@@ -31,7 +31,7 @@ class UserSignInTests(FunctionalTest):
         "App that helps you manage your biological research"
         )
         self.assertEqual(
-            self.login_input().get_attribute("id"), "login_input"
+            self.username_input().get_attribute("id"), "username_input"
         )
         self.assertEqual(
             self.password_input().get_attribute("id"), "password_input"
@@ -52,7 +52,7 @@ class UserSignInTests(FunctionalTest):
         # he get access to first BioDB page: "/projects/".
         self.browser.get(self.live_server_url)
 
-        self.login_input().send_keys("VitoCorleone")
+        self.username_input().send_keys("VitoCorleone")
         self.password_input().send_keys("cosa_nostra")
         self.submit_button().click()
         self.assertEqual(
@@ -63,11 +63,11 @@ class UserSignInTests(FunctionalTest):
         # is curious what will happend when he enters fake user data. He sees
         # validation error above form.
         self.browser.get(self.live_server_url)
-        login_input = self.browser.find_element_by_id("login_input")
+        username_input = self.browser.find_element_by_id("username_input")
         password_input = self.browser.find_element_by_id("password_input")
         submit_button = self.browser.find_element_by_id("submit_button")
 
-        login_input.send_keys("KingLion")
+        username_input.send_keys("KingLion")
         password_input.send_keys("wrrrrau")
         submit_button.click()
 
@@ -85,7 +85,7 @@ class UserSignInTests(FunctionalTest):
                                username="VitoCorleone", password="cosa_nostra")
         self.browser.get(self.live_server_url)
 
-        self.login_input().send_keys("VitoCorleone")
+        self.username_input().send_keys("VitoCorleone")
         self.password_input().send_keys("vendetta")
         self.submit_button().click()
 
