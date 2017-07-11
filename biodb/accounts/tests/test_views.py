@@ -37,16 +37,16 @@ class LoginViewTests(TestCase):
         })
         self.assertContains(response, "Invalid username or password.")
 
-    # def test_password_is_checked_during_credential_validation(self):
-    #     user = User.objects.create_user(
-    #         username = "NapoleonBonaparte",
-    #         password = "liberte!"
-    #     )
-    #     response = self.client.post("/accounts/login/", {
-    #         "username":"NapoleonBonaparte",
-    #         "password":"egalite!" # different password
-    #     })
-    #     self.assertEqual(response.status_code, 200)
+    def test_password_is_checked_during_credential_validation(self):
+        user = User.objects.create_user(
+            username = "NapoleonBonaparte",
+            password = "liberte!"
+        )
+        response = self.client.post("/accounts/login/", {
+            "username":"NapoleonBonaparte",
+            "password":"egalite!" # different password
+        })
+        self.assertEqual(response.status_code, 200)
 
 class SignUpViewTests(TestCase):
     def test_render_valid_template_on_get(self):

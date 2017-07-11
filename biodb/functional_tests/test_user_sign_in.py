@@ -75,4 +75,21 @@ class UserSignInTests(FunctionalTest):
         # User decides to sign-up and take another test with login form. He
         # enters valid username and fake password and vice versa. He sees
         # excacly the same error in both cases.
-        pass
+        ## create user in db
+        user = User.objects.create_user(
+                               username="VitoCorleone", password="cosa_nostra")
+        self.browser.get(self.live_server_url)
+        login_input = self.browser.find_element_by_id("login_input")
+        password_input = self.browser.find_element_by_id("password_input")
+        submit_button = self.browser.find_element_by_id("submit_button")
+
+        login_input.send_keys("VitoCorleone")
+        password_input.send_keys("vendetta")
+        submit_button.click()
+
+        error_div = self.browser.find_element_by_class_name("nonfield")
+
+        self.assertEqual(
+            "Invalid username or password.",
+            error_div.text
+        )

@@ -4,6 +4,7 @@ from accounts.forms import SignUpForm
 from django.shortcuts import redirect
 from django.core.mail import mail_admins
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate
 # Create your views here.
 
 class LoginView(View):
@@ -11,7 +12,7 @@ class LoginView(View):
         return render(request, "accounts/login.html")
 
     def post(self, request, **kwargs):
-        user = User.objects.filter(username=request.POST.get("username"))
+        user = authenticate(**request.POST.dict())
         if user:
             return redirect("/projects/")
         else:
