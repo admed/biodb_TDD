@@ -63,15 +63,11 @@ class UserSignInTests(FunctionalTest):
         # is curious what will happend when he enters fake user data. He sees
         # validation error above form.
         self.browser.get(self.live_server_url)
-        username_input = self.browser.find_element_by_id("username_input")
-        password_input = self.browser.find_element_by_id("password_input")
-        submit_button = self.browser.find_element_by_id("submit_button")
 
-        username_input.send_keys("KingLion")
-        password_input.send_keys("wrrrrau")
-        submit_button.click()
-
-        error_div = self.browser.find_element_by_class_name("nonfield")
+        self.username_input().send_keys("KingLion")
+        self.password_input().send_keys("wrrrrau")
+        self.submit_button().click()
+        error_div = self.browser.find_element_by_css_selector(".nonfield li")
         self.assertEqual(
             "Invalid username or password.",
             error_div.text
@@ -89,9 +85,19 @@ class UserSignInTests(FunctionalTest):
         self.password_input().send_keys("vendetta")
         self.submit_button().click()
 
-        error_div = self.browser.find_element_by_class_name("nonfield")
-
+        error_div = self.browser.find_element_by_css_selector(".nonfield li")
         self.assertEqual(
             "Invalid username or password.",
             error_div.text
         )
+
+    def test_user_encounters_required_field_validation(self):
+        # User goes to Biodb application. He wants to find out what will happend
+        # when he press submit button without fill any login field. He gets
+        # validation error above any field in form.
+        self.browser.get(self.live_server_url)
+        self.submit_button().click()
+
+        errors = self.browser.find_elements_by_class_name("errorlist")
+        for error in list(errors):
+            self.assertEqual(error.text, "This field is required.")

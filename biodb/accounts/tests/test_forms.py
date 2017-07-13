@@ -1,7 +1,39 @@
 from django.test import TestCase, Client
-from accounts.forms import SignUpForm
+from accounts.forms import SignUpForm, LoginForm
 from django.contrib.auth.models import User
 from django import forms
+
+class LoginFormTests(TestCase):
+    def test_form_field_names(self):
+        form_field_names = LoginForm.declared_fields.keys()
+        self.assertEqual(["username", "password"], form_field_names)
+
+    def test_username_field_class(self):
+        username_field = LoginForm.declared_fields.get("username")
+        self.assertIsInstance(username_field, forms.CharField)
+
+    def test_password_field_class(self):
+        password_field = LoginForm.declared_fields.get("password")
+        self.assertIsInstance(password_field, forms.CharField)
+
+    def test_password_widget(self):
+        password_field = LoginForm.declared_fields.get("password")
+        self.assertIsInstance(password_field.widget, forms.PasswordInput)
+
+    def test_username_id_attribute(self):
+        username_field = LoginForm.declared_fields.get("username")
+        self.assertEqual(username_field.widget.attrs["id"], "username_input")
+
+    def test_password_id_attribute(self):
+        password_field = LoginForm.declared_fields.get("password")
+        self.assertEqual(password_field.widget.attrs["id"], "password_input")
+
+    def test_form_credential_validation(self):
+        f = LoginForm({"username":"Bill_Gates", "password":"microsoft"})
+        self.assertEqual(f.errors.keys(), ["__all__"])
+        self.assertEqual(f.errors["__all__"], ["Invalid username or password."])
+        f = LoginForm({"username":"Bill_Gates"})
+        self.assertNotIn("__all__", f.errors)
 
 class SignUpFormTests(TestCase):
     def setUp(self):

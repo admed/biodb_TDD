@@ -30,10 +30,6 @@ class LoginViewTests(TestCase):
         response = self.send_login_request()
         self.assertTemplateUsed(response, "accounts/login.html")
 
-    def test_credentials_validation(self):
-        response = self.send_login_request()
-        self.assertContains(response, "Invalid username or password.")
-
     def test_password_is_checked_during_credential_validation(self):
         user = User.objects.create_user(
             username = "NapoleonBonaparte",
@@ -44,6 +40,17 @@ class LoginViewTests(TestCase):
             "password":"egalite!" # different password
         })
         self.assertEqual(response.status_code, 200)
+
+    def test_form_exists_in_template_context_on_get(self):
+        response = self.client.get("/accounts/login/")
+        self.assertIn("form", response.context)
+
+    def test_form_exists_in_template_context_on_invalid_post(self):
+        response = self.client.post("/accounts/login/", {
+            "username":"Elvis",
+            "password":"rockandroll"
+        })
+        self.assertIn("form", response.context)
 
 class SignUpViewTests(TestCase):
     def test_render_valid_template_on_get(self):
