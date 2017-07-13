@@ -42,7 +42,8 @@ INSTALLED_APPS = (
     'easy_thumbnails',
     'django_extensions',
     'biodb',
-    'accounts'
+    'accounts',
+    'projects'
 )
 
 MIDDLEWARE_CLASSES = (
