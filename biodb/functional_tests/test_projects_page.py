@@ -1,10 +1,15 @@
 from functional_tests.base import FunctionalTest
 from projects.models import Project
+import random as rd
 class ProjectsPageTestCase(FunctionalTest):
-    def __init__(self, *args, **kwargs):
-        super(ProjectsPageTestCase, self).__init__(*args, **kwargs)
-        self.project_1 = Project.objects.create(name="project_1")
-        self.project_2 = Project.objects.create(name="project_2")
+    def setUp(self):
+        super(ProjectsPageTestCase, self).setUp()
+        # project names are create randomly to prove that names in template
+        # comes from db
+        self.project_1 = Project.objects.create(
+                                         name="project_"+str(rd.randint(0,100)))
+        self.project_2 = Project.objects.create(
+                                         name="project_"+str(rd.randint(0,100)))
 
     def test_user_look_around_projects_page(self):
         # User visits projects page of BioDB app. He sees unordered list of
