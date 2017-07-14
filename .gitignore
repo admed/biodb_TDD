@@ -39,3 +39,6 @@ tasks.txt
 
 # email settings (those can't be send to GitHub)
 email_settings.py
+
+# migration files
+000*.py
