@@ -26,7 +26,6 @@ class ProjectsPageTestCase(FunctionalTest):
         # User visits projects page of BioDB app. He clicks one of projects
         # links. He is redirected to /projects/<project_name>/robjects/.
         self.browser.get(self.live_server_url + "/projects/")
-        time.sleep(10)
         link = self.browser.find_element_by_css_selector("li:first-child a")
         link.click()
 

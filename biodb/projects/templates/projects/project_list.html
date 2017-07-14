@@ -10,7 +10,7 @@
       <ul>
         {% for project in project_list %}
         <li class="project">
-          <a href="/projects/{{ project.name }}/robjects/">
+          <a href="{{ project.get_absolute_url }}">
             {{ project.name }}
           </a>
         </li>
