@@ -1,6 +1,7 @@
 from functional_tests.base import FunctionalTest
 from projects.models import Project
 import random as rd
+import time
 class ProjectsPageTestCase(FunctionalTest):
     def setUp(self):
         super(ProjectsPageTestCase, self).setUp()
@@ -22,4 +23,15 @@ class ProjectsPageTestCase(FunctionalTest):
         self.assertIn(self.project_2.name, [p.text for p in projects])
 
     def test_user_goes_to_certain_project(self):
-        pass
+        # User visits projects page of BioDB app. He clicks one of projects
+        # links. He is redirected to /projects/<project_name>/robjects/.
+        self.browser.get(self.live_server_url + "/projects/")
+        time.sleep(10)
+        link = self.browser.find_element_by_css_selector("li:first-child a")
+        link.click()
+
+        self.assertEqual(
+            self.browser.current_url,
+            self.live_server_url + "/projects/{}/robjects/".format(
+                                                            self.project_1.name)
+            )

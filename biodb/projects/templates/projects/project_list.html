@@ -7,9 +7,15 @@
   <body>
     <ul class="projects_list">
       <h1>Projects:</h1>
-      {% for project in project_list %}
-        <li class="project"><a href="#">{{ project.name }}</a></li>
-      {% endfor %}
+      <ul>
+        {% for project in project_list %}
+        <li class="project">
+          <a href="/projects/{{ project.name }}/robjects/">
+            {{ project.name }}
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
     </ul>
   </body>
 </html>
