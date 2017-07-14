@@ -43,7 +43,8 @@ INSTALLED_APPS = (
     'django_extensions',
     'biodb',
     'accounts',
-    'projects'
+    'projects',
+    'guardian',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -111,6 +112,7 @@ STATIC_URL = '/static/'
 # add for userena app
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
+    'guardian.backends.ObjectPermissionBackend',
 )
 
 ADMINS = (("Adrian", DEFAULT_TO_EMAIL), )
