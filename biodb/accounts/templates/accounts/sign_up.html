@@ -1,24 +1,18 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <title></title>
-  </head>
-  <body>
-    <form id="sign_up_form" action="" method="post">
-      {% csrf_token %}
-      {{ form.non_field_errors }}
-      {% for field in form %}
-        {% if field.errors %}
-          <ul id="{{ field.name }}_errorlist">
-            {% for error in field.errors %}
-              <li><strong>{{ error|escape }}</strong></li>
-            {% endfor %}
-          </ul>
-        {% endif %}
-        {{ field }}
+{% extends "biodb/base.html" %}
+{% block content %}
+  <form id="sign_up_form" action="" method="post">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    {% for field in form %}
+    {% if field.errors %}
+    <ul id="{{ field.name }}_errorlist">
+      {% for error in field.errors %}
+      <li><strong>{{ error|escape }}</strong></li>
       {% endfor %}
-      <button id="submit_button">Submit</button>
-    </form>
-  </body>
-</html>
+    </ul>
+    {% endif %}
+    {{ field }}
+    {% endfor %}
+    <button id="submit_button">Submit</button>
+  </form>
+{% endblock %}

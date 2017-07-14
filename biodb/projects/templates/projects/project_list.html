@@ -1,21 +1,15 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <title></title>
-  </head>
-  <body>
-    <ul class="projects_list">
-      <h1>Projects:</h1>
-      <ul>
-        {% for project in project_list %}
-        <li class="project">
-          <a href="{{ project.get_absolute_url }}">
-            {{ project.name }}
-          </a>
-        </li>
-        {% endfor %}
-      </ul>
+{% extends "biodb/base.html" %}
+{% block content %}
+<h1>Projects:</h1>
+  <ul class="projects_list">
+    <ul>
+      {% for project in project_list %}
+      <li class="project">
+        <a href="{{ project.get_absolute_url }}">
+          {{ project.name }}
+        </a>
+      </li>
+      {% endfor %}
     </ul>
-  </body>
-</html>
+  </ul>
+{% endblock %}
