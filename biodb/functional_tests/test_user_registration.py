@@ -177,3 +177,31 @@ class UserRegistrationTests(FunctionalTest):
         )
         self.assertIn("Passwords doesn't match.", errors)
         self.assertIn("User with such username or email already exists", errors)
+
+    def test_user_register_and_try_to_login(self):
+        # User goes to register site. He enters all valid data and is redirect
+        # to login page.
+        self.browser.get(self.live_server_url + "/accounts/sign-up/")
+        self.username_input().send_keys("JohnLenon")
+        self.email_input().send_keys("john.lennon@beatles.uk")
+        self.password_input().send_keys("i_m_the_best_beatle_paul")
+        self.confirm_input().send_keys("i_m_the_best_beatle_paul")
+        self.submit_button().click()
+
+        self.assertEqual(
+            self.browser.current_url,
+            self.live_server_url + "/accounts/login/"
+        )
+
+        # User tries to log in. Unfortunately he isnt allowed, becouse admin
+        # needs to activate his account.
+        login_username_input = self.browser.find_element_by_id("username_input")
+        login_password_input = self.browser.find_element_by_id("password_input")
+        submit_button = self.browser.find_element_by_id("submit_button")
+
+        login_username_input.send_keys("JohnLenon")
+        login_password_input.send_keys("i_m_the_best_beatle_paul")
+        submit_button.click()
+
+        error = self.browser.find_element_by_css_selector(".nonfield li")
+        self.assertEqual(error.text, "Invalid username or password.")
