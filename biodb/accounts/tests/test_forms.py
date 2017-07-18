@@ -28,13 +28,6 @@ class LoginFormTests(TestCase):
         password_field = LoginForm.declared_fields.get("password")
         self.assertEqual(password_field.widget.attrs["id"], "password_input")
 
-    def test_form_credential_validation(self):
-        f = LoginForm({"username":"Bill_Gates", "password":"microsoft"})
-        self.assertEqual(f.errors.keys(), ["__all__"])
-        self.assertEqual(f.errors["__all__"], ["Invalid username or password."])
-        f = LoginForm({"username":"Bill_Gates"})
-        self.assertNotIn("__all__", f.errors)
-
 class SignUpFormTests(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(username="Julius Cesar",

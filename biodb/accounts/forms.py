@@ -11,14 +11,6 @@ class LoginForm(forms.Form):
     password = forms.CharField(widget=forms.PasswordInput(attrs={
                                                         "id":"password_input"}))
 
-    def clean(self):
-        cleaned_data = super(LoginForm, self).clean()
-        username = cleaned_data.get("username")
-        password = cleaned_data.get("password")
-        user = authenticate(**cleaned_data)
-        if username and password and not user:
-            self.add_error(None, "Invalid username or password.")
-
 class SignUpForm(forms.Form):
     username = forms.CharField(
             widget=forms.TextInput(attrs={

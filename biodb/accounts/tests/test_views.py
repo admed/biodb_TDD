@@ -53,6 +53,14 @@ class LoginViewTests(TestCase):
         })
         self.assertIn("form", response.context)
 
+    def test_form_in_context_contain_error_message_after_credential_validation(self):
+        response = self.client.post("/accounts/login/", {
+            "username":"Elvis",
+            "password":"rockandroll"
+        })
+        f = response.context["form"]
+        self.assertEqual(f.errors["__all__"], ["Invalid username or password."])
+
     def test_user_is_logged_after_view_call(self):
         user = User.objects.create_user(
             username = "NapoleonBonaparte",

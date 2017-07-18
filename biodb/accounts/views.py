@@ -19,6 +19,12 @@ class LoginView(FormView):
             login(self.request, user)
             return redirect("/projects/")
 
+        else:
+            form.add_error(None, "Invalid username or password.")
+            context = self.get_context_data(**kwargs)
+            context["form"] = form
+            return render(self.request, self.template_name, context)
+
 class SignUpView(FormView):
     template_name = "accounts/sign_up.html"
     form_class = SignUpForm
