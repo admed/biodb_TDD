@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 # Create your views here.
 
+
 class LoginView(FormView):
     template_name = "accounts/login.html"
     form_class = LoginForm
@@ -15,15 +16,15 @@ class LoginView(FormView):
         username = self.request.POST['username']
         password = self.request.POST['password']
         user = authenticate(username=username, password=password)
-        if user is not None:
+        if user is not None and user.is_active:
             login(self.request, user)
             return redirect("/projects/")
-
         else:
             form.add_error(None, "Invalid username or password.")
             context = self.get_context_data(**kwargs)
             context["form"] = form
             return render(self.request, self.template_name, context)
+
 
 class SignUpView(FormView):
     template_name = "accounts/sign_up.html"

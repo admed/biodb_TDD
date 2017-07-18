@@ -1,4 +1,4 @@
-from django.test import TestCase, Client
+from django.test import TestCase
 from accounts.forms import SignUpForm
 from django.core import mail
 from biodb import settings
@@ -7,22 +7,24 @@ from django.contrib import auth
 
 # Create your tests here.
 
+
 class LoginViewTests(TestCase):
     def send_login_request(self):
         response = self.client.post("/accounts/login/", {
-            "username":"NapoleonBonaparte",
-            "password":"liberte"
+            "username": "NapoleonBonaparte",
+            "password": "liberte"
         })
         return response
+
     def test_renders_welcome_template_on_get(self):
         response = self.client.get("/accounts/login/")
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "accounts/login.html")
 
     def test_redirect_after_valid_post(self):
-        user = User.objects.create_user(
-            username = "NapoleonBonaparte",
-            password = "liberte"
+        User.objects.create_user(
+            username="NapoleonBonaparte",
+            password="liberte"
         )
         response = self.send_login_request()
         self.assertRedirects(response, "/projects/")
@@ -32,13 +34,13 @@ class LoginViewTests(TestCase):
         self.assertTemplateUsed(response, "accounts/login.html")
 
     def test_password_is_checked_during_credential_validation(self):
-        user = User.objects.create_user(
-            username = "NapoleonBonaparte",
-            password = "liberte"
+        User.objects.create_user(
+            username="NapoleonBonaparte",
+            password="liberte"
         )
         response = self.client.post("/accounts/login/", {
-            "username":"NapoleonBonaparte",
-            "password":"egalite" # different password
+            "username": "NapoleonBonaparte",
+            "password": "egalite"  # different password
         })
         self.assertEqual(response.status_code, 200)
 
@@ -48,27 +50,49 @@ class LoginViewTests(TestCase):
 
     def test_form_exists_in_template_context_on_invalid_post(self):
         response = self.client.post("/accounts/login/", {
-            "username":"Elvis",
-            "password":"rockandroll"
+            "username": "Elvis",
+            "password": "rockandroll"
         })
         self.assertIn("form", response.context)
 
     def test_form_in_context_contain_error_message_after_credential_validation(self):
         response = self.client.post("/accounts/login/", {
-            "username":"Elvis",
-            "password":"rockandroll"
+            "username": "Elvis",
+            "password": "rockandroll"
         })
         f = response.context["form"]
         self.assertEqual(f.errors["__all__"], ["Invalid username or password."])
 
     def test_user_is_logged_after_view_call(self):
         user = User.objects.create_user(
-            username = "NapoleonBonaparte",
-            password = "liberte"
+            username="NapoleonBonaparte",
+            password="liberte"
         )
-        response = self.send_login_request()
+        self.send_login_request()
         session_user = auth.get_user(self.client)
         self.assertEqual(user, session_user)
+
+    def test_template_render_when_user_is_inactive(self):
+        user = User.objects.create_user(
+            username="NapoleonBonaparte",
+            password="liberte",
+        )
+        user.is_active = False
+        user.save()
+        response = self.send_login_request()
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "accounts/login.html")
+
+    def test_form_render_when_user_isnt_active(self):
+        user = User.objects.create_user(
+            username="NapoleonBonaparte",
+            password="liberte",
+        )
+        user.is_active = False
+        user.save()
+        response = self.send_login_request()
+        f = response.context["form"]
+        self.assertEqual(f.errors["__all__"], ["Invalid username or password."])
 
 class SignUpViewTests(TestCase):
     def test_render_valid_template_on_get(self):
@@ -111,7 +135,7 @@ class SignUpViewTests(TestCase):
             "password": "habemus_papam",
             "confirm_password": "habemus_papam"
         }
-        response = self.client.post("/accounts/sign-up/", credentials)
+        self.client.post("/accounts/sign-up/", credentials)
         user = User.objects.last()
         self.assertEqual(user.username, credentials["username"])
         self.assertEqual(user.email, credentials["email"])
@@ -125,7 +149,7 @@ class SignUpViewTests(TestCase):
             "password": "habemus_papam",
             "confirm_password": "habemus_papam"
         }
-        response = self.client.post("/accounts/sign-up/", credentials)
+        self.client.post("/accounts/sign-up/", credentials)
         user = User.objects.last()
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(

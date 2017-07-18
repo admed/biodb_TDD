@@ -79,6 +79,7 @@ class UserSignInTests(FunctionalTest):
         ## create user in db
         user = User.objects.create_user(
                                username="VitoCorleone", password="cosa_nostra")
+
         self.browser.get(self.live_server_url)
 
         self.username_input().send_keys("VitoCorleone")
@@ -101,3 +102,22 @@ class UserSignInTests(FunctionalTest):
         errors = self.browser.find_elements_by_class_name("errorlist")
         for error in list(errors):
             self.assertEqual(error.text, "This field is required.")
+
+    def test_user_encounters_inactive_validation(self):
+        # User goes to Biodb application. He is registered but admin didnt
+        # activate his account. When user tries to log in, he sees in-activation
+        # errors.
+        user = User.objects.create_user(
+                               username="VitoCorleone", password="cosa_nostra")
+        user.is_active = False
+        user.save()
+        self.browser.get(self.live_server_url)
+        self.username_input().send_keys("VitoCorleone")
+        self.password_input().send_keys("cosa_nostra")
+        self.submit_button().click()
+
+        error_div = self.browser.find_element_by_css_selector(".nonfield li")
+        self.assertEqual(
+            "Invalid username or password.",
+            error_div.text
+        )
