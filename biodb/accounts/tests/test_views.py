@@ -3,6 +3,7 @@ from accounts.forms import SignUpForm
 from django.core import mail
 from biodb import settings
 from django.contrib.auth.models import User
+from django.contrib import auth
 
 # Create your tests here.
 
@@ -10,7 +11,7 @@ class LoginViewTests(TestCase):
     def send_login_request(self):
         response = self.client.post("/accounts/login/", {
             "username":"NapoleonBonaparte",
-            "password":"liberte!"
+            "password":"liberte"
         })
         return response
     def test_renders_welcome_template_on_get(self):
@@ -21,7 +22,7 @@ class LoginViewTests(TestCase):
     def test_redirect_after_valid_post(self):
         user = User.objects.create_user(
             username = "NapoleonBonaparte",
-            password = "liberte!"
+            password = "liberte"
         )
         response = self.send_login_request()
         self.assertRedirects(response, "/projects/")
@@ -33,11 +34,11 @@ class LoginViewTests(TestCase):
     def test_password_is_checked_during_credential_validation(self):
         user = User.objects.create_user(
             username = "NapoleonBonaparte",
-            password = "liberte!"
+            password = "liberte"
         )
         response = self.client.post("/accounts/login/", {
             "username":"NapoleonBonaparte",
-            "password":"egalite!" # different password
+            "password":"egalite" # different password
         })
         self.assertEqual(response.status_code, 200)
 
@@ -51,6 +52,15 @@ class LoginViewTests(TestCase):
             "password":"rockandroll"
         })
         self.assertIn("form", response.context)
+
+    def test_user_is_logged_after_view_call(self):
+        user = User.objects.create_user(
+            username = "NapoleonBonaparte",
+            password = "liberte"
+        )
+        response = self.send_login_request()
+        session_user = auth.get_user(self.client)
+        self.assertEqual(user, session_user)
 
 class SignUpViewTests(TestCase):
     def test_render_valid_template_on_get(self):

@@ -4,15 +4,20 @@ from accounts.forms import SignUpForm, LoginForm
 from django.shortcuts import redirect
 from django.core.mail import mail_admins
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login
 # Create your views here.
 
 class LoginView(FormView):
     template_name = "accounts/login.html"
     form_class = LoginForm
 
-    def form_valid(self, request, **kwargs):
-        return redirect("/projects/")
+    def form_valid(self, form, **kwargs):
+        username = self.request.POST['username']
+        password = self.request.POST['password']
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            login(self.request, user)
+            return redirect("/projects/")
 
 class SignUpView(FormView):
     template_name = "accounts/sign_up.html"
