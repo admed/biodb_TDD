@@ -4,7 +4,9 @@ from accounts.forms import SignUpForm, LoginForm
 from django.shortcuts import redirect
 from django.core.mail import mail_admins
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
+from django.http import HttpResponse
+from django.core.exceptions import PermissionDenied
 # Create your views here.
 
 
@@ -37,3 +39,7 @@ class SignUpView(FormView):
         message = "User with id={} request for activation.".format(user.id)
         mail_admins(subject, message)
         return redirect("/accounts/login/")
+
+def logout_view(request):
+    logout(request)
+    return redirect("/accounts/login/")

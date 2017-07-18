@@ -2,6 +2,7 @@ from functional_tests.base import FunctionalTest
 from projects.models import Project
 import random as rd
 import time
+from django.contrib.auth.models import User
 class ProjectsPageTestCase(FunctionalTest):
     def setUp(self):
         super(ProjectsPageTestCase, self).setUp()
@@ -13,6 +14,9 @@ class ProjectsPageTestCase(FunctionalTest):
                                          name="project_"+str(rd.randint(0,100)))
 
     def test_user_look_around_projects_page(self):
+        ## Create and log in user.
+        u = User.objects.create_user(username="USERNAME", password="PASSWORD")
+        self.login_user(username="USERNAME", password="PASSWORD")
         # User visits projects page of BioDB app. He sees unordered list of
         # links with projects names.
         self.browser.get(self.live_server_url + "/projects/")
@@ -23,6 +27,9 @@ class ProjectsPageTestCase(FunctionalTest):
         self.assertIn(self.project_2.name, [p.text for p in projects])
 
     def test_user_goes_to_certain_project(self):
+        ## Create and log in user.
+        u = User.objects.create_user(username="USERNAME", password="PASSWORD")
+        self.login_user(username="USERNAME", password="PASSWORD")
         # User visits projects page of BioDB app. He clicks one of projects
         # links. He is redirected to /projects/<project_name>/robjects/.
         self.browser.get(self.live_server_url + "/projects/")

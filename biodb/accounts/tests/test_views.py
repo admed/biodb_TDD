@@ -2,7 +2,7 @@ from django.test import TestCase
 from accounts.forms import SignUpForm
 from django.core import mail
 from biodb import settings
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AnonymousUser
 from django.contrib import auth
 
 # Create your tests here.
@@ -164,3 +164,16 @@ class SignUpViewTests(TestCase):
             mail.outbox[0].to,
             [admin_data[1] for admin_data in settings.ADMINS]
         )
+
+class LogoutViewTests(TestCase):
+    def test_view_logs_out_user(self):
+        u = User.objects.create_user(username="USERNAME", password="PASSWORD")
+        self.client.login(username="USERNAME", password="PASSWORD")
+        response = self.client.get("/accounts/logout/")
+        session_user = auth.get_user(self.client)
+        self.assertNotEqual(session_user, u)
+        self.assertIsInstance(session_user, AnonymousUser)
+
+    def test_view_redirect_to_login_page(self):
+        response = self.client.get("/accounts/logout/")
+        self.assertRedirects(response, "/accounts/login/")
