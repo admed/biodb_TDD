@@ -21,7 +21,7 @@ class LoginView(FormView):
         user = authenticate(username=username, password=password)
         if user is not None and user.is_active:
             login(self.request, user)
-            return redirect(reverse("projects"))
+            return redirect(reverse("projects_list"))
         else:
             form.add_error(None, "Invalid username or password.")
             context = self.get_context_data(**kwargs)
@@ -39,8 +39,9 @@ class SignUpView(FormView):
         subject = "New user request for activation."
         message = "User with id={} request for activation.".format(user.id)
         mail_admins(subject, message)
-        return redirect("/accounts/login/")
+        return redirect(reverse("login"))
+
 
 def logout_view(request):
     logout(request)
-    return redirect("/accounts/login/")
+    return redirect(reverse("login"))
