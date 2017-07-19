@@ -4,13 +4,14 @@ import time
 from functional_tests.base import FunctionalTest
 from django.contrib.auth.models import User
 
+
 class UserLogoutTests(FunctionalTest):
     def test_logged_user_logs_out(self):
-        ## Create active user.
+        # Create active user.
 
         u = User.objects.create_user(username="USERNAME", password="PASSWORD")
 
-        ## Login active user.
+        # Login active user.
 
         self.login_user(username="USERNAME", password="PASSWORD")
 
@@ -21,7 +22,8 @@ class UserLogoutTests(FunctionalTest):
         logout_button = self.browser.find_element_by_id("logout_button")
         logout_button.click()
 
-        self.assertEqual(self.browser.current_url, self.live_server_url + "/accounts/login/")
+        self.assertEqual(self.browser.current_url,
+                         self.live_server_url + "/accounts/login/")
 
         # When he wants to get to projects page he sees permission denied
         # message.

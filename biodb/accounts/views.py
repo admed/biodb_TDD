@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
 from django.core.exceptions import PermissionDenied
+from django.core.urlresolvers import reverse
 # Create your views here.
 
 
@@ -20,7 +21,7 @@ class LoginView(FormView):
         user = authenticate(username=username, password=password)
         if user is not None and user.is_active:
             login(self.request, user)
-            return redirect("/projects/")
+            return redirect(reverse("projects"))
         else:
             form.add_error(None, "Invalid username or password.")
             context = self.get_context_data(**kwargs)
