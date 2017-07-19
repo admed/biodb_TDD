@@ -3,6 +3,7 @@ from selenium.webdriver.common.keys import Keys
 import time
 from functional_tests.base import FunctionalTest
 from django.contrib.auth.models import User
+from selenium.common.exceptions import NoSuchElementException
 
 
 class UserLogoutTests(FunctionalTest):
@@ -33,7 +34,15 @@ class UserLogoutTests(FunctionalTest):
         self.assertEqual(body_element.text, "403 Forbidden")
 
     def test_annonymous_user_cant_find_logout_button(self):
-        pass
+        # Annonymous user goes to page he has access to. He looks for logout
+        # button but he cant find it.
+        self.browser.get(self.live_server_url + "/accounts/login/")
+        with self.assertRaises(NoSuchElementException):
+            self.browser.find_element_by_id("logout_button")
+
+        self.browser.get(self.live_server_url + "/accounts/sign-up/")
+        with self.assertRaises(NoSuchElementException):
+            self.browser.find_element_by_id("logout_button")
 
     def test_annonymous_user_cant_get_to_logut_url(self):
         pass
