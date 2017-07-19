@@ -44,5 +44,9 @@ class UserLogoutTests(FunctionalTest):
         with self.assertRaises(NoSuchElementException):
             self.browser.find_element_by_id("logout_button")
 
-    def test_annonymous_user_cant_get_to_logut_url(self):
-        pass
+    def test_annonymous_user_cant_get_to_logout_url(self):
+        # Annonymous user wants to visit logout url. He is automatically
+        # redirect to login page.
+        self.browser.get(self.live_server_url + "/accounts/logout/")
+        expected_current_url = self.live_server_url + "/accounts/login/"
+        self.assertEqual(self.browser.current_url, expected_current_url)
