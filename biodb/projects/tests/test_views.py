@@ -26,3 +26,9 @@ class ProjectListViewTestCase(TestCase):
     def test_login_requirement(self):
         response = self.client.get("/projects/")
         self.assertEqual(response.status_code, 403)
+
+class RObjectsListViewTests(TestCase):
+    def test_anonymous_user_gets_robjects_page(self):
+        Project.objects.create(name="PROJECT_1")
+        response = self.client.get("/projects/PROJECT_1/robjects/")
+        self.assertEqual(response.status_code, 403)
