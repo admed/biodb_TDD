@@ -3,4 +3,7 @@ from django.shortcuts import redirect
 from django.core.urlresolvers import reverse
 class RedirectView(View):
     def get(self, request, **kwargs):
-        return redirect(reverse("login"))
+        if request.user.is_authenticated():
+            return redirect(reverse("projects_list"))
+        else:
+            return redirect(reverse("login"))
