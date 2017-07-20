@@ -2,6 +2,9 @@ from django.core.exceptions import ValidationError
 from django.test import TestCase
 from projects.models import Project
 from django.db import models
+from django.db import IntegrityError
+
+
 class ProjectModelTestCase(TestCase):
 
     def test_fields_classes(self):
@@ -18,4 +21,10 @@ class ProjectModelTestCase(TestCase):
 
     def test_get_absolute_url(self):
         p = Project.objects.create(name="top_secret")
-        self.assertEqual(p.get_absolute_url(), "/projects/top_secret/robjects/")
+        self.assertEqual(p.get_absolute_url(),
+                         "/projects/top_secret/robjects/")
+
+    def test_project_name_uniqueness(self):
+        Project.objects.create(name="PROJECT_1")
+        with self.assertRaises(IntegrityError):
+            Project.objects.create(name="PROJECT_1")

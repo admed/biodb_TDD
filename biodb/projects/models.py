@@ -2,7 +2,7 @@ from django.db import models
 from django.core.exceptions import ValidationError
 # Create your models here.
 class Project(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
 
     def clean(self):
         allowed_name_chars="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxy\
