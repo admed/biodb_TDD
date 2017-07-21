@@ -4,7 +4,7 @@ from projects.models import Project
 from django.db import models
 from django.db import IntegrityError
 from projects.models import Robject
-from django.contrib.auth.models import User
+
 
 class ProjectModelTestCase(TestCase):
 
@@ -30,13 +30,13 @@ class ProjectModelTestCase(TestCase):
         with self.assertRaises(IntegrityError):
             Project.objects.create(name="PROJECT_1")
 
+
 class RobjectModelTestCase(TestCase):
     def test_fields_classes(self):
         project_field = Robject._meta.get_field("project")
         self.assertIsInstance(project_field, models.ForeignKey)
         author_field = Robject._meta.get_field("author")
         self.assertIsInstance(author_field, models.ForeignKey)
-
 
     def test_str_method(self):
         r = Robject(id=101)
