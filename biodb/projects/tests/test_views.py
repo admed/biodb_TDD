@@ -32,3 +32,14 @@ class RObjectsListViewTests(TestCase):
         Project.objects.create(name="PROJECT_1")
         response = self.client.get("/projects/PROJECT_1/robjects/")
         self.assertEqual(response.status_code, 403)
+    def test_render_template_on_get(self):
+        u = User.objects.create_user(username="USERNAME", password="PASSWORD")
+        self.client.login(username="USERNAME", password="PASSWORD")
+        response = self.client.get("/projects/PROJECT_1/robjects/")
+
+        self.assertTemplateUsed(response, "projects/robjects_list.html")
+
+    # def test_list_of_robjects_in_context_as_expected(self):
+    #     pass
+    # def test_robject_list_is_in_template_context(self):
+    #     pass

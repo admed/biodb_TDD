@@ -14,3 +14,6 @@ z0123456789_"
 
     def get_absolute_url(self):
         return "/projects/%s/robjects/" % self.name
+
+class Robject(models.Model):
+    project = models.CharField(max_length=100)

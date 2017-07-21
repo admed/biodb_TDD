@@ -14,4 +14,4 @@ class ProjectListView(LoginRequiredMixin, ListView):
 def robjects_list_view(request):
     if not request.user.is_authenticated():
         raise PermissionDenied
-    return HttpResponse("robjects page")
+    return render(request, "projects/robjects_list.html")

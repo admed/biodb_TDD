@@ -37,7 +37,7 @@ class UserSignInTests(FunctionalTest):
             self.password_input().get_attribute("id"), "password_input"
         )
 
-        self.assertEqual(submit_button.text, "Sign up")
+        self.assertEqual(submit_button.text, "Login")
 
         link = self.browser.find_element_by_id("sign_up_link")
 
