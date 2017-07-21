@@ -8,13 +8,14 @@
     <table id="robjects_table">
       <tr id="header_row">
         <th>id</th>
-        <th>robject</th>
-        <th>name</th>
-        <th>create by</th>
-        <th>modify by</th>
-        <th>create date</th>
         <th>author</th>
       </tr>
+      {% for robject in robject_list %}
+        <tr class="row robject_{{ robject.id }}">
+          <td>{{ robject.id }}</td>
+          <td>{{ robject.author }}</td>
+        </tr>
+      {% endfor %}
     </table>
   </body>
 </html>

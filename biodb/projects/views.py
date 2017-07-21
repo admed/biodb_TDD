@@ -4,6 +4,7 @@ from projects.models import Project
 from django.core.exceptions import PermissionDenied
 from biodb.mixins import LoginRequiredMixin
 from django.http import HttpResponse
+from projects.models import Robject
 # Create your views here.
 
 
@@ -11,7 +12,10 @@ class ProjectListView(LoginRequiredMixin, ListView):
     model = Project
 
 
-def robjects_list_view(request):
+def robjects_list_view(request, project_name):
     if not request.user.is_authenticated():
         raise PermissionDenied
-    return render(request, "projects/robjects_list.html")
+    project = Project.objects.get(name=project_name)
+    robject_list = Robject.objects.filter(project=project)
+    return render(request, "projects/robjects_list.html",
+                  {"robject_list": robject_list})

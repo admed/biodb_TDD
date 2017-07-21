@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.exceptions import ValidationError
+from django.contrib.auth.models import User
 # Create your models here.
 class Project(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -16,4 +17,8 @@ z0123456789_"
         return "/projects/%s/robjects/" % self.name
 
 class Robject(models.Model):
-    project = models.CharField(max_length=100)
+    project = models.ForeignKey(to=Project)
+    author = models.ForeignKey(to=User)
+
+    def __str__(self):
+        return "Robject " + str(self.id)
