@@ -17,7 +17,7 @@ class UserVisitRobjectsPage(FunctionalTest):
         body = self.browser.find_element_by_tag_name("body")
         self.assertEqual(body.text, "403 Forbidden")
 
-    def test_logged_user_visit_robjects_page_no_robjects_exists(self):
+    def test_logged_user_visit_robjects_page___no_robjects_exists(self):
         # Create user and log him in.
         u = User.objects.create_user(username="USERNAME", password="PASSWORD")
         self.login_user(username="USERNAME", password="PASSWORD")
@@ -38,12 +38,12 @@ class UserVisitRobjectsPage(FunctionalTest):
             ".row.robject")
         self.assertEqual(len(robject_rows), 0)
 
-    def test_logged_user_visit_robjects_page_robjects_exists_in_projects(self):
+    def test_logged_user_visit_robjects_page___robjects_exists_in_project(self):
         # Create user and log him in.
         u = User.objects.create_user(username="USERNAME", password="PASSWORD")
         self.login_user(username="USERNAME", password="PASSWORD")
 
-        # Craete sample project
+        # Create sample project
         p = Project.objects.create(name="project_1")
 
         # Create sample robjects.

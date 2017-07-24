@@ -1,4 +1,8 @@
 {% extends "biodb/base.html" %}
+{% load static %}
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'accounts/login.css' %}">
+{% endblock %}
 {% block content %}
   <h1 id="header">Welcome to BioDB</h1>
   <p id="description">App that helps you manage your biological research</p>
