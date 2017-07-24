@@ -42,3 +42,7 @@ email_settings.py
 
 # migration files
 000*.py
+
+INSTALL.txt
+requirements-dev.txt
+requirements.txt
