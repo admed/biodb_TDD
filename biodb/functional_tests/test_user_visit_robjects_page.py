@@ -19,7 +19,6 @@ class UserVisitRobjectsPage(FunctionalTest):
 
     def test_logged_user_visit_robjects_page___no_robjects_exists(self):
         # Create user and log him in.
-        u = User.objects.create_user(username="USERNAME", password="PASSWORD")
         self.login_user(username="USERNAME", password="PASSWORD")
         # Craete sample project
         p = Project.objects.create(name="project_1")
@@ -40,8 +39,8 @@ class UserVisitRobjectsPage(FunctionalTest):
 
     def test_logged_user_visit_robjects_page___robjects_exists_in_project(self):
         # Create user and log him in.
-        u = User.objects.create_user(username="USERNAME", password="PASSWORD")
-        self.login_user(username="USERNAME", password="PASSWORD")
+        # u = User.objects.create_user(username="USERNAME", password="PASSWORD")
+        u = self.login_user(username="USERNAME", password="PASSWORD")
 
         # Create sample project
         p = Project.objects.create(name="project_1")
