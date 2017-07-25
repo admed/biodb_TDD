@@ -17,8 +17,8 @@ z0123456789_"
         return "/projects/%s/robjects/" % self.name
 
 class Robject(models.Model):
-    project = models.ForeignKey(to=Project)
-    author = models.ForeignKey(to=User)
+    project = models.ForeignKey(to=Project, null=True)
+    author = models.ForeignKey(to=User, null=True)
 
     def __str__(self):
         return "Robject " + str(self.id)

@@ -41,3 +41,8 @@ class RobjectModelTestCase(TestCase):
     def test_str_method(self):
         r = Robject(id=101)
         self.assertEqual(r.__str__(), "Robject 101")
+
+    def test_not_string_based_fields_may_be_null(self):
+        r = Robject.objects.create()
+        self.assertIsNone(r.author)
+        self.assertIsNone(r.project)
