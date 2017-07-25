@@ -41,7 +41,7 @@ tasks.txt
 email_settings.py
 
 # migration files
-000*.py
+00*.py
 
 INSTALL.txt
 requirements-dev.txt
