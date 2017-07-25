@@ -1,4 +1,13 @@
 table {
   max-width: 500px;
   margin: auto;
+  border-collapse: collapse;
+}
+
+table, td, th {
+  border: solid thin;
+}
+
+body {
+  color: red;
 }

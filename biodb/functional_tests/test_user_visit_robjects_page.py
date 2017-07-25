@@ -29,8 +29,13 @@ class UserVisitRobjectsPage(FunctionalTest):
         header_row = self.browser.find_element_by_id("header_row")
         table_columns = header_row.find_elements_by_tag_name("th")
         table_columns_names = [column.text for column in table_columns]
+
         self.assertIn("id", table_columns_names)
+        self.assertIn("name", table_columns_names)
         self.assertIn("author", table_columns_names)
+        self.assertIn("create by", table_columns_names)
+        self.assertIn("create date", table_columns_names)
+        self.assertIn("modify by", table_columns_names)
 
         # Table hasnt any rows
         robject_rows = self.browser.find_elements_by_css_selector(
@@ -39,7 +44,6 @@ class UserVisitRobjectsPage(FunctionalTest):
 
     def test_logged_user_visit_robjects_page___robjects_exists_in_project(self):
         # Create user and log him in.
-        # u = User.objects.create_user(username="USERNAME", password="PASSWORD")
         u = self.login_user(username="USERNAME", password="PASSWORD")
 
         # Create sample project
