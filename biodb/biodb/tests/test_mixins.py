@@ -1,6 +1,5 @@
 from django.test import TestCase, RequestFactory
 from biodb.mixins import LoginRequiredMixin
-from mock import patch
 from django.views.generic import View
 from django.contrib.auth.models import User, AnonymousUser
 from django.core.exceptions import PermissionDenied
