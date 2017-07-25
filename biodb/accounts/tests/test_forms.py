@@ -6,7 +6,7 @@ from django import forms
 class LoginFormTests(TestCase):
     def test_form_field_names(self):
         form_field_names = LoginForm.declared_fields.keys()
-        self.assertEqual(["username", "password"], form_field_names)
+        self.assertEqual(["username", "password"], list(form_field_names))
 
     def test_username_field_class(self):
         username_field = LoginForm.declared_fields.get("username")
