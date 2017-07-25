@@ -130,6 +130,7 @@ class UserRegistrationTests(FunctionalTest):
         # following message: User with such username or email already exists'.
 
         # create Bilbo Baggins user
+
         username = "Bilbo"
         email = "bilbo@baggins.shire.mde"
         password = "damn_dragon!"
@@ -220,7 +221,7 @@ class UserRegistrationTests(FunctionalTest):
         )
 
         self.username_input().send_keys('Bilbo')
-        self.email_input().send_keys("test@test.com") # any, test mail 
+        self.email_input().send_keys("test@test.com") # any, test mail
         self.password_input().send_keys("top_secret")
         self.confirm_input().send_keys("less_secret")
         self.submit_button().click()
