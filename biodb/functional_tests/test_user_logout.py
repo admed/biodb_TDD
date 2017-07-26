@@ -1,20 +1,20 @@
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-import time
-from functional_tests.base import FunctionalTest
+# import time
 from django.contrib.auth.models import User
+from functional_tests.base import FunctionalTest
 from selenium.common.exceptions import NoSuchElementException
+# from selenium import webdriver
+# from selenium.webdriver.common.keys import Keys
 
 
 class UserLogoutTests(FunctionalTest):
     def test_logged_user_logs_out(self):
         # Create active user.
 
-        u = User.objects.create_user(username="USERNAME", password="PASSWORD")
+        usr = User.objects.create_user(username="UNAME", password="PASSWORD")
 
         # Login active user.
 
-        self.login_user(username="USERNAME", password="PASSWORD")
+        self.login_user(username="UNAME", password="PASSWORD")
 
         # User gets to projects page. He wants to logout. He
         # clicks to logout button and is redirected to login page.

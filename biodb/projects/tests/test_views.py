@@ -1,8 +1,10 @@
-from django.test import TestCase
+# from django.contrib.auth.models import User
+# from django.test import TestCase
 from projects.models import Project
-from django.contrib.auth.models import User
 from projects.models import Robject
 from unit_tests.base import FunctionalTest
+
+
 class ProjectListViewTestCase(FunctionalTest):
     def test_renders_given_template(self):
         self.login_default_user()
@@ -15,12 +17,12 @@ class ProjectListViewTestCase(FunctionalTest):
         self.assertIn("project_list", response.context)
 
     def test_get_project_list_from_db(self):
-        p1 = Project.objects.create(name="project_1")
-        p2 = Project.objects.create(name="project_2")
+        proj1 = Project.objects.create(name="project_1")
+        proj2 = Project.objects.create(name="project_2")
         self.login_default_user()
         response = self.client.get("/projects/")
-        self.assertIn(p1, response.context["project_list"])
-        self.assertIn(p2, response.context["project_list"])
+        self.assertIn(proj1, response.context["project_list"])
+        self.assertIn(proj2, response.context["project_list"])
 
     def test_login_requirement(self):
         response = self.client.get("/projects/")
@@ -41,17 +43,17 @@ class RObjectsListViewTests(FunctionalTest):
         self.assertTemplateUsed(response, "projects/robjects_list.html")
 
     def test_view_create_list_of_robjects_and_pass_it_to_context(self):
-        u = self.login_default_user()
-        p1 = Project.objects.create(name="project_1")
-        p2 = Project.objects.create(name="project_2")
-        r1 = Robject.objects.create(author=u, project=p1)
-        r2 = Robject.objects.create(author=u, project=p1)
-        r3 = Robject.objects.create(author=u, project=p2)
+        usr = self.login_default_user()
+        proj1 = Project.objects.create(name="project_1")
+        proj2 = Project.objects.create(name="project_2")
+        robj1 = Robject.objects.create(author=usr, project=proj1)
+        robj2 = Robject.objects.create(author=usr, project=proj1)
+        robj3 = Robject.objects.create(author=usr, project=proj2)
         response = self.client.get("/projects/project_1/robjects/")
-        self.assertIn(r1, response.context["robject_list"])
-        self.assertIn(r2, response.context["robject_list"])
+        self.assertIn(robj1, response.context["robject_list"])
+        self.assertIn(robj2, response.context["robject_list"])
         response = self.client.get("/projects/project_2/robjects/")
-        self.assertIn(r3, response.context["robject_list"])
+        self.assertIn(robj3, response.context["robject_list"])
 
     # def test_robject_list_is_in_template_context(self):
     #     pass
