@@ -1,6 +1,8 @@
-from functional_tests.base import FunctionalTest
-import time
+# import time
 from django.contrib.auth.models import User
+from functional_tests.base import FunctionalTest
+
+
 class UserComeToBiodb(FunctionalTest):
     def test_anonymous_user_come_to_biodb(self):
         # Annonymous user come to biodb. He is redirected to login page.
