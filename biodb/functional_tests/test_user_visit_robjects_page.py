@@ -93,7 +93,8 @@ class SearchEngineTests(FunctionalTest):
                          "/projects/project_1/robjects/")
 
         # He sees two robjects in table.
-        self.browser.find_element_by_css_selector(".row.robject_1")
+        self.wait_for(
+            lambda: self.browser.find_element_by_css_selector(".row.robject_1"))
         self.browser.find_element_by_css_selector(".row.robject_2")
 
         # User wants to test search tool. He looks for search form, input and
