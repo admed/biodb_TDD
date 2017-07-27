@@ -53,9 +53,9 @@ class UserVisitRobjectsPage(FunctionalTest):
         proj = Project.objects.create(name="project_1")
 
         # Create sample robjects.
-        robj1 = Robject.objects.create(author=u, project=p)
-        robj2 = Robject.objects.create(author=u, project=p)
-        robj3 = Robject.objects.create(author=u, project=p)
+        robj1 = Robject.objects.create(author=usr, project=proj)
+        robj2 = Robject.objects.create(author=usr, project=proj)
+        robj3 = Robject.objects.create(author=usr, project=proj)
 
         # Logged user goes to project_1's robjects page. He knows that this
         # project contains several robjects. He sees table of rows. Each row
