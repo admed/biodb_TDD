@@ -71,3 +71,50 @@ class UserVisitRobjectsPage(FunctionalTest):
                 "robject_" + str(robject.id))
             self.assertIn(str(robject.id), row.text)
             self.assertIn(str(robject.author), row.text)
+
+
+class SearchEngineTests(FunctionalTest):
+    def test_user_perform_search_based_on_whole_robj_name_and_find_robject(self):
+        # Log user.
+        user = self.login_user("USERNAME", "PASSWORD")
+
+        # Create project.
+        project = Project.objects.create(name="project_1")
+
+        # Create sample robjects.
+        Robject.objects.create(name="robject_1", project=project)
+        Robject.objects.create(name="robject_2", project=project)
+
+        # User goes to robjects page.
+        self.browser.get(self.live_server_url +
+                         "/projects/project_1/robjects/")
+
+        time.sleep(5)
+        # He sees two robjects in table.
+        self.browser.find_element_by_css_selector(".row.robject_1")
+        self.browser.find_element_by_css_selector(".row.robject_2")
+
+        # User wants to test search tool. He looks for search form, input and
+        # button.
+        search_form = self.browser.find_element_by_id("search_form")
+        search_input = self.browser.find_element_by_id("search_input")
+        search_button = self.browser.find_element_by_id("search_button")
+
+        # User enter name of one robject and expect to see only this robject in
+        # table.
+        search_input.send_keys("robject_1")
+        search_button.click()
+
+        rows = self.browser.find_elements_by_css_selector(".row")
+        self.assertEqual(len(rows), 1)
+
+        self.browser.find_elements_by_css_selector(".robject_1")
+
+    def test_user_perform_search_based_on_part_of_word(self):
+        pass
+
+    def test_user_limits_number_of_fields_to_search(self):
+        pass
+
+    def test_user_narrows_the_search_to_the_date_range(self):
+        pass

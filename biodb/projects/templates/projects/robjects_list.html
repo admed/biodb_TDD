@@ -4,6 +4,10 @@
   <link rel="stylesheet" href="{% static 'projects/robject_list.css' %}">
 {% endblock %}
 {% block content %}
+  <form id="search_form" action="search/">
+    <input type="text" name="name" id="search_input">
+    <button id="search_button">Search</button>
+  </form>
   <table id="robjects_table">
     <tr id="header_row">
       <th>id</th>

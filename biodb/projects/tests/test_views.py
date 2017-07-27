@@ -3,6 +3,8 @@ from projects.models import Project
 from django.contrib.auth.models import User
 from projects.models import Robject
 from unit_tests.base import FunctionalTest
+
+
 class ProjectListViewTestCase(FunctionalTest):
     def test_renders_given_template(self):
         self.login_default_user()
@@ -53,5 +55,26 @@ class RObjectsListViewTests(FunctionalTest):
         response = self.client.get("/projects/project_2/robjects/")
         self.assertIn(r3, response.context["robject_list"])
 
-    # def test_robject_list_is_in_template_context(self):
-    #     pass
+    def test_robject_list_is_in_template_context(self):
+        pass
+
+
+class SearchRobjectsViewTests(FunctionalTest):
+    def test_view_renders_robjects_page_template(self):
+        self.login_default_user()
+        project = Project.objects.create(name="project_1")
+        response = self.client.get("/projects/project_1/robjects/search/")
+        self.assertTemplateUsed(response, "projects/robjects_list.html")
+
+    def test_if_view_get_valid_query_on_get__view_pass_qs_to_template(self):
+        project = Project.objects.create(name="project_1")
+
+        robject_1 = Robject.objects.create(name="robject_1")
+        robject_2 = Robject.objects.create(name="robject_2")
+
+        response = self.client.get(
+            "/projects/project_1/robjects/search/", {"name": "robject_1"})
+        queryset = Robject.objects.filter(name="robject_1")
+        # comparison of two querysets
+        self.assertQuerysetEqual(
+            response.context["robject_list"], map(repr, queryset))

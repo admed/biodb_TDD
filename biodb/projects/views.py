@@ -19,3 +19,9 @@ def robjects_list_view(request, project_name):
     robject_list = Robject.objects.filter(project=project)
     return render(request, "projects/robjects_list.html",
                   {"robject_list": robject_list})
+
+
+def search_robjects_view(request):
+    name = request.GET.get("name")
+    queryset = Robject.objects.filter(name=name)
+    return render(request, "projects/robjects_list.html", {"robject_list": queryset})
