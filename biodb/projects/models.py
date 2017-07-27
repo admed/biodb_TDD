@@ -25,9 +25,9 @@ class Robject(models.Model):
         to=User, null=True, related_name="robjects_in_which_user_is_author")
     name = models.CharField(max_length=100)
     create_by = models.ForeignKey(
-        to=User, related_name="robjects_created_by_user")
-    create_date = models.DateTimeField()
-    modify_by = models.ForeignKey(to=User)
+        to=User, related_name="robjects_created_by_user", null=True)
+    create_date = models.DateTimeField(null=True)
+    modify_by = models.ForeignKey(to=User, null=True)
 
     def __str__(self):
         return "Robject " + str(self.id)

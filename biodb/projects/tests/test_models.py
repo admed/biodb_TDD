@@ -58,5 +58,11 @@ class RobjectModelTestCase(TestCase):
     def test_not_string_based_fields_may_be_null(self):
         author_field = Robject._meta.get_field("author")
         project_field = Robject._meta.get_field("project")
+        create_by_field = Robject._meta.get_field("create_by")
+        create_date_field = Robject._meta.get_field("create_date")
+        modify_by_field = Robject._meta.get_field("modify_by")
         self.assertTrue(author_field.null)
         self.assertTrue(project_field.null)
+        self.assertTrue(create_by_field.null)
+        self.assertTrue(create_date_field.null)
+        self.assertTrue(modify_by_field.null)
