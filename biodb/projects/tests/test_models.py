@@ -4,6 +4,7 @@ from django.db import models
 from django.test import TestCase
 from projects.models import Project
 from projects.models import Robject
+from django.contrib.auth.models import User
 
 
 class ProjectModelTestCase(TestCase):
@@ -66,3 +67,14 @@ class RobjectModelTestCase(TestCase):
         self.assertTrue(create_by_field.null)
         self.assertTrue(create_date_field.null)
         self.assertTrue(modify_by_field.null)
+
+    def test_related_models_in_foreign_keys(self):
+        author_field = Robject._meta.get_field("author")
+        project_field = Robject._meta.get_field("project")
+        create_by_field = Robject._meta.get_field("create_by")
+        modify_by_field = Robject._meta.get_field("modify_by")
+
+        self.assertEqual(author_field.related_model, User)
+        self.assertEqual(project_field.related_model, Project)
+        self.assertEqual(create_by_field.related_model, User)
+        self.assertEqual(modify_by_field.related_model, User)
