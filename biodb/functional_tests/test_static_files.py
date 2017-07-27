@@ -1,7 +1,9 @@
-from functional_tests.base import FunctionalTest
+# import time
 from django.contrib.auth.models import User
-from projects.models import  Project, Robject
-import time
+from functional_tests.base import FunctionalTest
+from projects.models import Project
+from projects.models import Robject
+
 
 class StaticFilesTests(FunctionalTest):
     def test_login_page(self):
@@ -17,18 +19,19 @@ class StaticFilesTests(FunctionalTest):
         )
 
     def test_robjects_list(self):
-        ## create user and log him in
-        u = User.objects.create_user(username="USERNAME", password="PASSWORD")
-        self.login_user(username="USERNAME", password="PASSWORD")
+        # create user and log him in
+        usr = User.objects.create_user(username="UNAME", password="PASSWORD")
+        self.login_user(username="UNAME", password="PASSWORD")
 
-        ## create project
-        p = Project.objects.create(name="project_1")
+        # create project
+        proj = Project.objects.create(name="project_1")
 
-        ## create robject inside project
-        Robject.objects.create(project=p, author=u)
+        # create robject inside project
+        Robject.objects.create(project=proj, author=usr)
 
         # User goes to robjects page.
-        self.browser.get(self.live_server_url + "/projects/project_1/robjects/")
+        self.browser.get(self.live_server_url +
+                         "/projects/project_1/robjects/")
         self.browser.set_window_size(1024, 768)
 
         # He noticed that robjects table is nicely centered.

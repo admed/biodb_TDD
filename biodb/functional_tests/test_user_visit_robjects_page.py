@@ -1,7 +1,9 @@
+# import time
+# from datetime import datetime
+from django.contrib.auth.models import User
 from functional_tests.base import FunctionalTest
 from projects.models import Project
 from datetime import datetime
-import time
 from django.contrib.auth.models import User
 from projects.models import Robject
 
@@ -19,6 +21,7 @@ class UserVisitRobjectsPage(FunctionalTest):
 
     def test_logged_user_visit_robjects_page___no_robjects_exists(self):
         # Create user and log him in.
+        u = User.objects.create_user(username="USERNAME", password="PASSWORD")
         self.login_user(username="USERNAME", password="PASSWORD")
         # Craete sample project
         p = Project.objects.create(name="project_1")
@@ -44,15 +47,15 @@ class UserVisitRobjectsPage(FunctionalTest):
 
     def test_logged_user_visit_robjects_page___robjects_exists_in_project(self):
         # Create user and log him in.
-        u = self.login_user(username="USERNAME", password="PASSWORD")
+        usr = self.login_user(username="USERNAME", password="PASSWORD")
 
         # Create sample project
-        p = Project.objects.create(name="project_1")
+        proj = Project.objects.create(name="project_1")
 
         # Create sample robjects.
-        r1 = Robject.objects.create(author=u, project=p)
-        r2 = Robject.objects.create(author=u, project=p)
-        r3 = Robject.objects.create(author=u, project=p)
+        robj1 = Robject.objects.create(author=u, project=p)
+        robj2 = Robject.objects.create(author=u, project=p)
+        robj3 = Robject.objects.create(author=u, project=p)
 
         # Logged user goes to project_1's robjects page. He knows that this
         # project contains several robjects. He sees table of rows. Each row
@@ -65,7 +68,7 @@ class UserVisitRobjectsPage(FunctionalTest):
             ".row")
         self.assertEqual(len(robject_rows), 3)
 
-        for robject in [r1, r2, r3]:
+        for robject in [robj1, robj2, robj3]:
             # capture specific row
             row = self.browser.find_element_by_class_name(
                 "robject_" + str(robject.id))
@@ -89,7 +92,6 @@ class SearchEngineTests(FunctionalTest):
         self.browser.get(self.live_server_url +
                          "/projects/project_1/robjects/")
 
-        time.sleep(5)
         # He sees two robjects in table.
         self.browser.find_element_by_css_selector(".row.robject_1")
         self.browser.find_element_by_css_selector(".row.robject_2")

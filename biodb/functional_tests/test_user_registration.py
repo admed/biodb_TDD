@@ -1,10 +1,10 @@
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-import unittest
-import time
-from functional_tests.base import FunctionalTest
+# import unittest
+# import time
 from django.contrib.auth.models import User
+from functional_tests.base import FunctionalTest
 from selenium.common.exceptions import NoSuchElementException
+# from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
 
 
 class UserRegistrationTests(FunctionalTest):
@@ -92,7 +92,7 @@ class UserRegistrationTests(FunctionalTest):
         self.browser.get(self.live_server_url + "/accounts/sign-up/")
 
         # Curoius user wants to know what will happend when he clicks submit
-        # button before fill any field. Instead of redirect he stays in the same
+        # button before fill any field.Instead of redirect he stays in the same
         # page.
         current_url = self.browser.current_url
         self.submit_button().click()
@@ -221,7 +221,7 @@ class UserRegistrationTests(FunctionalTest):
         )
 
         self.username_input().send_keys('Bilbo')
-        self.email_input().send_keys("test@test.com") # any, test mail
+        self.email_input().send_keys("test@test.com")  # any, test mail
         self.password_input().send_keys("top_secret")
         self.confirm_input().send_keys("less_secret")
         self.submit_button().click()
