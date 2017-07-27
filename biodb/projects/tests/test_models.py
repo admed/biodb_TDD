@@ -78,3 +78,8 @@ class RobjectModelTestCase(TestCase):
         self.assertEqual(project_field.related_model, Project)
         self.assertEqual(create_by_field.related_model, User)
         self.assertEqual(modify_by_field.related_model, User)
+
+    def test_related_name_attr_in_create_by_field(self):
+        self.assertEqual(
+            Robject._meta.get_field("create_by").related_query_name(),
+            "robjects_created_by_user")
