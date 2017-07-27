@@ -5,9 +5,12 @@ from selenium.common.exceptions import WebDriverException
 import time
 from django.contrib.auth.models import User
 from django.db.utils import IntegrityError
+from projects.models import Project
+
 
 class FunctionalTest(StaticLiveServerTestCase):
     MAX_WAIT = 10
+
     def setUp(self):
         self.browser = webdriver.Firefox()
 
@@ -33,9 +36,9 @@ class FunctionalTest(StaticLiveServerTestCase):
             u = User.objects.get(username=username)
         self.browser.get(self.live_server_url)
         username_input = self.browser.find_element_by_css_selector(
-                                                              "#username_input")
+            "#username_input")
         password_input = self.browser.find_element_by_css_selector(
-                                                              "#password_input")
+            "#password_input")
         submit_button = self.browser.find_element_by_id("submit_button")
 
         username_input.send_keys(username)
@@ -45,3 +48,17 @@ class FunctionalTest(StaticLiveServerTestCase):
         assert self.browser.current_url == expected_url, "User login failed!"
 
         return u
+
+    def project_set_up_using_default_data(self):
+        """ Helper method for all robject page related tests.
+
+            Method include logged user with default creadentials and project
+            with default name.
+        """
+        user = self.login_user("USERNAME", "PASSWORD")
+
+        proj = Project.objects.create(name="project_1")
+
+        self.browser.get(self.live_server_url + f"/projects/{proj}/robjects/")
+
+        return user, proj

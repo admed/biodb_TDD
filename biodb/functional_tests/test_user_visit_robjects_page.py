@@ -6,6 +6,7 @@ from projects.models import Project
 from datetime import datetime
 from django.contrib.auth.models import User
 from projects.models import Robject
+import time
 
 
 class UserVisitRobjectsPage(FunctionalTest):
@@ -20,15 +21,13 @@ class UserVisitRobjectsPage(FunctionalTest):
         self.assertEqual(body.text, "403 Forbidden")
 
     def test_logged_user_visit_robjects_page___no_robjects_exists(self):
-        # Create user and log him in.
-        u = User.objects.create_user(username="USERNAME", password="PASSWORD")
-        self.login_user(username="USERNAME", password="PASSWORD")
-        # Craete sample project
-        p = Project.objects.create(name="project_1")
+        user, proj = self.project_set_up_using_default_data()
+
         # Logged user visit robjects page. He sees robjects table. Table has
         # several columns: robject id, robject name, robject create date,
         # robject author.
-        self.browser.get(self.live_server_url + "/projects/project_1/robjects")
+        self.browser.get(
+            self.live_server_url + f"/projects/{proj.name}/robjects")
         header_row = self.browser.find_element_by_id("header_row")
         table_columns = header_row.find_elements_by_tag_name("th")
         table_columns_names = [column.text for column in table_columns]
@@ -46,11 +45,7 @@ class UserVisitRobjectsPage(FunctionalTest):
         self.assertEqual(len(robject_rows), 0)
 
     def test_logged_user_visit_robjects_page___robjects_exists_in_project(self):
-        # Create user and log him in.
-        usr = self.login_user(username="USERNAME", password="PASSWORD")
-
-        # Create sample project
-        proj = Project.objects.create(name="project_1")
+        usr, proj = self.project_set_up_using_default_data()
 
         # Create sample robjects.
         robj1 = Robject.objects.create(author=usr, project=proj)
@@ -78,11 +73,7 @@ class UserVisitRobjectsPage(FunctionalTest):
 
 class SearchEngineTests(FunctionalTest):
     def test_user_perform_search_based_on_whole_robj_name_and_find_robject(self):
-        # Log user.
-        user = self.login_user("USERNAME", "PASSWORD")
-
-        # Create project.
-        project = Project.objects.create(name="project_1")
+        user, project = self.project_set_up_using_default_data()
 
         # Create sample robjects.
         Robject.objects.create(name="robject_1", project=project)
@@ -113,7 +104,7 @@ class SearchEngineTests(FunctionalTest):
 
         self.browser.find_elements_by_css_selector(".robject_1")
 
-    def test_user_perform_search_based_on_part_of_word(self):
+    def test_user_perform_search_based_on_part_of_name_and_find_robject(self):
         pass
 
     def test_user_limits_number_of_fields_to_search(self):
