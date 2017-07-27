@@ -1,5 +1,6 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
+from projects.models import Project
 
 
 class FunctionalTest(TestCase):
@@ -8,3 +9,9 @@ class FunctionalTest(TestCase):
             username="USERNAME", password="PASSWORD")
         self.client.login(username="USERNAME", password="PASSWORD")
         return user
+
+    def default_set_up_for_robjects(self):
+        user = self.login_default_user()
+        proj = Project.objects.create(name="project_1")
+
+        return user, proj
