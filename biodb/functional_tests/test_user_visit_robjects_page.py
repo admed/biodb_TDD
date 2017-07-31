@@ -107,6 +107,19 @@ class SearchEngineTests(FunctionalTest):
     def test_user_perform_search_based_on_part_of_name_and_find_robject(self):
         pass
 
+    def test_annonymous_user_cant_request_search_url(self):
+        # create sample project
+        proj = Project.objects.create(name="project_1")
+
+        # User would like to know if he can reach search robjecs url without
+        # logging. He requests search url.
+        self.browser.get(self.live_server_url +
+                         f"/projects/{proj.name}/robjects/search")
+
+        # Now he sees permission denied message.
+        body = self.browser.find_element_by_tag_name("body")
+        self.assertEqual(body.text, "403 Forbidden")
+
     def test_user_limits_number_of_fields_to_search(self):
         pass
 

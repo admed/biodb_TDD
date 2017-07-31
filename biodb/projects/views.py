@@ -5,6 +5,8 @@ from django.core.exceptions import PermissionDenied
 from biodb.mixins import LoginRequiredMixin
 from django.http import HttpResponse
 from projects.models import Robject
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
 # Create your views here.
 
 
@@ -22,6 +24,10 @@ def robjects_list_view(request, project_name):
 
 
 def search_robjects_view(request):
-    name = request.GET.get("name")
-    queryset = Robject.objects.filter(name=name)
-    return render(request, "projects/robjects_list.html", {"robject_list": queryset})
+    if request.user.is_authenticated:
+        name = request.GET.get("name")
+        queryset = Robject.objects.filter(name=name)
+        return render(request, "projects/robjects_list.html",
+                      {"robject_list": queryset})
+    else:
+        raise PermissionDenied

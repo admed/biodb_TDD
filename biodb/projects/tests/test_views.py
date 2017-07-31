@@ -61,14 +61,20 @@ class SearchRobjectsViewTests(FunctionalTest):
         self.assertTemplateUsed(response, "projects/robjects_list.html")
 
     def test_if_view_get_valid_query_on_get__view_pass_qs_to_template(self):
-        project = Project.objects.create(name="project_1")
+        user, proj = self.default_set_up_for_robjects()
 
         robject_1 = Robject.objects.create(name="robject_1")
         robject_2 = Robject.objects.create(name="robject_2")
 
         response = self.client.get(
-            "/projects/project_1/robjects/search/", {"name": "robject_1"})
+            f"/projects/{proj.name}/robjects/search/", {"name": "robject_1"})
         queryset = Robject.objects.filter(name="robject_1")
         # comparison of two querysets
         self.assertQuerysetEqual(
             response.context["robject_list"], map(repr, queryset))
+
+    def test_annonymous_user_has_no_access_to_search_view(self):
+        proj = Project.objects.create(name="project_1")
+
+        resp = self.client.get(f"/projects/{proj.name}/robjects/search/")
+        self.assertEqual(resp.status_code, 403)
