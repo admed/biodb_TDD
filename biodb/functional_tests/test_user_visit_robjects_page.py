@@ -76,8 +76,8 @@ class SearchEngineTests(FunctionalTest):
         user, project = self.project_set_up_using_default_data()
 
         # Create sample robjects.
-        Robject.objects.create(name="robject_1", project=project)
-        Robject.objects.create(name="robject_2", project=project)
+        Robject.objects.create(name="robject_1", project=project, id=1)
+        Robject.objects.create(name="robject_2", project=project, id=2)
 
         # User goes to robjects page.
         self.browser.get(self.live_server_url +
