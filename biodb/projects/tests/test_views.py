@@ -36,13 +36,13 @@ class RObjectsListViewTests(FunctionalTest):
         self.assertEqual(response.status_code, 403)
 
     def test_render_template_on_get(self):
-        user, proj = self.default_set_up_for_robjects()
+        user, proj = self.default_set_up_for_robjects_page()
         response = self.client.get(f"/projects/{proj.name}/robjects/")
 
         self.assertTemplateUsed(response, "projects/robjects_list.html")
 
     def test_view_create_list_of_robjects_and_pass_it_to_context(self):
-        user, proj = self.default_set_up_for_robjects()
+        user, proj = self.default_set_up_for_robjects_page()
 
         robj1 = Robject.objects.create(author=user, project=proj)
         robj2 = Robject.objects.create(author=user, project=proj)
@@ -55,13 +55,13 @@ class RObjectsListViewTests(FunctionalTest):
 
 class SearchRobjectsViewTests(FunctionalTest):
     def test_view_renders_robjects_page_template(self):
-        user, proj = self.default_set_up_for_robjects()
+        user, proj = self.default_set_up_for_robjects_page()
 
         response = self.client.get(f"/projects/{proj.name}/robjects/search/")
         self.assertTemplateUsed(response, "projects/robjects_list.html")
 
     def test_if_view_get_valid_query_on_get__view_pass_qs_to_template(self):
-        user, proj = self.default_set_up_for_robjects()
+        user, proj = self.default_set_up_for_robjects_page()
 
         robject_1 = Robject.objects.create(name="robject_1")
         robject_2 = Robject.objects.create(name="robject_2")

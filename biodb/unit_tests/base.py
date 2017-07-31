@@ -10,7 +10,7 @@ class FunctionalTest(TestCase):
         self.client.login(username="USERNAME", password="PASSWORD")
         return user
 
-    def default_set_up_for_robjects(self):
+    def default_set_up_for_robjects_page(self):
         user = self.login_default_user()
         proj = Project.objects.create(name="project_1")
 
