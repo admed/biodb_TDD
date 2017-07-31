@@ -48,9 +48,12 @@ class UserVisitRobjectsPage(FunctionalTest):
         usr, proj = self.project_set_up_using_default_data()
 
         # Create sample robjects.
-        robj1 = Robject.objects.create(author=usr, project=proj)
-        robj2 = Robject.objects.create(author=usr, project=proj)
-        robj3 = Robject.objects.create(author=usr, project=proj)
+        robj1 = Robject.objects.create(
+            author=usr, project=proj, name="robject_1")
+        robj2 = Robject.objects.create(
+            author=usr, project=proj, name="robject_2")
+        robj3 = Robject.objects.create(
+            author=usr, project=proj, name="robject_3")
 
         # Logged user goes to project_1's robjects page. He knows that this
         # project contains several robjects. He sees table of rows. Each row
@@ -65,8 +68,7 @@ class UserVisitRobjectsPage(FunctionalTest):
 
         for robject in [robj1, robj2, robj3]:
             # capture specific row
-            row = self.browser.find_element_by_class_name(
-                "robject_" + str(robject.id))
+            row = self.browser.find_element_by_class_name(robject.name)
             self.assertIn(str(robject.id), row.text)
             self.assertIn(str(robject.author), row.text)
 
