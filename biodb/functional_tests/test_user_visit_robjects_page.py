@@ -136,6 +136,39 @@ class SearchEngineTests(FunctionalTest):
 
         self.browser.find_elements_by_css_selector(".robject_1")
 
+    def test_user_search_for_multiple_robjects_using_name_fragment(self):
+        # Make set up for robjects page.
+        user, proj = self.project_set_up_using_default_data()
+
+        # Create sample robjects.
+        Robject.objects.create(name="robject_1", project=proj)
+        Robject.objects.create(name="robject_2", project=proj)
+        Robject.objects.create(name="foo", project=proj)
+
+        # User want to find multiple robjects using common part of robject
+        # names. He goes to robjects page.
+        self.browser.get(self.live_server_url +
+                         f"/projects/{proj.name}/robjects/")
+
+        # User sees three robjects in table.
+        table_rows = self.browser.find_elements_by_class_name("row")
+        self.assertEqual(len(table_rows), 3)
+
+        # He track down search form elements.
+        search_input = self.browser.find_element_by_id("search_input")
+        search_button = self.browser.find_element_by_id("search_button")
+
+        # Then he looks for robjects names cotaining 'robject' part and checks
+        # result.
+        search_input.send_keys("robject")
+        search_button.click()
+
+        self.browser.find_element_by_class_name("robject_1")
+        self.browser.find_element_by_class_name("robject_2")
+        table_rows = self.browser.find_elements_by_class_name("row")
+
+        self.assertEqual(len(table_rows), 2)
+
     def test_annonymous_user_cant_request_search_url(self):
         # create sample project
         proj = Project.objects.create(name="project_1")
