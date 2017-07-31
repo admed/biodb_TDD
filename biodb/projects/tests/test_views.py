@@ -60,7 +60,7 @@ class SearchRobjectsViewTests(FunctionalTest):
         response = self.client.get(f"/projects/{proj.name}/robjects/search/")
         self.assertTemplateUsed(response, "projects/robjects_list.html")
 
-    def test_if_view_get_valid_query_on_get__view_pass_qs_to_template(self):
+    def test_view_gets_valid_query_on_get__view_pass_qs_to_template(self):
         user, proj = self.default_set_up_for_robjects_page()
 
         robject_1 = Robject.objects.create(name="robject_1")
@@ -78,3 +78,18 @@ class SearchRobjectsViewTests(FunctionalTest):
 
         resp = self.client.get(f"/projects/{proj.name}/robjects/search/")
         self.assertEqual(resp.status_code, 403)
+
+    def test_view_can_perform_search_basing_on_part_of_robject_name(self):
+        user, proj = self.default_set_up_for_robjects_page()
+
+        robject_1 = Robject.objects.create(name="robject_1")
+        robject_2 = Robject.objects.create(name="robject_2")
+
+        response = self.client.get(
+            f"/projects/{proj.name}/robjects/search/", {"name": "_1"})  # part!
+
+        queryset = Robject.objects.filter(name="robject_1")
+
+        # comparison of two querysets
+        self.assertQuerysetEqual(
+            response.context["robject_list"], map(repr, queryset))

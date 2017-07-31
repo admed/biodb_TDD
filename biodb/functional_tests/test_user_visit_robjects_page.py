@@ -105,7 +105,36 @@ class SearchEngineTests(FunctionalTest):
         self.browser.find_elements_by_css_selector(".robject_1")
 
     def test_user_perform_search_based_on_part_of_name_and_find_robject(self):
-        pass
+        # Default setup for robjects page.
+        user, proj = self.project_set_up_using_default_data()
+
+        # Create sample robjects.
+        Robject.objects.create(name="robject_1", project=proj)
+        Robject.objects.create(name="robject_2", project=proj)
+
+        # User would like to know if he can get search results using part of
+        # robject name. To find out he goes to robjects page.
+        self.browser.get(self.live_server_url +
+                         f"/projects/{proj.name}/robjects/")
+
+        # He sees two robjects in table.
+        self.wait_for(
+            lambda: self.browser.find_element_by_css_selector(".row.robject_1"))
+        self.browser.find_element_by_css_selector(".row.robject_2")
+
+        # User track down search form components.
+        search_input = self.browser.find_element_by_id("search_input")
+        search_button = self.browser.find_element_by_id("search_button")
+
+        # He wants to search for robject with lower id. User enters part of its
+        # name and looks for results.
+        search_input.send_keys("_1")
+        search_button.click()
+
+        rows = self.browser.find_elements_by_css_selector(".row")
+        self.assertEqual(len(rows), 1)
+
+        self.browser.find_elements_by_css_selector(".robject_1")
 
     def test_annonymous_user_cant_request_search_url(self):
         # create sample project
