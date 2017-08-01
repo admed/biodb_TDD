@@ -26,7 +26,7 @@ def robjects_list_view(request, project_name):
 
 class SearchRobjectsView(LoginRequiredMixin, View):
     def get(self, request, project_name):
-        query = request.GET.get("name")
+        query = request.GET.get("query")
 
         queryset = self.perform_search(query)
 
@@ -34,6 +34,8 @@ class SearchRobjectsView(LoginRequiredMixin, View):
                       {"robject_list": queryset, "project_name": project_name})
 
     def perform_search(self, query):
+        """ Perform search for robjects using given query.
+        """
         queryset = list()
 
         for robject in Robject.objects.all():

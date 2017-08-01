@@ -67,7 +67,7 @@ class SearchRobjectsViewTests(FunctionalTest):
         robject_2 = Robject.objects.create(name="robject_2")
 
         response = self.client.get(
-            f"/projects/{proj.name}/robjects/search/", {"name": "robject_1"})
+            f"/projects/{proj.name}/robjects/search/", {"query": "robject_1"})
         queryset = Robject.objects.filter(name="robject_1")
         # comparison of two querysets
         self.assertQuerysetEqual(
@@ -86,7 +86,7 @@ class SearchRobjectsViewTests(FunctionalTest):
         robject_2 = Robject.objects.create(name="robject_2")
 
         response = self.client.get(
-            f"/projects/{proj.name}/robjects/search/", {"name": "_1"})  # part!
+            f"/projects/{proj.name}/robjects/search/", {"query": "_1"})  # part!
 
         queryset = Robject.objects.filter(name="robject_1")
 
@@ -101,13 +101,13 @@ class SearchRobjectsViewTests(FunctionalTest):
 
         # lower case query
         resp = self.client.get(
-            f"/projects/{proj.name}/robjects/search/", {"name": "robject_1"})
+            f"/projects/{proj.name}/robjects/search/", {"query": "robject_1"})
 
         self.assertEqual(resp.context["robject_list"], [robj])
 
         # upper case query
         resp = self.client.get(
-            f"/projects/{proj.name}/robjects/search/", {"name": "ROBJECT_1"})
+            f"/projects/{proj.name}/robjects/search/", {"query": "ROBJECT_1"})
 
         self.assertEqual(resp.context["robject_list"], [robj])
 
@@ -115,6 +115,6 @@ class SearchRobjectsViewTests(FunctionalTest):
         user, proj = self.default_set_up_for_robjects_page()
 
         resp = self.client.get(f"/projects/{proj.name}/robjects/search/",
-                               {"name": "robject_1"})
+                               {"query": "robject_1"})
 
         self.assertEqual(proj.name, resp.context["project_name"])
