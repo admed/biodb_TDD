@@ -74,6 +74,14 @@ class UserVisitRobjectsPage(FunctionalTest):
 
 
 class SearchEngineTests(FunctionalTest):
+    def __init__(self, *args, **kwargs):
+        super(SearchEngineTests, self).__init__(*args, **kwargs)
+
+        self.search_input = lambda: self.browser.find_element_by_id(
+            "search_input")
+        self.search_button = lambda: self.browser.find_element_by_id(
+            "search_button")
+
     def test_user_perform_search_based_on_whole_robj_name_and_find_robject(self):
         user, project = self.project_set_up_using_default_data()
 
@@ -93,13 +101,11 @@ class SearchEngineTests(FunctionalTest):
         # User wants to test search tool. He looks for search form, input and
         # button.
         search_form = self.browser.find_element_by_id("search_form")
-        search_input = self.browser.find_element_by_id("search_input")
-        search_button = self.browser.find_element_by_id("search_button")
 
         # User enter name of one robject and expect to see only this robject in
         # table.
-        search_input.send_keys("robject_1")
-        search_button.click()
+        self.search_input().send_keys("robject_1")
+        self.search_button().click()
 
         rows = self.browser.find_elements_by_css_selector(".row")
         self.assertEqual(len(rows), 1)
@@ -124,14 +130,10 @@ class SearchEngineTests(FunctionalTest):
             lambda: self.browser.find_element_by_css_selector(".row.robject_1"))
         self.browser.find_element_by_css_selector(".row.robject_2")
 
-        # User track down search form components.
-        search_input = self.browser.find_element_by_id("search_input")
-        search_button = self.browser.find_element_by_id("search_button")
-
         # He wants to search for robject with lower id. User enters part of its
         # name and looks for results.
-        search_input.send_keys("_1")
-        search_button.click()
+        self.search_input().send_keys("_1")
+        self.search_button().click()
 
         rows = self.browser.find_elements_by_css_selector(".row")
         self.assertEqual(len(rows), 1)
@@ -156,14 +158,10 @@ class SearchEngineTests(FunctionalTest):
         table_rows = self.browser.find_elements_by_class_name("row")
         self.assertEqual(len(table_rows), 3)
 
-        # He track down search form elements.
-        search_input = self.browser.find_element_by_id("search_input")
-        search_button = self.browser.find_element_by_id("search_button")
-
         # Then he looks for robjects names cotaining 'robject' part and checks
         # result.
-        search_input.send_keys("robject")
-        search_button.click()
+        self.search_input().send_keys("robject")
+        self.search_button().click()
 
         self.browser.find_element_by_class_name("robject_1")
         self.browser.find_element_by_class_name("robject_2")
@@ -202,22 +200,14 @@ class SearchEngineTests(FunctionalTest):
                          f"/projects/{proj.name}/robjects/")
 
         # User enters name using lower case letters.
-        search_input = self.browser.find_element_by_id("search_input")
-        submit_button = self.browser.find_element_by_id("search_button")
-
-        search_input.send_keys("robject_1")
-        submit_button.click()
+        self.search_input().send_keys("robject_1")
+        self.search_button().click()
         # User looks for results.
         self.browser.find_element_by_css_selector(f".row.{robj.name}")
 
         # User enters name using upper case letters.
-        search_input = self.browser.find_element_by_id("search_input")
-        submit_button = self.browser.find_element_by_id("search_button")
-
-        search_input.send_keys("ROBJECT_1")
-        time.sleep(20)
-        submit_button.click()
-        time.sleep(10)
+        self.search_input().send_keys("ROBJECT_1")
+        self.search_button().click()
 
         # User looks for results.
         self.browser.find_element_by_css_selector(f".row.{robj.name}")
