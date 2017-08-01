@@ -21,16 +21,17 @@ def robjects_list_view(request, project_name):
     project = Project.objects.get(name=project_name)
     robject_list = Robject.objects.filter(project=project)
     return render(request, "projects/robjects_list.html",
-                  {"robject_list": robject_list})
+                  {"robject_list": robject_list, "project_name": project_name})
 
 
 class SearchRobjectsView(LoginRequiredMixin, View):
-    def get(self, request):
+    def get(self, request, project_name):
         query = request.GET.get("name")
         queryset = list()
 
         for robject in Robject.objects.all():
-            if query in robject.name:
+            if query.lower() in robject.name.lower():
                 queryset.append(robject)
+
         return render(request, "projects/robjects_list.html",
-                      {"robject_list": queryset})
+                      {"robject_list": queryset, "project_name": project_name})

@@ -106,7 +106,7 @@ class SearchEngineTests(FunctionalTest):
 
         self.browser.find_elements_by_css_selector(".robject_1")
 
-    def test_user_perform_search_based_on_part_of_name_and_find_robject(self):
+    def test_user_search_for_one_robject_using_name_fragment(self):
         # Default setup for robjects page.
         user, proj = self.project_set_up_using_default_data()
 
@@ -183,6 +183,44 @@ class SearchEngineTests(FunctionalTest):
         # Now he sees permission denied message.
         body = self.browser.find_element_by_tag_name("body")
         self.assertEqual(body.text, "403 Forbidden")
+
+    def test_user_search_for_robject_name_using_case_insensitivity(self):
+        # User want to search robject using its name, but he dont know what is
+        # exact letter case. He knows that name contains letter with both cases
+        # and that searching suppouse to be case insensitve. User decide to use
+        # all upper case letters and then all lower case letters and compare
+        # results.
+
+        # Make set up for robjects page.
+        user, proj = self.project_set_up_using_default_data()
+
+        # Create sample robject.
+        robj = Robject.objects.create(name="RoBjEcT_1")
+
+        # User goes to robjects page.
+        self.browser.get(self.live_server_url +
+                         f"/projects/{proj.name}/robjects/")
+
+        # User enters name using lower case letters.
+        search_input = self.browser.find_element_by_id("search_input")
+        submit_button = self.browser.find_element_by_id("search_button")
+
+        search_input.send_keys("robject_1")
+        submit_button.click()
+        # User looks for results.
+        self.browser.find_element_by_css_selector(f".row.{robj.name}")
+
+        # User enters name using upper case letters.
+        search_input = self.browser.find_element_by_id("search_input")
+        submit_button = self.browser.find_element_by_id("search_button")
+
+        search_input.send_keys("ROBJECT_1")
+        time.sleep(20)
+        submit_button.click()
+        time.sleep(10)
+
+        # User looks for results.
+        self.browser.find_element_by_css_selector(f".row.{robj.name}")
 
     def test_user_limits_number_of_fields_to_search(self):
         pass

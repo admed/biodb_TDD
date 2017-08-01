@@ -93,3 +93,28 @@ class SearchRobjectsViewTests(FunctionalTest):
         # comparison of two querysets
         self.assertQuerysetEqual(
             response.context["robject_list"], map(repr, queryset))
+
+    def test_search_is_case_insensitive(self):
+        user, proj = self.default_set_up_for_robjects_page()
+
+        robj = Robject.objects.create(name="RoBjEcT_1")
+
+        # lower case query
+        resp = self.client.get(
+            f"/projects/{proj.name}/robjects/search/", {"name": "robject_1"})
+
+        self.assertEqual(resp.context["robject_list"], [robj])
+
+        # upper case query
+        resp = self.client.get(
+            f"/projects/{proj.name}/robjects/search/", {"name": "ROBJECT_1"})
+
+        self.assertEqual(resp.context["robject_list"], [robj])
+
+    def test_view_pass_project_name_to_context(self):
+        user, proj = self.default_set_up_for_robjects_page()
+
+        resp = self.client.get(f"/projects/{proj.name}/robjects/search/",
+                               {"name": "robject_1"})
+
+        self.assertEqual(proj.name, resp.context["project_name"])

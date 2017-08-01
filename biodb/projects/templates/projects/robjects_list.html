@@ -1,6 +1,6 @@
 {% extends "biodb/base.html" %} {% load static %} {% block extra_head %}
 <link rel="stylesheet" href="{% static 'projects/robject_list.css' %}"> {% endblock %} {% block content %}
-<form id="search_form" action="search/">
+<form id="search_form" action="/projects/{{ project_name }}/robjects/search/">
   <input type="text" name="name" id="search_input">
   <button id="search_button">Search</button>
 </form>
@@ -23,5 +23,4 @@
     <td>{{ robject.modify_by }}</td>
   </tr>
   {% endfor %}
-</table>
-{% endblock %}
+</table> {% endblock %}
