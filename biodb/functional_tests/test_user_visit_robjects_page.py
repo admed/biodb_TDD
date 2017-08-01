@@ -98,8 +98,7 @@ class SearchEngineTests(FunctionalTest):
             lambda: self.browser.find_element_by_css_selector(".row.robject_1"))
         self.browser.find_element_by_css_selector(".row.robject_2")
 
-        # User wants to test search tool. He looks for search form, input and
-        # button.
+        # User wants to test search tool. He looks for search form.
         search_form = self.browser.find_element_by_id("search_form")
 
         # User enter name of one robject and expect to see only this robject in
