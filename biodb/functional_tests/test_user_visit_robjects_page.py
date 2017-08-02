@@ -82,6 +82,24 @@ class SearchEngineTests(FunctionalTest):
         self.search_button = lambda: self.browser.find_element_by_id(
             "search_button")
 
+    def send_query(self, query):
+        self.search_input().send_keys(query)
+        self.search_button().click()
+
+    def look_for_robject_row(self, css):
+        self.browser.find_element_by_css_selector(css)
+
+    def create_sample_robject_and_go_to_robjects_page(self,
+                                                      project,
+                                                      **robject_kwargs):
+        # Create sample robject.
+        robj = Robject.objects.create(project=project, **robject_kwargs)
+
+        # User goes to robjects page.
+        self.browser.get(self.live_server_url +
+                         f"/projects/{project.name}/robjects/")
+        return robj
+
     def test_user_perform_search_based_on_whole_robj_name_and_find_robject(self):
         user, project = self.project_set_up_using_default_data()
 
@@ -212,25 +230,19 @@ class SearchEngineTests(FunctionalTest):
         self.browser.find_element_by_css_selector(f".row.{robj.name}")
 
     def test_user_can_search_robject_using_full_author(self):
-        # Default set up.
         user, proj = self.project_set_up_using_default_data()
 
-        # Create sample robject.
-        robj = Robject.objects.create(
-            project=proj, name="robject_1", author=user)
-
-        # User goes to robjects page.
-        self.browser.get(self.live_server_url +
-                         f"/projects/{proj.name}/robjects/")
-
+        robj = self.create_sample_robject_and_go_to_robjects_page(
+            project=proj, author=user, name="robject_1")
+        time.sleep(10)
         # He sees robject in table.
-        self.browser.find_element_by_css_selector(f".row.{robj.name}")
+        self.look_for_robject_row(f".row.{robj.name}")
 
         # User heard he can search robject using author name. He want to
         # confirm that.
-        self.search_input().send_keys(robj.author.username)
-        self.search_button().click()
-        self.browser.find_element_by_css_selector(f".row.{robj.name}")
+        self.send_query(robj.author.username)
+
+        self.look_for_robject_row(f".row.{robj.name}")
 
     def test_user_limits_number_of_fields_to_search(self):
         pass
