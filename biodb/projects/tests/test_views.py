@@ -122,11 +122,19 @@ class SearchRobjectsViewTests(FunctionalTest):
 
         self.assertEqual(proj.name, resp.context["project_name"])
 
+    def create_sample_robject_and_send_query_to_search_view(self, project,
+                                                            query,
+                                                            **robject_kwargs):
+
+        robj = Robject.objects.create(**robject_kwargs)
+        resp = self.client.get(f"/projects/{project.name}/robjects/search/",
+                               {"query": query})
+        return robj, resp
+
     def test_search_include_full_author_name(self):
         user, proj = self.default_set_up_for_robjects_page()
-        robj = Robject.objects.create(author=user)
 
-        resp = self.client.get(f"/projects/{proj.name}/robjects/search/",
-                               {"query": robj.author.username})
+        robj, resp = self.create_sample_robject_and_send_query_to_search_view(
+            project=proj, query=user.username, author=user)
 
         self.assertIn(robj, resp.context["robject_list"])
