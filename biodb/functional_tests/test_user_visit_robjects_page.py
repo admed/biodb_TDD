@@ -211,6 +211,27 @@ class SearchEngineTests(FunctionalTest):
         # User looks for results.
         self.browser.find_element_by_css_selector(f".row.{robj.name}")
 
+    def test_user_can_search_robject_using_full_author(self):
+        # Default set up.
+        user, proj = self.project_set_up_using_default_data()
+
+        # Create sample robject.
+        robj = Robject.objects.create(
+            project=proj, name="robject_1", author=user)
+
+        # User goes to robjects page.
+        self.browser.get(self.live_server_url +
+                         f"/projects/{proj.name}/robjects/")
+
+        # He sees robject in table.
+        self.browser.find_element_by_css_selector(f".row.{robj.name}")
+
+        # User heard he can search robject using author name. He want to
+        # confirm that.
+        self.search_input().send_keys(robj.author.username)
+        self.search_button().click()
+        self.browser.find_element_by_css_selector(f".row.{robj.name}")
+
     def test_user_limits_number_of_fields_to_search(self):
         pass
 

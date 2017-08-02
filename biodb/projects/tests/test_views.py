@@ -57,7 +57,8 @@ class SearchRobjectsViewTests(FunctionalTest):
     def test_view_renders_robjects_page_template(self):
         user, proj = self.default_set_up_for_robjects_page()
 
-        response = self.client.get(f"/projects/{proj.name}/robjects/search/")
+        response = self.client.get(f"/projects/{proj.name}/robjects/search/",
+                                   {"query": ""})
         self.assertTemplateUsed(response, "projects/robjects_list.html")
 
     def test_view_gets_valid_query_on_get__view_pass_qs_to_template(self):
@@ -103,13 +104,15 @@ class SearchRobjectsViewTests(FunctionalTest):
         resp = self.client.get(
             f"/projects/{proj.name}/robjects/search/", {"query": "robject_1"})
 
-        self.assertEqual(resp.context["robject_list"], [robj])
+        self.assertEqual(list(resp.context["robject_list"]),
+                         [robj])
 
         # upper case query
         resp = self.client.get(
             f"/projects/{proj.name}/robjects/search/", {"query": "ROBJECT_1"})
 
-        self.assertEqual(resp.context["robject_list"], [robj])
+        self.assertEqual(list(resp.context["robject_list"]),
+                         [robj])
 
     def test_view_pass_project_name_to_context(self):
         user, proj = self.default_set_up_for_robjects_page()
@@ -118,3 +121,12 @@ class SearchRobjectsViewTests(FunctionalTest):
                                {"query": "robject_1"})
 
         self.assertEqual(proj.name, resp.context["project_name"])
+
+    def test_search_include_full_author_name(self):
+        user, proj = self.default_set_up_for_robjects_page()
+        robj = Robject.objects.create(author=user)
+
+        resp = self.client.get(f"/projects/{proj.name}/robjects/search/",
+                               {"query": robj.author.username})
+
+        self.assertIn(robj, resp.context["robject_list"])

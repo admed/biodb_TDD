@@ -36,9 +36,10 @@ class SearchRobjectsView(LoginRequiredMixin, View):
     def perform_search(self, query):
         """ Perform search for robjects using given query.
         """
-        queryset = list()
+        # search including name field
+        name_qs = Robject.objects.filter(name__icontains=query)
 
-        for robject in Robject.objects.all():
-            if query.lower() in robject.name.lower():
-                queryset.append(robject)
-        return queryset
+        # search including author field
+        author_qs = Robject.objects.filter(author__username=query)
+
+        return name_qs | author_qs
