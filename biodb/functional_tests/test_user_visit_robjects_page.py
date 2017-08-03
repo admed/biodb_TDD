@@ -74,6 +74,8 @@ class UserVisitRobjectsPage(FunctionalTest):
 
 
 class SearchEngineTests(FunctionalTest):
+    DEFAULT_AUTHOR_USERNAME = "AUTHOR"
+
     def __init__(self, *args, **kwargs):
         super(SearchEngineTests, self).__init__(*args, **kwargs)
 
@@ -247,23 +249,25 @@ class SearchEngineTests(FunctionalTest):
         # User looks for results.
         self.browser.find_element_by_css_selector(f".row.{robj.name}")
 
-    def test_user_can_search_robject_using_full_author_username(self):
-        author = User.objects.create_user(username="AUTHOR")
+    def search_for_robject_using_author_query(self, author_query):
+        # create default author
+        author = User.objects.create_user(
+            username=self.DEFAULT_AUTHOR_USERNAME)
+        # create sample robject and bond author with it
         self.create_sample_robject_then_search_for_him_using_query(
-            query="AUTHOR",
+            query=author_query,
             robject_kwargs={"author": author, "name": "robject_1"})
+
+    def test_user_can_search_robject_using_full_author_username(self):
+        self.search_for_robject_using_author_query(
+            self.DEFAULT_AUTHOR_USERNAME)
 
     def test_user_can_search_robjet_using_fragment_of_athor_username(self):
-        author = User.objects.create_user(username="AUTHOR")
-        self.create_sample_robject_then_search_for_him_using_query(
-            query=author.username[0:-1],
-            robject_kwargs={"author": author, "name": "robject_1"})
+        self.search_for_robject_using_author_query(
+            self.DEFAULT_AUTHOR_USERNAME[0:-1])
 
     def test_user_can_search_robject_using_case_insensitive_full_author_username(self):
-        author = User.objects.create_user(username="AUTHOR")
-        self.create_sample_robject_then_search_for_him_using_query(
-            query="aUtHoR",
-            robject_kwargs={"author": author, "name": "robject_1"})
+        self.search_for_robject_using_author_query("aUtHoR")
 
     def test_user_limits_number_of_fields_to_search(self):
         pass
