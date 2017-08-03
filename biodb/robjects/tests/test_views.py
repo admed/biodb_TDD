@@ -1,6 +1,7 @@
 from unit_tests.base import FunctionalTest
 from robjects.models import Robject
 from projects.models import Project
+from django.contrib.auth.models import User
 
 
 class RObjectsListViewTests(FunctionalTest):
@@ -105,26 +106,38 @@ class SearchRobjectsViewTests(FunctionalTest):
                                {"query": query})
         return robj, resp
 
-    def test_search_include_full_author_username(self):
+    def create_sample_robject_search_for_it_and_checks_confirm_results(
+            self, query, robject_kwargs):
         user, proj = self.default_set_up_for_robjects_page()
 
         robj, resp = self.create_sample_robject_and_send_query_to_search_view(
-            project=proj, query=user.username, author=user)
+            project=proj, query=query, **robject_kwargs)
 
         self.assertIn(robj, resp.context["robject_list"])
+
+    def test_search_include_full_author_username(self):
+        robject_kwargs = {
+            "author": User.objects.create_user(username="AUTHOR")
+        }
+        self.create_sample_robject_search_for_it_and_checks_confirm_results(
+            query="AUTHOR",
+            robject_kwargs=robject_kwargs
+        )
 
     def test_search_include_fragment_author_username(self):
-        user, proj = self.default_set_up_for_robjects_page()
-
-        robj, resp = self.create_sample_robject_and_send_query_to_search_view(
-            project=proj, query="USER", author=user)
-
-        self.assertIn(robj, resp.context["robject_list"])
+        robject_kwargs = {
+            "author": User.objects.create_user(username="AUTHOR")
+        }
+        self.create_sample_robject_search_for_it_and_checks_confirm_results(
+            query="AUTH",
+            robject_kwargs=robject_kwargs
+        )
 
     def test_search_include_case_insensitive_full_author_username(self):
-        user, proj = self.default_set_up_for_robjects_page()
-
-        robj, resp = self.create_sample_robject_and_send_query_to_search_view(
-            project=proj, query="uSeRnAmE", author=user)
-
-        self.assertIn(robj, resp.context["robject_list"])
+        robject_kwargs = {
+            "author": User.objects.create_user(username="AUTHOR")
+        }
+        self.create_sample_robject_search_for_it_and_checks_confirm_results(
+            query="aUtHoR",
+            robject_kwargs=robject_kwargs
+        )

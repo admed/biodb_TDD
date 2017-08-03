@@ -120,6 +120,15 @@ class SearchEngineTests(FunctionalTest):
         # And confirm search success.
         self.look_for_robject_row(f".row.{robj.name}")
 
+    def search_for_robject_using_author_query(self, author_query):
+        # create default author
+        author = User.objects.create_user(
+            username=self.DEFAULT_AUTHOR_USERNAME)
+        # create sample robject and bond author with it
+        self.create_sample_robject_then_search_for_him_using_query(
+            query=author_query,
+            robject_kwargs={"author": author, "name": "robject_1"})
+
     def test_user_perform_search_based_on_whole_robj_name_and_find_robject(self):
         user, project = self.project_set_up_using_default_data()
 
@@ -249,24 +258,24 @@ class SearchEngineTests(FunctionalTest):
         # User looks for results.
         self.browser.find_element_by_css_selector(f".row.{robj.name}")
 
-    def search_for_robject_using_author_query(self, author_query):
-        # create default author
-        author = User.objects.create_user(
-            username=self.DEFAULT_AUTHOR_USERNAME)
-        # create sample robject and bond author with it
-        self.create_sample_robject_then_search_for_him_using_query(
-            query=author_query,
-            robject_kwargs={"author": author, "name": "robject_1"})
-
     def test_user_can_search_robject_using_full_author_username(self):
+        # User goes to robjects page where he can see sample robject in table.
+        # He search for robject's author full username and looks if robject is
+        # still in table.
         self.search_for_robject_using_author_query(
             self.DEFAULT_AUTHOR_USERNAME)
 
     def test_user_can_search_robjet_using_fragment_of_athor_username(self):
+        # User goes to robjects page where he can see sample robject in table.
+        # He search for robject's author username fragment and looks if robject
+        # is still in table.
         self.search_for_robject_using_author_query(
             self.DEFAULT_AUTHOR_USERNAME[0:-1])
 
     def test_user_can_search_robject_using_case_insensitive_full_author_username(self):
+        # User goes to robjects page where he can see sample robject in table.
+        # He search for robject's author username using mixed case letters and
+        # looks if robject is still in table.
         self.search_for_robject_using_author_query("aUtHoR")
 
     def test_user_limits_number_of_fields_to_search(self):
