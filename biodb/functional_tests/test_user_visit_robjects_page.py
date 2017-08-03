@@ -100,6 +100,24 @@ class SearchEngineTests(FunctionalTest):
                          f"/projects/{project.name}/robjects/")
         return robj
 
+    def create_sample_robject_then_search_for_him_using_query(self, query,
+                                                              robject_kwargs):
+        user, proj = self.project_set_up_using_default_data()
+
+        # Create sample robject.
+        # User goes to robjects page.
+        robj = self.create_sample_robject_and_go_to_robjects_page(
+            project=proj, **robject_kwargs)
+
+        # He sees sample robject in table.
+        self.look_for_robject_row(f".row.{robj.name}")
+
+        # User perform search using given query.
+        self.send_query(query)
+
+        # And confirm search success.
+        self.look_for_robject_row(f".row.{robj.name}")
+
     def test_user_perform_search_based_on_whole_robj_name_and_find_robject(self):
         user, project = self.project_set_up_using_default_data()
 
@@ -230,58 +248,22 @@ class SearchEngineTests(FunctionalTest):
         self.browser.find_element_by_css_selector(f".row.{robj.name}")
 
     def test_user_can_search_robject_using_full_author_username(self):
-        user, proj = self.project_set_up_using_default_data()
-
-        # Create sample robject.
-        # User goes to robjects page.
-        robj = self.create_sample_robject_and_go_to_robjects_page(
-            project=proj, author=user, name="robject_1")
-
-        # He sees sample robject in table.
-        self.look_for_robject_row(f".row.{robj.name}")
-
-        # User heard he can search robject using author name. He want to
-        # confirm that.
-        self.send_query(robj.author.username)
-
-        # Yeah, its still there!
-        self.look_for_robject_row(f".row.{robj.name}")
+        author = User.objects.create_user(username="AUTHOR")
+        self.create_sample_robject_then_search_for_him_using_query(
+            query="AUTHOR",
+            robject_kwargs={"author": author, "name": "robject_1"})
 
     def test_user_can_search_robjet_using_fragment_of_athor_username(self):
-        user, proj = self.project_set_up_using_default_data()
-
-        # Create sample robject.
-        # User goes to robjects page.
-        robj = self.create_sample_robject_and_go_to_robjects_page(
-            project=proj, author=user, name="robject_1")
-
-        # He sees sample robject in table.
-        self.look_for_robject_row(f".row.{robj.name}")
-
-        # User heard he can search robject using fragment of author username.
-        # He want to confirm that.
-        self.send_query(user.username[0:-1])
-
-        # Yeah, its still there!
-        self.look_for_robject_row(f".row.{robj.name}")
+        author = User.objects.create_user(username="AUTHOR")
+        self.create_sample_robject_then_search_for_him_using_query(
+            query=author.username[0:-1],
+            robject_kwargs={"author": author, "name": "robject_1"})
 
     def test_user_can_search_robject_using_case_insensitive_full_author_username(self):
-        user, proj = self.project_set_up_using_default_data()
-
-        # Create sample robject.
-        # User goes to robjects page.
-        robj = self.create_sample_robject_and_go_to_robjects_page(
-            project=proj, author=user, name="robject_1")
-
-        # He sees sample robject in table.
-        self.look_for_robject_row(f".row.{robj.name}")
-
-        # User heard he can search robject using fragment of author username.
-        # He want to confirm that.
-        self.send_query("UsErNaMe")
-
-        # Yeah, its still there!
-        self.look_for_robject_row(f".row.{robj.name}")
+        author = User.objects.create_user(username="AUTHOR")
+        self.create_sample_robject_then_search_for_him_using_query(
+            query="aUtHoR",
+            robject_kwargs={"author": author, "name": "robject_1"})
 
     def test_user_limits_number_of_fields_to_search(self):
         pass
