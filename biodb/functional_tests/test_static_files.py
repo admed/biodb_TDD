@@ -2,7 +2,7 @@
 from django.contrib.auth.models import User
 from functional_tests.base import FunctionalTest
 from projects.models import Project
-from projects.models import Robject
+from robjects.models import Robject
 
 
 class StaticFilesTests(FunctionalTest):

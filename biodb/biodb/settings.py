@@ -44,6 +44,7 @@ INSTALLED_APPS = (
     'biodb',
     'accounts',
     'projects',
+    'robjects',
     'guardian',
 )
 

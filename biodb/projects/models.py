@@ -17,17 +17,3 @@ z0123456789_"
 
     def get_absolute_url(self):
         return "/projects/%s/robjects/" % self.name
-
-
-class Robject(models.Model):
-    project = models.ForeignKey(to=Project, null=True)
-    author = models.ForeignKey(
-        to=User, null=True, related_name="robjects_in_which_user_is_author")
-    name = models.CharField(max_length=100)
-    create_by = models.ForeignKey(
-        to=User, related_name="robjects_created_by_user", null=True)
-    create_date = models.DateTimeField(null=True)
-    modify_by = models.ForeignKey(to=User, null=True)
-
-    def __str__(self):
-        return "Robject " + str(self.id)
