@@ -33,6 +33,6 @@ class SearchRobjectsView(LoginRequiredMixin, View):
         name_qs = Robject.objects.filter(name__icontains=query)
 
         # search including author field
-        author_qs = Robject.objects.filter(author__username=query)
+        author_qs = Robject.objects.filter(author__username__icontains=query)
 
         return name_qs | author_qs

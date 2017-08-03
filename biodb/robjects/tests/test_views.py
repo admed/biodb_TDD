@@ -105,10 +105,18 @@ class SearchRobjectsViewTests(FunctionalTest):
                                {"query": query})
         return robj, resp
 
-    def test_search_include_full_author_name(self):
+    def test_search_include_full_author_username(self):
         user, proj = self.default_set_up_for_robjects_page()
 
         robj, resp = self.create_sample_robject_and_send_query_to_search_view(
             project=proj, query=user.username, author=user)
+
+        self.assertIn(robj, resp.context["robject_list"])
+
+    def test_search_include_fragment_author_username(self):
+        user, proj = self.default_set_up_for_robjects_page()
+
+        robj, resp = self.create_sample_robject_and_send_query_to_search_view(
+            project=proj, query="USER", author=user)
 
         self.assertIn(robj, resp.context["robject_list"])

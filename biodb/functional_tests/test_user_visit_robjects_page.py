@@ -229,7 +229,7 @@ class SearchEngineTests(FunctionalTest):
         # User looks for results.
         self.browser.find_element_by_css_selector(f".row.{robj.name}")
 
-    def test_user_can_search_robject_using_full_author(self):
+    def test_user_can_search_robject_using_full_author_username(self):
         user, proj = self.project_set_up_using_default_data()
 
         # Create sample robject.
@@ -243,6 +243,24 @@ class SearchEngineTests(FunctionalTest):
         # User heard he can search robject using author name. He want to
         # confirm that.
         self.send_query(robj.author.username)
+
+        # Yeah, its still there!
+        self.look_for_robject_row(f".row.{robj.name}")
+
+    def test_user_can_search_robjet_using_fragment_of_athor_username(self):
+        user, proj = self.project_set_up_using_default_data()
+
+        # Create sample robject.
+        # User goes to robjects page.
+        robj = self.create_sample_robject_and_go_to_robjects_page(
+            project=proj, author=user, name="robject_1")
+
+        # He sees sample robject in table.
+        self.look_for_robject_row(f".row.{robj.name}")
+
+        # User heard he can search robject using fragment of author username.
+        # He want to confirm that.
+        self.send_query("USER")
 
         # Yeah, its still there!
         self.look_for_robject_row(f".row.{robj.name}")
