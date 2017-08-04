@@ -141,3 +141,19 @@ class SearchRobjectsViewTests(FunctionalTest):
             query="aUtHoR",
             robject_kwargs=robject_kwargs
         )
+
+    def test_empty_query_will_display_all_robjects(self):
+        user, proj = self.default_set_up_for_robjects_page()
+
+        robj_1 = Robject.objects.create(project=proj)
+        robj_2 = Robject.objects.create(project=proj)
+
+        resp = self.client.get(
+            f"/projects/{proj.name}/robjects/search/", {"query": ""})
+
+        all_robjects = Robject.objects.filter(project=proj)
+
+        self.assertEqual(
+            list(resp.context["robject_list"]),
+            list(all_robjects)
+        )

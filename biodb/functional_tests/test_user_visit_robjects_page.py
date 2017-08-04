@@ -278,6 +278,33 @@ class SearchEngineTests(FunctionalTest):
         # looks if robject is still in table.
         self.search_for_robject_using_author_query("aUtHoR")
 
+    def test_user_can_display_all_robjects_leaving_search_input_empty(self):
+        # Make set up for robjects page.
+        user, proj = self.project_set_up_using_default_data()
+
+        # Create sample robjects.
+        robj_1 = Robject.objects.create(name="robj_1", project=proj)
+        robj_2 = Robject.objects.create(name="robj_1", project=proj)
+
+        # User goes to robjects page.
+        self.browser.get(self.live_server_url +
+                         f"/projects/{proj.name}/robjects/")
+
+        # User sees two robjects in table.
+        self.look_for_robject_row(f".row.{robj_1.name}")
+        self.look_for_robject_row(f".row.{robj_2.name}")
+
+        # He decides to limit table rows to one robject using search tool.
+        self.send_query(f"{robj_1.name}")
+
+        # Now, user wants to know what will happend if he perform search
+        # without type anything.
+        self.send_query("")
+
+        # He sees all robjects in table once again.
+        self.look_for_robject_row(f".row.{robj_1.name}")
+        self.look_for_robject_row(f".row.{robj_2.name}")
+
     def test_user_limits_number_of_fields_to_search(self):
         pass
 
