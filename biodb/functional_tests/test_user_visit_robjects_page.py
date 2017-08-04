@@ -7,6 +7,7 @@ from datetime import datetime
 from django.contrib.auth.models import User
 from robjects.models import Robject
 import time
+from selenium.common.exceptions import NoSuchElementException
 
 
 class UserVisitRobjectsPage(FunctionalTest):
@@ -239,7 +240,7 @@ class SearchEngineTests(FunctionalTest):
         user, proj = self.project_set_up_using_default_data()
 
         # Create sample robject.
-        robj = Robject.objects.create(name="RoBjEcT_1")
+        robj = Robject.objects.create(name="RoBjEcT_1", project=proj)
 
         # User goes to robjects page.
         self.browser.get(self.live_server_url +
@@ -304,6 +305,27 @@ class SearchEngineTests(FunctionalTest):
         # He sees all robjects in table once again.
         self.look_for_robject_row(f".row.{robj_1.name}")
         self.look_for_robject_row(f".row.{robj_2.name}")
+
+    def test_user_cant_search_robjects_from_outside_project(self):
+        # Make set up for robjects page.
+        user, proj = self.project_set_up_using_default_data()
+
+        # Create new project and attach robject to it.
+        other_proj = Project.objects.create(name="other_proj")
+        searched_robj = Robject.objects.create(name="searched_robj")
+
+        # User goes to robjects page.
+        self.browser.get(self.live_server_url +
+                         f"/projects/{proj.name}/robjects/")
+
+        # He wants to know if there is a way to search robject from outside the
+        # project. He know about some robject from other project and decide to
+        # search him.
+        self.send_query(f"{searched_robj.name}")
+
+        # He confirms that there is no required robject in table.
+        with self.assertRaises(NoSuchElementException):
+            self.look_for_robject_row(f".row.{searched_robj.name}")
 
     def test_user_limits_number_of_fields_to_search(self):
         pass

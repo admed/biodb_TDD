@@ -39,8 +39,8 @@ class SearchRobjectsViewTests(FunctionalTest):
     def test_view_gets_valid_query_on_get__view_pass_qs_to_template(self):
         user, proj = self.default_set_up_for_robjects_page()
 
-        robject_1 = Robject.objects.create(name="robject_1")
-        robject_2 = Robject.objects.create(name="robject_2")
+        robject_1 = Robject.objects.create(name="robject_1", project=proj)
+        robject_2 = Robject.objects.create(name="robject_2", project=proj)
 
         response = self.client.get(
             f"/projects/{proj.name}/robjects/search/", {"query": "robject_1"})
@@ -58,8 +58,8 @@ class SearchRobjectsViewTests(FunctionalTest):
     def test_view_can_perform_search_basing_on_part_of_robject_name(self):
         user, proj = self.default_set_up_for_robjects_page()
 
-        robject_1 = Robject.objects.create(name="robject_1")
-        robject_2 = Robject.objects.create(name="robject_2")
+        robject_1 = Robject.objects.create(name="robject_1", project=proj)
+        robject_2 = Robject.objects.create(name="robject_2", project=proj)
 
         response = self.client.get(
             f"/projects/{proj.name}/robjects/search/", {"query": "_1"})  # part!
@@ -73,7 +73,7 @@ class SearchRobjectsViewTests(FunctionalTest):
     def test_search_is_case_insensitive(self):
         user, proj = self.default_set_up_for_robjects_page()
 
-        robj = Robject.objects.create(name="RoBjEcT_1")
+        robj = Robject.objects.create(name="RoBjEcT_1", project=proj)
 
         # lower case query
         resp = self.client.get(
@@ -101,12 +101,12 @@ class SearchRobjectsViewTests(FunctionalTest):
                                                             query,
                                                             **robject_kwargs):
 
-        robj = Robject.objects.create(**robject_kwargs)
+        robj = Robject.objects.create(project=project, **robject_kwargs)
         resp = self.client.get(f"/projects/{project.name}/robjects/search/",
                                {"query": query})
         return robj, resp
 
-    def create_sample_robject_search_for_it_and_checks_confirm_results(
+    def create_sample_robject_search_for_it_and_confirm_results(
             self, query, robject_kwargs):
         user, proj = self.default_set_up_for_robjects_page()
 
@@ -119,7 +119,7 @@ class SearchRobjectsViewTests(FunctionalTest):
         robject_kwargs = {
             "author": User.objects.create_user(username="AUTHOR")
         }
-        self.create_sample_robject_search_for_it_and_checks_confirm_results(
+        self.create_sample_robject_search_for_it_and_confirm_results(
             query="AUTHOR",
             robject_kwargs=robject_kwargs
         )
@@ -128,7 +128,7 @@ class SearchRobjectsViewTests(FunctionalTest):
         robject_kwargs = {
             "author": User.objects.create_user(username="AUTHOR")
         }
-        self.create_sample_robject_search_for_it_and_checks_confirm_results(
+        self.create_sample_robject_search_for_it_and_confirm_results(
             query="AUTH",
             robject_kwargs=robject_kwargs
         )
@@ -137,7 +137,7 @@ class SearchRobjectsViewTests(FunctionalTest):
         robject_kwargs = {
             "author": User.objects.create_user(username="AUTHOR")
         }
-        self.create_sample_robject_search_for_it_and_checks_confirm_results(
+        self.create_sample_robject_search_for_it_and_confirm_results(
             query="aUtHoR",
             robject_kwargs=robject_kwargs
         )
@@ -156,4 +156,19 @@ class SearchRobjectsViewTests(FunctionalTest):
         self.assertEqual(
             list(resp.context["robject_list"]),
             list(all_robjects)
+        )
+
+    def test_search_include_robjects_from_given_project(self):
+        user, proj = self.default_set_up_for_robjects_page()
+
+        other_proj = Project.objects.create(name="other_proj")
+        robj = Robject.objects.create(project=other_proj, name="robj")
+
+        resp = self.client.get(
+            f"/projects/{proj.name}/robjects/search/",
+            {"query": f"{robj.name}"})
+
+        self.assertNotIn(
+            robj,
+            list(resp.context["robject_list"])
         )

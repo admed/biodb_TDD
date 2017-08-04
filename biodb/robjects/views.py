@@ -21,18 +21,20 @@ class SearchRobjectsView(LoginRequiredMixin, View):
     def get(self, request, project_name):
         query = request.GET.get("query")
 
-        queryset = self.perform_search(query)
+        queryset = self.perform_search(query, project_name)
 
         return render(request, "projects/robjects_list.html",
                       {"robject_list": queryset, "project_name": project_name})
 
-    def perform_search(self, query):
+    def perform_search(self, query, project_name):
         """ Perform search for robjects using given query.
         """
         # search including name field
-        name_qs = Robject.objects.filter(name__icontains=query)
+        name_qs = Robject.objects.filter(
+            name__icontains=query, project__name=project_name)
 
         # search including author field
-        author_qs = Robject.objects.filter(author__username__icontains=query)
+        author_qs = Robject.objects.filter(
+            author__username__icontains=query, project__name=project_name)
 
         return name_qs | author_qs
