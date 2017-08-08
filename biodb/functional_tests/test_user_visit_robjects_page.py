@@ -179,7 +179,7 @@ class SearchEngineTests(FunctionalTest):
 
         # He wants to search for robject with lower id. User enters part of its
         # name and looks for results.
-        self.search_input().send_keys("_1")
+        self.search_input().send_keys("object_1")
         self.search_button().click()
 
         rows = self.browser.find_elements_by_css_selector(".row")
