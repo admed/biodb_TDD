@@ -25,6 +25,7 @@ def robjects_list_view(request, project_name):
 
 
 class SearchRobjectsView(LoginRequiredMixin, View):
+    # TODO: Add multipleObjectMixin to inherit by this class??
     model = Robject
 
     def get(self, request, project_name):
@@ -67,7 +68,7 @@ class SearchRobjectsView(LoginRequiredMixin, View):
             project_name (str): name of the project (auto).
 
         Returns:
-            model object list (list): filtered list of model objects
+            model objects list (list): filtered list of model objects
             model is filtered based on Q objects Complex SQL expression
             in Django (see Django docs) and project_name
         """
