@@ -1,9 +1,10 @@
-# import time
 from django.contrib.auth.models import User
+from django.test import tag
 from functional_tests.base import FunctionalTest
 
 
 class UserSignInTests(FunctionalTest):
+    @tag('slow')
     def __init__(self, *args, **kwargs):
         super(UserSignInTests, self).__init__(*args, **kwargs)
         self.username_input = lambda: self.browser.find_element_by_id(
@@ -13,6 +14,7 @@ class UserSignInTests(FunctionalTest):
         self.submit_button = lambda: self.browser.find_element_by_id(
             "submit_button")
 
+    @tag('slow')
     def test_user_encounters_login_page(self):
         # User heard about biodb app and decide to visit this website. Received
         # adress leads him to welcome page. Welcome page contains welcome
@@ -46,6 +48,7 @@ class UserSignInTests(FunctionalTest):
 
         self.assertEqual(link.text, "Sign up")
 
+    @tag('slow')
     def test_user_logs_in_without_problems(self):
         # Create user inside Django DB
         user = User.objects.create_user(
@@ -61,6 +64,7 @@ class UserSignInTests(FunctionalTest):
         self.assertEqual(
             self.browser.current_url, self.live_server_url + "/projects/")
 
+    @tag('slow')
     def test_user_encounters_invalid_credentials_validation(self):
         # User goes to BioDB application. He dont have account in BioDB but he
         # is curious what will happend when he enters fake user data. He sees
@@ -95,6 +99,7 @@ class UserSignInTests(FunctionalTest):
             error_div.text
         )
 
+    @tag('slow')
     def test_user_encounters_required_field_validation(self):
         # User goes to Biodb application. He wants to find out what will
         # happend when he press submit button without fill any login field.
@@ -106,6 +111,7 @@ class UserSignInTests(FunctionalTest):
         for error in list(errors):
             self.assertEqual(error.text, "This field is required.")
 
+    @tag('slow')
     def test_user_encounters_inactive_validation(self):
         # User goes to Biodb application. He is registered but admin didnt
         # activate his account. When user tries to log in,
