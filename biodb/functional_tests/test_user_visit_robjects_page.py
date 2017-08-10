@@ -179,7 +179,7 @@ class SearchEngineTests(FunctionalTest):
 
         # He wants to search for robject with lower id. User enters part of its
         # name and looks for results.
-        self.search_input().send_keys("_1")
+        self.search_input().send_keys("object_1")
         self.search_button().click()
 
         rows = self.browser.find_elements_by_css_selector(".row")
@@ -285,7 +285,7 @@ class SearchEngineTests(FunctionalTest):
 
         # Create sample robjects.
         robj_1 = Robject.objects.create(name="robj_1", project=proj)
-        robj_2 = Robject.objects.create(name="robj_1", project=proj)
+        robj_2 = Robject.objects.create(name="robj_2", project=proj)
 
         # User goes to robjects page.
         self.browser.get(self.live_server_url +
@@ -312,7 +312,8 @@ class SearchEngineTests(FunctionalTest):
 
         # Create new project and attach robject to it.
         other_proj = Project.objects.create(name="other_proj")
-        searched_robj = Robject.objects.create(name="searched_robj")
+        searched_robj = Robject.objects.create(
+            name="searched_robj", project=other_proj)
 
         # User goes to robjects page.
         self.browser.get(self.live_server_url +
@@ -326,6 +327,38 @@ class SearchEngineTests(FunctionalTest):
         # He confirms that there is no required robject in table.
         with self.assertRaises(NoSuchElementException):
             self.look_for_robject_row(f".row.{searched_robj.name}")
+
+    def test_user_can_search_with_many_words(self):
+        # Make set up for robjects page.
+        user, proj = self.project_set_up_using_default_data()
+
+        # Create sample robjects.
+        robj_1 = Robject.objects.create(
+            name="robj_1", project=proj, create_by=user)
+        robj_2 = Robject.objects.create(
+            name="robj_2", project=proj, create_by=user)
+        robj_3 = Robject.objects.create(
+            name="robj_3", project=proj, create_by=user)
+
+        # User goes to robjects page.
+        self.browser.get(self.live_server_url +
+                         f"/projects/{proj.name}/robjects/")
+
+        # User sees three robjects in table.
+        table_rows = self.browser.find_elements_by_class_name("row")
+        self.assertEqual(len(table_rows), 3)
+
+        # He wants to know if there is a way to search two robjects from the
+        # project. He want to search two different names and get as result the
+        # two robjects.
+        self.search_input().send_keys("robj_1 robj_2")
+        self.search_button().click()
+
+        self.browser.find_element_by_class_name("robj_1")
+        self.browser.find_element_by_class_name("robj_2")
+        table_rows = self.browser.find_elements_by_class_name("row")
+
+        self.assertEqual(len(table_rows), 2)
 
     def test_user_limits_number_of_fields_to_search(self):
         pass

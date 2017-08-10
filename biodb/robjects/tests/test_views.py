@@ -62,7 +62,7 @@ class SearchRobjectsViewTests(FunctionalTest):
         robject_2 = Robject.objects.create(name="robject_2", project=proj)
 
         response = self.client.get(
-            f"/projects/{proj.name}/robjects/search/", {"query": "_1"})  # part!
+            f"/projects/{proj.name}/robjects/search/", {"query": "object_1"})  # part!
 
         queryset = Robject.objects.filter(name="robject_1")
 

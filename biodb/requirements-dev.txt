@@ -1,3 +1,5 @@
 django_extensions
 mock
 selenium
+ipython
+jupyter
