@@ -10,7 +10,7 @@ class Project(models.Model):
 
     def clean(self):
         """
-        Extra cleaning.
+        Extra cleaning of name chars in Forms.
         Any ValidationError raised by this method will be associated
         with the 'name' field;
         """
