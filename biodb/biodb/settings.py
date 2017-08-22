@@ -46,6 +46,7 @@ INSTALLED_APPS = (
     'projects',
     'robjects',
     'guardian',
+    'debug_toolbar',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -57,6 +58,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 
 ROOT_URLCONF = 'biodb.urls'
@@ -118,3 +120,5 @@ AUTHENTICATION_BACKENDS = (
 
 ADMINS = (("Adrian", DEFAULT_TO_EMAIL), )
 EMAIL_SUBJECT_PREFIX = "[BioDB] "
+
+INTERNAL_IPS = '127.0.0.1'

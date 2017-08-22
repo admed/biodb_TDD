@@ -4,6 +4,8 @@ from biodb import views
 from django.http import HttpResponse
 from django.shortcuts import render
 from projects.views import ProjectListView
+from django.conf import settings
+
 
 urlpatterns = [
     # Examples:
@@ -15,3 +17,9 @@ urlpatterns = [
     url(r'^accounts/', include("accounts.urls")),
     url(r'^admin/', include(admin.site.urls)),
 ]
+
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns = [
+        url(r'^__debug__/', include(debug_toolbar.urls)),
+    ] + urlpatterns
