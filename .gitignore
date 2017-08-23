@@ -44,3 +44,6 @@ email_settings.py
 INSTALL.txt
 requirements-dev.txt
 requirements.txt
+
+# migrations
+00*.py
