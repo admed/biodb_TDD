@@ -17,3 +17,11 @@ class Robject(models.Model):
 
     def __str__(self):
         return "Robject " + str(self.id)
+
+
+class Name(models.Model):
+    pass
+
+
+class Tag(models.Model):
+    pass
