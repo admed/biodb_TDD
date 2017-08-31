@@ -47,3 +47,10 @@ requirements.txt
 
 # migrations
 00*.py
+
+# coverage files
+htmlcov
+.coverage
+
+# files dir
+files/
