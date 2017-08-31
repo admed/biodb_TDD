@@ -13,6 +13,7 @@ class Robject(models.Model):
         to=User, related_name="robjects_created_by_user", null=True)
     create_date = models.DateTimeField(null=True)
     modify_by = models.ForeignKey(to=User, null=True)
+    tags = models.CharField(max_length=100)
 
     def __str__(self):
         return "Robject " + str(self.id)

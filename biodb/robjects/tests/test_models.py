@@ -56,3 +56,9 @@ class RobjectModelTestCase(TestCase):
         self.assertEqual(
             Robject._meta.get_field("create_by").related_query_name(),
             "robjects_created_by_user")
+
+    def test_Robject_has_tags_field(self):
+        try:
+            Robject._meta.get_field("tags")
+        except models.FieldDoesNotExist:
+            self.fail("Robject doesn't have 'tags' field.")
