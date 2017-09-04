@@ -17,3 +17,8 @@ z0123456789_"
 
     def get_absolute_url(self):
         return "/projects/%s/robjects/" % self.name
+
+    class Meta:
+        permissions = (
+            ("can_visit_project", "User can see project elements."),
+            ("can_modify_project", "User can modify project elements."))

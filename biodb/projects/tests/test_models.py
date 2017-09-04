@@ -28,3 +28,13 @@ class ProjectModelTestCase(TestCase):
         Project.objects.create(name="PROJECT_1")
         with self.assertRaises(IntegrityError):
             Project.objects.create(name="PROJECT_1")
+
+    def test_Project_has_view_permission(self):
+        self.assertIn(
+            ("can_visit_project", "User can see project elements."),
+            Project._meta.permissions)
+
+    def test_Project_has_modify_permission(self):
+        self.assertIn(
+            ("can_modify_project", "User can modify project elements."),
+            Project._meta.permissions)
