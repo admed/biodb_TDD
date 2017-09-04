@@ -2,6 +2,9 @@ from unit_tests.base import FunctionalTest
 from robjects.models import Robject
 from projects.models import Project
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
+from django_addanother.widgets import AddAnotherWidgetWrapper
+from django import forms
 
 
 class RObjectsListViewTests(FunctionalTest):
@@ -172,3 +175,55 @@ class SearchRobjectsViewTests(FunctionalTest):
             robj,
             list(resp.context["robject_list"])
         )
+
+
+class RobjectCreateViewTestCase(FunctionalTest):
+    def test_renders_template(self):
+        user, proj = self.default_set_up_for_robjects_page()
+
+        response = self.client.get(
+            reverse("robject_create", args=(proj.name,)))
+        self.assertTemplateUsed(
+            response, template_name="robjects/robject_create.html")
+
+    def test_renders_form_in_context(self):
+        user, proj = self.default_set_up_for_robjects_page()
+
+        response = self.client.get(
+            reverse("robject_create", args=(proj.name,)))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("form", response.context)
+
+    def test_RobectCreateForm_is_child_of_ModelForm(self):
+        user, proj = self.default_set_up_for_robjects_page()
+        response = self.client.get(
+            reverse("robject_create", args=(proj.name,)))
+        form = response.context["form"]
+        self.assertEqual(form.__class__.__base__, forms.ModelForm)
+
+    def test_model_class_is_Robject_in_form(self):
+        user, proj = self.default_set_up_for_robjects_page()
+        response = self.client.get(
+            reverse("robject_create", args=(proj.name,)))
+        form = response.context["form"]
+        self.assertEqual(form._meta.model, Robject)
+
+    def test_widget_instance_of_names_field_in_form(self):
+        user, proj = self.default_set_up_for_robjects_page()
+        response = self.client.get(
+            reverse("robject_create", args=(proj.name,)))
+        form = response.context["form"]
+        self.assertIsInstance(
+            form.base_fields["names"].widget, AddAnotherWidgetWrapper)
+
+    def test_widget_arguments_in_form(self):
+        user, proj = self.default_set_up_for_robjects_page()
+        response = self.client.get(
+            reverse("robject_create", args=(proj.name,)))
+        form = response.context["form"]
+        widget = form.base_fields["names"].widget.widget
+        add_related_url = form.base_fields["names"].widget.add_related_url
+        self.assertIsInstance(widget, forms.SelectMultiple)
+        self.assertEqual(add_related_url, reverse(
+            "names_create", args=(proj.name,)))

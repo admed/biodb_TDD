@@ -10,8 +10,9 @@ from django.shortcuts import render
 from django.views.generic import View
 from projects.models import Project
 from robjects.models import Robject
-
-
+from django import forms
+from django_addanother.widgets import AddAnotherWidgetWrapper
+from django.core.urlresolvers import reverse
 # Create your views here.
 
 
@@ -102,7 +103,7 @@ class SearchRobjectsView(LoginRequiredMixin, View):
             # exted queries by foreign fields
             if foreign_models_fields:
                 for foreign_field, model_fields \
-                 in foreign_models_fields.items():
+                        in foreign_models_fields.items():
                     queries += [Q(**{'%s__%s__icontains' %
                                      (foreign_field.name, f.name): term})
                                 for f in model_fields]
@@ -113,3 +114,17 @@ class SearchRobjectsView(LoginRequiredMixin, View):
         # project reqired
 
         return self.model.objects.filter(qs, project__name=project_name)
+
+
+def robject_create_view(request, project_name):
+    form = forms.modelform_factory(model=Robject, fields="__all__", widgets={
+        "names": AddAnotherWidgetWrapper(
+            widget=forms.SelectMultiple,
+            add_related_url=reverse("names_create", args=(project_name,))
+        )
+    })
+    return render(request, "robjects/robject_create.html", {"form": form()})
+
+
+class NameCreateView(View):
+    pass

@@ -62,3 +62,9 @@ class RobjectModelTestCase(TestCase):
             Robject._meta.get_field("tags")
         except models.FieldDoesNotExist:
             self.fail("Robject doesn't have 'tags' field.")
+
+    def test_Robject_has_names_field(self):
+        try:
+            Robject._meta.get_field("names")
+        except models.FieldDoesNotExist:
+            self.fail("Robject doesn't have 'names' field.")

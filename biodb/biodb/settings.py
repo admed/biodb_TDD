@@ -47,6 +47,7 @@ INSTALLED_APPS = (
     'robjects',
     'guardian',
     'debug_toolbar',
+    'django_addanother'
 )
 
 MIDDLEWARE_CLASSES = (
