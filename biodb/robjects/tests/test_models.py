@@ -80,3 +80,7 @@ class NameModelTestCase(TestCase):
 
     def test_name_field_is_char_field(self):
         self.assertIsInstance(Name._meta.get_field("name"), models.CharField)
+
+    def test_str_method(self):
+        n = Name.objects.create(name="hello")
+        self.assertEqual(n.__str__(), "hello")
