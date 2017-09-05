@@ -122,7 +122,7 @@ class RobjectCreateView(CreateView):
     model = Robject
     template_name = "robjects/robject_create.html"
 
-    def get_form(self):
+    def get_form_class(self):
         form = forms.modelform_factory(model=Robject, fields="__all__", widgets={
             "names": AddAnotherWidgetWrapper(
                 widget=forms.SelectMultiple,
@@ -135,8 +135,8 @@ class RobjectCreateView(CreateView):
         })
         return form
 
-    def post(self, request, *args, **kwargs):
-        return redirect(reverse("robjects_list", args=(args[0],)))
+    def get_success_url(self):
+        return reverse("robjects_list", args=(self.args[0],))
 
 
 class NameCreateView(CreatePopupMixin, CreateView):

@@ -86,6 +86,15 @@ class RobjectModelTestCase(TestCase):
         field = Robject._meta.get_field("modify_by")
         self.assertTrue(field.blank)
 
+    def test_way_to_get_robjects_related_to_given_tag(self):
+        t = Tag.objects.create(name="tag")
+        r1 = Robject.objects.create(name="robj_1")
+        r1.tags.add(t)
+        r2 = Robject.objects.create(name="robj_2")
+        r2.tags.add(t)
+        robjects = t.robjects.all()
+        self.assertEqual(list(robjects), [r1, r2])
+
 
 class NameModelTestCase(TestCase):
     def test_Name_has_name_field(self):
