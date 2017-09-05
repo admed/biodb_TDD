@@ -6,32 +6,35 @@
     <title></title>
   </head>
   <body>
-    {{ form }}
-    <div id="cke_id_notes">
-      <iframe src="" width="" height=""></iframe>
-    </div>
-    <div id="cke_id_ref_seq">
-      <iframe src="" width="" height=""></iframe>
-    </div>
-    <div id="cke_id_mod_seq">
-      <iframe src="" width="" height=""></iframe>
-    </div>
-    <div id="cke_id_description">
-      <iframe src="" width="" height=""></iframe>
-    </div>
-    <div id="cke_id_bibliography">
-      <iframe src="" width="" height=""></iframe>
-    </div>
-    <div id="cke_id_ref_commercial">
-      <iframe src="" width="" height=""></iframe>
-    </div>
-    <div id="cke_id_ref_clinical">
-      <iframe src="" width="" height=""></iframe>
-    </div>
-    <input id="id_ligand"></input>
-    <input id="id_receptor"></input>
-    <button type="button" name="button">Submit</button>    
-    <script src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
-    {{ form.media }}
+    <form class="" action="" method="post">
+      {% csrf_token %}
+      {{ form }}
+      <div id="cke_id_notes">
+        <iframe src="" width="" height=""></iframe>
+      </div>
+      <div id="cke_id_ref_seq">
+        <iframe src="" width="" height=""></iframe>
+      </div>
+      <div id="cke_id_mod_seq">
+        <iframe src="" width="" height=""></iframe>
+      </div>
+      <div id="cke_id_description">
+        <iframe src="" width="" height=""></iframe>
+      </div>
+      <div id="cke_id_bibliography">
+        <iframe src="" width="" height=""></iframe>
+      </div>
+      <div id="cke_id_ref_commercial">
+        <iframe src="" width="" height=""></iframe>
+      </div>
+      <div id="cke_id_ref_clinical">
+        <iframe src="" width="" height=""></iframe>
+      </div>
+      <input id="id_ligand"></input>
+      <input id="id_receptor"></input>
+      <button name="button">Submit</button>
+      <script src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
+      {{ form.media }}
+    </form>
   </body>
 </html>

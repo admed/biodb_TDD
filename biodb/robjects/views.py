@@ -13,6 +13,7 @@ from robjects.models import Robject, Name, Tag
 from django import forms
 from django_addanother.widgets import AddAnotherWidgetWrapper
 from django.core.urlresolvers import reverse
+from django.shortcuts import redirect
 from django_addanother.views import CreatePopupMixin
 # Create your views here.
 
@@ -118,6 +119,8 @@ class SearchRobjectsView(LoginRequiredMixin, View):
 
 
 def robject_create_view(request, project_name):
+    if request.POST:
+        return redirect(reverse("robjects_list", args=(project_name,)))
     form = forms.modelform_factory(model=Robject, fields="__all__", widgets={
         "names": AddAnotherWidgetWrapper(
             widget=forms.SelectMultiple,

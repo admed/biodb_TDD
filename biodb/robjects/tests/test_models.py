@@ -70,6 +70,22 @@ class RobjectModelTestCase(TestCase):
         except models.FieldDoesNotExist:
             self.fail("Robject doesn't have 'names' field.")
 
+    def test_project_field_is_not_blank(self):
+        field = Robject._meta.get_field("project")
+        self.assertTrue(field.blank)
+
+    def test_create_by_field_is_not_blank(self):
+        field = Robject._meta.get_field("create_by")
+        self.assertTrue(field.blank)
+
+    def test_create_date_field_is_not_blank(self):
+        field = Robject._meta.get_field("create_date")
+        self.assertTrue(field.blank)
+
+    def test_modify_by_field_is_not_blank(self):
+        field = Robject._meta.get_field("modify_by")
+        self.assertTrue(field.blank)
+
 
 class NameModelTestCase(TestCase):
     def test_Name_has_name_field(self):

@@ -5,14 +5,14 @@ from django.contrib.auth.models import User
 
 
 class Robject(models.Model):
-    project = models.ForeignKey(to=Project, null=True)
+    project = models.ForeignKey(to=Project, null=True, blank=True)
     author = models.ForeignKey(
         to=User, null=True, related_name="robjects_in_which_user_is_author")
     name = models.CharField(max_length=100)
     create_by = models.ForeignKey(
-        to=User, related_name="robjects_created_by_user", null=True)
-    create_date = models.DateTimeField(null=True)
-    modify_by = models.ForeignKey(to=User, null=True)
+        to=User, related_name="robjects_created_by_user", null=True, blank=True)
+    create_date = models.DateTimeField(null=True, blank=True)
+    modify_by = models.ForeignKey(to=User, null=True, blank=True)
     tags = models.ManyToManyField("Tag")
     names = models.ManyToManyField("Name")
 

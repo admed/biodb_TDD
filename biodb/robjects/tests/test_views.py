@@ -181,6 +181,9 @@ class SearchRobjectsViewTests(FunctionalTest):
 
 
 class RobjectCreateViewTestCase(FunctionalTest):
+    def get_robject_create_url(self, proj):
+        return reverse("robject_create", args=(proj.name,))
+
     def get_form_from_context(self):
         proj = Project.objects.create(name="proj")
         response = self.client.get(
@@ -238,6 +241,15 @@ class RobjectCreateViewTestCase(FunctionalTest):
         self.assertIsInstance(widget, forms.SelectMultiple)
         self.assertEqual(add_related_url, reverse(
             "tags_create", args=(Project.objects.last().name,)))
+
+    def test_view_redirects_to_robject_list_page_on_post(self):
+        user, proj = self.default_set_up_for_robjects_page()
+        response = self.client.post(
+            self.get_robject_create_url(proj),
+            data={"key": "value"}
+        )
+        self.assertRedirects(response, reverse(
+            "robjects_list", args=(proj.name,)))
 
 
 class NameCreateViewTestCase(FunctionalTest):

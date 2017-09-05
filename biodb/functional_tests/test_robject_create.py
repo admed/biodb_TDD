@@ -65,6 +65,7 @@ class RobjectCreateTestCase(FunctionalTest):
 
     def submit_and_assert_valid_redirect(self, proj):
         self.browser.find_element_by_css_selector("button").click()
+        time.sleep(10)
         self.assertEqual(self.browser.current_url, self.live_server_url +
                          reverse("robjects_list", args=(proj.name,)))
 
