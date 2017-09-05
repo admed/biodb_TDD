@@ -3,7 +3,7 @@ from robjects.models import Robject
 from django.contrib.auth.models import User
 from projects.models import Project
 from django.db import models
-from robjects.models import Name
+from robjects.models import Name, Tag
 
 
 class RobjectModelTestCase(TestCase):
@@ -84,3 +84,14 @@ class NameModelTestCase(TestCase):
     def test_str_method(self):
         n = Name.objects.create(name="hello")
         self.assertEqual(n.__str__(), "hello")
+
+
+class TagModelTestCase(TestCase):
+    def test_Tag_has_name_field(self):
+        try:
+            Tag._meta.get_field("name")
+        except models.FieldDoesNotExist:
+            self.fail("Tag doesn't have 'name' field.")
+
+    def test_tag_field_is_char_field(self):
+        self.assertIsInstance(Tag._meta.get_field("name"), models.CharField)

@@ -9,7 +9,7 @@ from django.core.exceptions import PermissionDenied
 from django.shortcuts import render
 from django.views.generic import View, CreateView
 from projects.models import Project
-from robjects.models import Robject, Name
+from robjects.models import Robject, Name, Tag
 from django import forms
 from django_addanother.widgets import AddAnotherWidgetWrapper
 from django.core.urlresolvers import reverse
@@ -135,3 +135,9 @@ class NameCreateView(CreatePopupMixin, CreateView):
     model = Name
     fields = "__all__"
     template_name = "robjects/names_create.html"
+
+
+class TagCreateView(CreatePopupMixin, CreateView):
+    model = Tag
+    fields = "__all__"
+    template_name = "robjects/tags_create.html"

@@ -28,4 +28,4 @@ class Name(models.Model):
 
 
 class Tag(models.Model):
-    pass
+    name = models.CharField(max_length=100)

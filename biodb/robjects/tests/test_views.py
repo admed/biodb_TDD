@@ -1,5 +1,5 @@
 from unit_tests.base import FunctionalTest
-from robjects.models import Robject, Name
+from robjects.models import Robject, Name, Tag
 from projects.models import Project
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
@@ -7,7 +7,7 @@ from django_addanother.widgets import AddAnotherWidgetWrapper
 from django import forms
 from django_addanother.views import CreatePopupMixin
 from django.views import generic
-from robjects.views import NameCreateView
+from robjects.views import NameCreateView, TagCreateView
 
 
 class RObjectsListViewTests(FunctionalTest):
@@ -255,3 +255,20 @@ class NameCreateViewTestCase(FunctionalTest):
         proj = Project.objects.create(name="proj_1")
         response = self.client.get(reverse("names_create", args=(proj.name,)))
         self.assertTemplateUsed(response, "robjects/names_create.html")
+
+
+class TagCreateViewTestCase(FunctionalTest):
+    def test_view_parents(self):
+        self.assertEqual(TagCreateView.__bases__,
+                         (CreatePopupMixin, generic.CreateView))
+
+    def test_view_model_attr(self):
+        self.assertEqual(TagCreateView.model, Tag)
+
+    def test_view_fields_attr(self):
+        self.assertEqual(TagCreateView.fields, "__all__")
+
+    def test_render_template(self):
+        proj = Project.objects.create(name="proj_1")
+        response = self.client.get(reverse("tags_create", args=(proj.name,)))
+        self.assertTemplateUsed(response, "robjects/tags_create.html")

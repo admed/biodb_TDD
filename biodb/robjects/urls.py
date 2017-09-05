@@ -2,7 +2,7 @@ from django.conf.urls import url
 from robjects.views import robjects_list_view, SearchRobjectsView
 from django.http import HttpResponse
 from robjects.views import robject_create_view
-from robjects.views import NameCreateView
+from robjects.views import NameCreateView, TagCreateView
 
 urlpatterns = [
     url(r"^search/$",
@@ -10,5 +10,5 @@ urlpatterns = [
     url(r"^$", robjects_list_view, name="robjects_list"),
     url(r"^create/$", robject_create_view, name="robject_create"),
     url(r"^names-create/$", NameCreateView.as_view(), name="names_create"),
-    url(r"^tags-create/$", lambda request: HttpResponse(""), name="tags_create"),
+    url(r"^tags-create/$", TagCreateView.as_view(), name="tags_create"),
 ]
