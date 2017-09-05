@@ -181,16 +181,23 @@ class SearchRobjectsViewTests(FunctionalTest):
 
 
 class RobjectCreateViewTestCase(FunctionalTest):
-    def test_renders_template(self):
-        user, proj = self.default_set_up_for_robjects_page()
+    def get_form_from_context(self):
+        proj = Project.objects.create(name="proj")
+        response = self.client.get(
+            reverse("robject_create", args=(proj.name,)))
+        form = response.context["form"]
 
+        return form
+
+    def test_renders_template(self):
+        proj = Project.objects.create(name="proj")
         response = self.client.get(
             reverse("robject_create", args=(proj.name,)))
         self.assertTemplateUsed(
             response, template_name="robjects/robject_create.html")
 
     def test_renders_form_in_context(self):
-        user, proj = self.default_set_up_for_robjects_page()
+        proj = Project.objects.create(name="proj")
 
         response = self.client.get(
             reverse("robject_create", args=(proj.name,)))
@@ -199,37 +206,25 @@ class RobjectCreateViewTestCase(FunctionalTest):
         self.assertIn("form", response.context)
 
     def test_RobectCreateForm_is_child_of_ModelForm(self):
-        user, proj = self.default_set_up_for_robjects_page()
-        response = self.client.get(
-            reverse("robject_create", args=(proj.name,)))
-        form = response.context["form"]
+        form = self.get_form_from_context()
         self.assertEqual(form.__class__.__base__, forms.ModelForm)
 
     def test_model_class_is_Robject_in_form(self):
-        user, proj = self.default_set_up_for_robjects_page()
-        response = self.client.get(
-            reverse("robject_create", args=(proj.name,)))
-        form = response.context["form"]
+        form = self.get_form_from_context()
         self.assertEqual(form._meta.model, Robject)
 
     def test_widget_instance_of_names_field_in_form(self):
-        user, proj = self.default_set_up_for_robjects_page()
-        response = self.client.get(
-            reverse("robject_create", args=(proj.name,)))
-        form = response.context["form"]
+        form = self.get_form_from_context()
         self.assertIsInstance(
             form.base_fields["names"].widget, AddAnotherWidgetWrapper)
 
     def test_widget_arguments_in_form(self):
-        user, proj = self.default_set_up_for_robjects_page()
-        response = self.client.get(
-            reverse("robject_create", args=(proj.name,)))
-        form = response.context["form"]
+        form = self.get_form_from_context()
         widget = form.base_fields["names"].widget.widget
         add_related_url = form.base_fields["names"].widget.add_related_url
         self.assertIsInstance(widget, forms.SelectMultiple)
         self.assertEqual(add_related_url, reverse(
-            "names_create", args=(proj.name,)))
+            "names_create", args=(Project.objects.last().name,)))
 
 
 class NameCreateViewTestCase(FunctionalTest):
