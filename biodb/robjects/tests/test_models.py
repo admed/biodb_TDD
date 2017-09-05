@@ -110,6 +110,15 @@ class RobjectModelTestCase(TestCase):
         except:
             self.fail("Robject doesn't have 'notes' attr.")
 
+    def test_Robject_has_ref_seq_attr(self):
+        try:
+            Robject.ref_seq
+        except:
+            self.fail("Robject doesn't have 'ref_seq' attr.")
+
+    def test_Robject_ref_seq_hardcoded_value(self):
+        self.assertEqual(Robject.ref_seq, '<p>These are ref seq.</p>')
+
 
 class NameModelTestCase(TestCase):
     def test_Name_has_name_field(self):
