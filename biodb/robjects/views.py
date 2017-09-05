@@ -122,6 +122,10 @@ def robject_create_view(request, project_name):
         "names": AddAnotherWidgetWrapper(
             widget=forms.SelectMultiple,
             add_related_url=reverse("names_create", args=(project_name,))
+        ),
+        "tags":  AddAnotherWidgetWrapper(
+            widget=forms.SelectMultiple,
+            add_related_url=reverse("tags_create", args=(project_name,))
         )
     })
     return render(request, "robjects/robject_create.html", {"form": form()})

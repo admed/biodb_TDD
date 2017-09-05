@@ -9,5 +9,6 @@ urlpatterns = [
         SearchRobjectsView.as_view(), name="search_robjects"),
     url(r"^$", robjects_list_view, name="robjects_list"),
     url(r"^create/$", robject_create_view, name="robject_create"),
-    url(r"^names-create/$", NameCreateView.as_view(), name="names_create")
+    url(r"^names-create/$", NameCreateView.as_view(), name="names_create"),
+    url(r"^tags-create/$", lambda request: HttpResponse(""), name="tags_create"),
 ]

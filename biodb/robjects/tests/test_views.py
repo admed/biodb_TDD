@@ -218,13 +218,26 @@ class RobjectCreateViewTestCase(FunctionalTest):
         self.assertIsInstance(
             form.base_fields["names"].widget, AddAnotherWidgetWrapper)
 
-    def test_widget_arguments_in_form(self):
+    def test_names_widget_arguments_in_form(self):
         form = self.get_form_from_context()
         widget = form.base_fields["names"].widget.widget
         add_related_url = form.base_fields["names"].widget.add_related_url
         self.assertIsInstance(widget, forms.SelectMultiple)
         self.assertEqual(add_related_url, reverse(
             "names_create", args=(Project.objects.last().name,)))
+
+    def test_widget_instance_of_tags_field_in_form(self):
+        form = self.get_form_from_context()
+        self.assertIsInstance(
+            form.base_fields["tags"].widget, AddAnotherWidgetWrapper)
+
+    def test_tags_widget_arguments_in_form(self):
+        form = self.get_form_from_context()
+        widget = form.base_fields["tags"].widget.widget
+        add_related_url = form.base_fields["tags"].widget.add_related_url
+        self.assertIsInstance(widget, forms.SelectMultiple)
+        self.assertEqual(add_related_url, reverse(
+            "tags_create", args=(Project.objects.last().name,)))
 
 
 class NameCreateViewTestCase(FunctionalTest):
