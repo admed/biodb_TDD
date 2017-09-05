@@ -32,8 +32,8 @@ class RobjectCreateTestCase(FunctionalTest):
     def check_for_related_in_input(self, input_id, name):
         """ User checks in related select input if created object shows up.
         """
-        option_tag = self.browser.find_element_by_css_selector(
-            f".related-widget-wrapper select#{input_id} option:last-child")
+        option_tag = self.wait_for(lambda: self.browser.find_element_by_css_selector(
+            f".related-widget-wrapper select#{input_id} option:last-child"))
 
         self.assertEqual(option_tag.text, name)
 
