@@ -15,6 +15,7 @@ class Robject(models.Model):
     modify_by = models.ForeignKey(to=User, null=True, blank=True)
     tags = models.ManyToManyField("Tag", related_name="robjects")
     names = models.ManyToManyField("Name", related_name="robjects")
+    notes = '<p>These are notes.</p>'
 
     def __str__(self):
         return "Robject " + str(self.id)

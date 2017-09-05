@@ -104,6 +104,12 @@ class RobjectModelTestCase(TestCase):
         robjects = n.robjects.all()
         self.assertEqual(list(robjects), [r1, r2])
 
+    def test_Robject_has_notes_attr(self):
+        try:
+            Robject.notes
+        except:
+            self.fail("Robject doesn't have 'notes' attr.")
+
 
 class NameModelTestCase(TestCase):
     def test_Name_has_name_field(self):
