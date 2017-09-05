@@ -118,20 +118,25 @@ class SearchRobjectsView(LoginRequiredMixin, View):
         return self.model.objects.filter(qs, project__name=project_name)
 
 
-def robject_create_view(request, project_name):
-    if request.POST:
-        return redirect(reverse("robjects_list", args=(project_name,)))
-    form = forms.modelform_factory(model=Robject, fields="__all__", widgets={
-        "names": AddAnotherWidgetWrapper(
-            widget=forms.SelectMultiple,
-            add_related_url=reverse("names_create", args=(project_name,))
-        ),
-        "tags":  AddAnotherWidgetWrapper(
-            widget=forms.SelectMultiple,
-            add_related_url=reverse("tags_create", args=(project_name,))
-        )
-    })
-    return render(request, "robjects/robject_create.html", {"form": form()})
+class RobjectCreateView(CreateView):
+    model = Robject
+    template_name = "robjects/robject_create.html"
+
+    def get_form(self):
+        form = forms.modelform_factory(model=Robject, fields="__all__", widgets={
+            "names": AddAnotherWidgetWrapper(
+                widget=forms.SelectMultiple,
+                add_related_url=reverse("names_create", args=(self.args[0],))
+            ),
+            "tags":  AddAnotherWidgetWrapper(
+                widget=forms.SelectMultiple,
+                add_related_url=reverse("tags_create", args=(self.args[0],))
+            )
+        })
+        return form
+
+    def post(self, request, *args, **kwargs):
+        return redirect(reverse("robjects_list", args=(args[0],)))
 
 
 class NameCreateView(CreatePopupMixin, CreateView):

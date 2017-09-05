@@ -208,10 +208,6 @@ class RobjectCreateViewTestCase(FunctionalTest):
         self.assertEqual(response.status_code, 200)
         self.assertIn("form", response.context)
 
-    def test_RobectCreateForm_is_child_of_ModelForm(self):
-        form = self.get_form_from_context()
-        self.assertEqual(form.__class__.__base__, forms.ModelForm)
-
     def test_model_class_is_Robject_in_form(self):
         form = self.get_form_from_context()
         self.assertEqual(form._meta.model, Robject)
