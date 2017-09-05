@@ -95,6 +95,15 @@ class RobjectModelTestCase(TestCase):
         robjects = t.robjects.all()
         self.assertEqual(list(robjects), [r1, r2])
 
+    def test_way_to_get_robjects_related_to_given_name(self):
+        n = Name.objects.create(name="name")
+        r1 = Robject.objects.create(name="robj_1")
+        r1.names.add(n)
+        r2 = Robject.objects.create(name="robj_2")
+        r2.names.add(n)
+        robjects = n.robjects.all()
+        self.assertEqual(list(robjects), [r1, r2])
+
 
 class NameModelTestCase(TestCase):
     def test_Name_has_name_field(self):

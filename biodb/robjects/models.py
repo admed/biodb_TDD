@@ -14,7 +14,7 @@ class Robject(models.Model):
     create_date = models.DateTimeField(null=True, blank=True)
     modify_by = models.ForeignKey(to=User, null=True, blank=True)
     tags = models.ManyToManyField("Tag", related_name="robjects")
-    names = models.ManyToManyField("Name")
+    names = models.ManyToManyField("Name", related_name="robjects")
 
     def __str__(self):
         return "Robject " + str(self.id)
