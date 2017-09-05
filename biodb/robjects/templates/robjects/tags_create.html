@@ -5,7 +5,10 @@
     <title></title>
   </head>
   <body>
-    {{ form }}
-    <input type="submit" name="" value="Submit">
+    <form class="" action="" method="post">
+      {% csrf_token %}
+      {{ form }}
+      <input type="submit" name="" value="Submit">
+    </form>
   </body>
 </html>

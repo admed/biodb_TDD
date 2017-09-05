@@ -95,3 +95,7 @@ class TagModelTestCase(TestCase):
 
     def test_tag_field_is_char_field(self):
         self.assertIsInstance(Tag._meta.get_field("name"), models.CharField)
+
+    def test_str_method(self):
+        t = Tag.objects.create(name="bye")
+        self.assertEqual(t.__str__(), "bye")
