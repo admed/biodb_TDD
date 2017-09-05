@@ -21,7 +21,6 @@ class RobjectCreateTestCase(FunctionalTest):
         plus_btn.click()
 
         self.switch_to_popup()
-        time.sleep(20)
         name_input = self.browser.find_element_by_css_selector(
             "input[name='name']")
         name_input.send_keys(name)
