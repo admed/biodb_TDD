@@ -13,6 +13,9 @@ class FunctionalTest(StaticLiveServerTestCase):
 
     def setUp(self):
         self.browser = webdriver.Chrome()
+        self.main_window = None
+        while not self.main_window:
+            self.main_window = self.browser.current_window_handle
 
     def tearDown(self):
         self.browser.quit()
@@ -26,6 +29,22 @@ class FunctionalTest(StaticLiveServerTestCase):
                 if time.time() - start_time > self.MAX_WAIT:
                     raise e
                 time.sleep(0.5)
+
+    def get_popup_window(self):
+        popup_window = None
+        while not popup_window:
+            for handle in self.browser.window_handles:
+                if handle != self.main_window:
+                    popup_window = handle
+                    break
+        return popup_window
+
+    def switch_to_popup(self):
+        popup_window = self.get_popup_window()
+        self.browser.switch_to.window(popup_window)
+
+    def switch_to_main(self):
+        self.browser.switch_to.window(self.main_window)
 
     def login_user(self, username, password):
         """ Helper method for log user in.

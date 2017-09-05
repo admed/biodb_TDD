@@ -1,10 +1,13 @@
 from unit_tests.base import FunctionalTest
-from robjects.models import Robject
+from robjects.models import Robject, Name
 from projects.models import Project
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django_addanother.widgets import AddAnotherWidgetWrapper
 from django import forms
+from django_addanother.views import CreatePopupMixin
+from django.views import generic
+from robjects.views import NameCreateView
 
 
 class RObjectsListViewTests(FunctionalTest):
@@ -227,3 +230,20 @@ class RobjectCreateViewTestCase(FunctionalTest):
         self.assertIsInstance(widget, forms.SelectMultiple)
         self.assertEqual(add_related_url, reverse(
             "names_create", args=(proj.name,)))
+
+
+class NameCreateViewTestCase(FunctionalTest):
+    def test_view_parents(self):
+        self.assertEqual(NameCreateView.__bases__,
+                         (CreatePopupMixin, generic.CreateView))
+
+    def test_view_model_attr(self):
+        self.assertEqual(NameCreateView.model, Name)
+
+    def test_view_fields_attr(self):
+        self.assertEqual(NameCreateView.fields, "__all__")
+
+    def test_render_template(self):
+        proj = Project.objects.create(name="proj_1")
+        response = self.client.get(reverse("names_create", args=(proj.name,)))
+        self.assertTemplateUsed(response, "robjects/names_create.html")

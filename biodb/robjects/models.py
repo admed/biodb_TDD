@@ -21,7 +21,7 @@ class Robject(models.Model):
 
 
 class Name(models.Model):
-    pass
+    name = models.CharField(max_length=100)
 
 
 class Tag(models.Model):

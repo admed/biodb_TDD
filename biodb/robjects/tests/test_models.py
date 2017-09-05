@@ -3,6 +3,7 @@ from robjects.models import Robject
 from django.contrib.auth.models import User
 from projects.models import Project
 from django.db import models
+from robjects.models import Name
 
 
 class RobjectModelTestCase(TestCase):
@@ -68,3 +69,14 @@ class RobjectModelTestCase(TestCase):
             Robject._meta.get_field("names")
         except models.FieldDoesNotExist:
             self.fail("Robject doesn't have 'names' field.")
+
+
+class NameModelTestCase(TestCase):
+    def test_Name_has_name_field(self):
+        try:
+            Name._meta.get_field("name")
+        except models.FieldDoesNotExist:
+            self.fail("Name doesn't have 'name' field.")
+
+    def test_name_field_is_char_field(self):
+        self.assertIsInstance(Name._meta.get_field("name"), models.CharField)

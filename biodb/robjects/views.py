@@ -7,12 +7,13 @@ from django.db.models import TextField
 from django.db.models import Q
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render
-from django.views.generic import View
+from django.views.generic import View, CreateView
 from projects.models import Project
-from robjects.models import Robject
+from robjects.models import Robject, Name
 from django import forms
 from django_addanother.widgets import AddAnotherWidgetWrapper
 from django.core.urlresolvers import reverse
+from django_addanother.views import CreatePopupMixin
 # Create your views here.
 
 
@@ -126,5 +127,7 @@ def robject_create_view(request, project_name):
     return render(request, "robjects/robject_create.html", {"form": form()})
 
 
-class NameCreateView(View):
-    pass
+class NameCreateView(CreatePopupMixin, CreateView):
+    model = Name
+    fields = "__all__"
+    template_name = "robjects/names_create.html"

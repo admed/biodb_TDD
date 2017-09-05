@@ -16,12 +16,12 @@ class RobjectCreateTestCase(FunctionalTest):
     def add_related(self, input_id, name):
         """User click in plus button, switch to popup, add related and get back.
         """
-        time.sleep(30)
         plus_btn = self.browser.find_element_by_css_selector(
             f".related-widget-wrapper select#{input_id} + a")
         plus_btn.click()
 
         self.switch_to_popup()
+        time.sleep(20)
         name_input = self.browser.find_element_by_css_selector(
             "input[name='name']")
         name_input.send_keys(name)
