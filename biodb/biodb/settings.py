@@ -47,7 +47,8 @@ INSTALLED_APPS = (
     'robjects',
     'guardian',
     'debug_toolbar',
-    'django_addanother'
+    'django_addanother',
+    'ckeditor'
 )
 
 MIDDLEWARE_CLASSES = (
