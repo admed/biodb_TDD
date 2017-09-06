@@ -22,7 +22,7 @@ class Robject(models.Model):
     description = "<p>This is description.</p>"
     bibliography = '<p>This is bibliography.</p>'
     ref_commercial = RichTextField()
-    ref_clinical = '<p>This is ref clinical.</p>'
+    ref_clinical = RichTextField()
     ligand = "ligand"
     receptor = "receptor"
 

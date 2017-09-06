@@ -136,9 +136,6 @@ class RobjectModelTestCase(TestCase):
     def test_Robject_has_ref_clinical_attr(self):
         self.check_Robject_has_attr("ref_clinical")
 
-    def test_Robject_ref_clinical_hardcoded_value(self):
-        self.assertEqual(Robject.ref_clinical, '<p>This is ref clinical.</p>')
-
     def test_Robject_has_ligand_attr(self):
         self.check_Robject_has_attr("ligand")
 
@@ -161,6 +158,10 @@ class RobjectModelTestCase(TestCase):
 
     def test_ref_commercial_field_is_RichTextField_instance(self):
         field = Robject._meta.get_field("ref_commercial")
+        self.assertIsInstance(field, RichTextField)
+
+    def test_ref_clinical_field_is_RichTextField_instance(self):
+        field = Robject._meta.get_field("ref_clinical")
         self.assertIsInstance(field, RichTextField)
 
 
