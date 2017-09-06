@@ -7,6 +7,10 @@ from robjects.models import Name, Tag
 
 
 class RobjectModelTestCase(TestCase):
+    def check_Robject_has_attr(self, attr_name):
+        if not hasattr(Robject, attr_name):
+            self.fail(f"Robject doesn't have '{attr_name}' attr.")
+
     def test_fields_classes(self):
         project_field = Robject._meta.get_field("project")
         self.assertIsInstance(project_field, models.ForeignKey)
@@ -105,25 +109,16 @@ class RobjectModelTestCase(TestCase):
         self.assertEqual(list(robjects), [r1, r2])
 
     def test_Robject_has_notes_attr(self):
-        try:
-            Robject.notes
-        except:
-            self.fail("Robject doesn't have 'notes' attr.")
+        self.check_Robject_has_attr("notes")
 
     def test_Robject_has_ref_seq_attr(self):
-        try:
-            Robject.ref_seq
-        except:
-            self.fail("Robject doesn't have 'ref_seq' attr.")
+        self.check_Robject_has_attr("ref_seq")
 
     def test_Robject_ref_seq_hardcoded_value(self):
         self.assertEqual(Robject.ref_seq, '<p>These are ref seq.</p>')
 
     def test_Robject_has_mod_seq_attr(self):
-        try:
-            Robject.mod_seq
-        except:
-            self.fail("Robject doesn't have 'mod_seq' attr.")
+        self.check_Robject_has_attr("mod_seq")
 
     def test_Robject_mod_seq_hardcoded_value(self):
         self.assertEqual(Robject.mod_seq, '<p>These are mod seq.</p>')
