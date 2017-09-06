@@ -133,10 +133,6 @@ class RobjectModelTestCase(TestCase):
     def test_Robject_has_ref_commercial_attr(self):
         self.check_Robject_has_attr("ref_commercial")
 
-    def test_Robject_ref_commercial_hardcoded_value(self):
-        self.assertEqual(Robject.ref_commercial,
-                         "<p>This is ref commercial.</p>")
-
     def test_Robject_has_ref_clinical_attr(self):
         self.check_Robject_has_attr("ref_clinical")
 
@@ -161,6 +157,10 @@ class RobjectModelTestCase(TestCase):
 
     def test_mod_seq_field_is_RichTextField_instance(self):
         field = Robject._meta.get_field("mod_seq")
+        self.assertIsInstance(field, RichTextField)
+
+    def test_ref_commercial_field_is_RichTextField_instance(self):
+        field = Robject._meta.get_field("ref_commercial")
         self.assertIsInstance(field, RichTextField)
 
 

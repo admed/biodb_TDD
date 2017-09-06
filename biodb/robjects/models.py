@@ -21,7 +21,7 @@ class Robject(models.Model):
     mod_seq = RichTextField()
     description = "<p>This is description.</p>"
     bibliography = '<p>This is bibliography.</p>'
-    ref_commercial = "<p>This is ref commercial.</p>"
+    ref_commercial = RichTextField()
     ref_clinical = '<p>This is ref clinical.</p>'
     ligand = "ligand"
     receptor = "receptor"
