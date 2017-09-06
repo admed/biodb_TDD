@@ -24,7 +24,7 @@ class Robject(models.Model):
     ref_commercial = RichTextField()
     ref_clinical = RichTextField()
     ligand = models.CharField(max_length=100)
-    receptor = "receptor"
+    receptor = models.CharField(max_length=100)
 
     def __str__(self):
         return "Robject " + str(self.id)

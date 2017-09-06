@@ -142,9 +142,6 @@ class RobjectModelTestCase(TestCase):
     def test_Robject_has_ligand_attr(self):
         self.check_Robject_has_attr("receptor")
 
-    def test_Robject_receptor_hardcoded_value(self):
-        self.assertEqual(Robject.receptor, 'receptor')
-
     def test_ref_seq_field_is_RichTextField_instance(self):
         field = Robject._meta.get_field("ref_seq")
         self.assertIsInstance(field, RichTextField)
@@ -163,6 +160,11 @@ class RobjectModelTestCase(TestCase):
 
     def test_ligand_field_is_CharField_instance_with_max_width_100(self):
         field = Robject._meta.get_field("ligand")
+        self.assertIsInstance(field, models.CharField)
+        self.assertEqual(field.max_length, 100)
+
+    def test_receptor_field_is_CharField_instance_with_max_width_100(self):
+        field = Robject._meta.get_field("receptor")
         self.assertIsInstance(field, models.CharField)
         self.assertEqual(field.max_length, 100)
 

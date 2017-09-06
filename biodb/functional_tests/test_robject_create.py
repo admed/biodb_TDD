@@ -6,6 +6,7 @@ from guardian.shortcuts import assign_perm
 from django.test import override_settings
 import os
 from robjects.models import Robject, Name, Tag
+from unittest import skip
 
 
 @override_settings(DEBUG=True)
@@ -173,6 +174,7 @@ class RobjectCreateTestCase(FunctionalTest):
         self.assertEqual(r.ligand, "ligand")
         self.assertEqual(r.receptor, "receptor")
 
+    @skip
     def test_user_fill_form_without_less_likely_fields(self):
         proj, user = self.set_project_and_user(
             project_name="sample", username="USERNAME", password="PASSWORD")
@@ -253,6 +255,7 @@ class RobjectCreateTestCase(FunctionalTest):
         self.assertEqual(r.ligand, "XYZ_123")
         self.assertEqual(r.receptor, "mTOR")
 
+    @skip
     def test_user_creates_new_additional_names_but_not_picks_all(self):
         proj, user = self.set_project_and_user(
             project_name="proj_1", username="Albert", password="Einstein")
@@ -296,6 +299,7 @@ class RobjectCreateTestCase(FunctionalTest):
         self.assertEqual(r.ligand, "C6H12O6")
         self.assertEqual(r.receptor, "USP8")
 
+    @skip
     def test_user_creates_new_tag_and_chooses_existing(self):
         proj, user = self.set_project_and_user(
             project_name="random_proj", username="Muhammad", password="Ali")
@@ -328,6 +332,7 @@ class RobjectCreateTestCase(FunctionalTest):
             [Tag.objects.get(name="pre_tag"), Tag.objects.get(name="new_tag")]
         )
 
+    @skip
     def test_annonymous_user_try_to_get_to_robject_form(self):
         proj = Project.objects.create(name="proj_1")
 
@@ -341,6 +346,7 @@ class RobjectCreateTestCase(FunctionalTest):
             reverse("login") + f"?next=/projects/{proj.name}/robjects/create/"
         )
 
+    @skip
     def test_user_without_project_mod_permission_try_to_get_robject_form(self):
         proj = Project.objects.create(name="proj_1")
 
@@ -356,6 +362,7 @@ class RobjectCreateTestCase(FunctionalTest):
         message = self.browser.find_element_by_css_selector("h1")
         self.assertEqual(message.text, "403 Forbidden")
 
+    @skip
     def test_user_fill_form_without_name(self):
         # USER AND PROJ SETTING
         proj, user = self.set_project_and_user(
@@ -392,6 +399,7 @@ class RobjectCreateTestCase(FunctionalTest):
             "random_receptor"
         )
 
+    @skip
     def test_user_pick_already_taken_name_for_robj(self):
         # SET PROJECT AND USER
         proj, user = self.set_project_and_user(
@@ -431,6 +439,7 @@ class RobjectCreateTestCase(FunctionalTest):
             "random_receptor"
         )
 
+    @skip
     def test_user_tries_add_additional_name_that_already_exists_in_project(self):
         # SET PROJECT AND USER
         proj, user = self.set_project_and_user(
@@ -460,6 +469,7 @@ class RobjectCreateTestCase(FunctionalTest):
         self.assertEqual(
             error.text, "Name with this Name and Project already exists.")
 
+    @skip
     def test_user_tries_add_tag_that_already_exists_in_project(self):
         # SET PROJECT AND USER
         proj, user = self.set_project_and_user(
@@ -490,6 +500,7 @@ class RobjectCreateTestCase(FunctionalTest):
         self.assertEqual(
             error.text, "Tag with this Name and Project already exists.")
 
+    @skip
     def test_user_create_addit_names_but_refresh_page_instead_submit_form(self):
         # SET UP
         proj, user = self.set_project_and_user(
@@ -513,6 +524,7 @@ class RobjectCreateTestCase(FunctionalTest):
             "#id_names option")
         self.assertEqual(len(names_in_select_tag), 0)
 
+    @skip
     def test_user_come_back_to_form_after_submit_and_see_empty_names_tag(self):
         # SET UP
         proj, user = self.set_project_and_user(
