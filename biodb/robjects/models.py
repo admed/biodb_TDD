@@ -15,7 +15,7 @@ class Robject(models.Model):
     create_date = models.DateTimeField(null=True, blank=True)
     modify_by = models.ForeignKey(to=User, null=True, blank=True)
     tags = models.ManyToManyField("Tag", related_name="robjects", blank=True)
-    names = models.ManyToManyField("Name", related_name="robjects")
+    names = models.ManyToManyField("Name", related_name="robjects", blank=True)
     notes = RichTextField(blank=True)
     ref_seq = RichTextField(blank=True)
     mod_seq = RichTextField(blank=True)
@@ -39,6 +39,7 @@ class Name(models.Model):
 
 class Tag(models.Model):
     name = models.CharField(max_length=100)
+    project = models.CharField(max_length=100, blank=True)
 
     def __str__(self):
         return self.name

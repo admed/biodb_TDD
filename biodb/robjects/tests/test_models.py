@@ -218,6 +218,10 @@ class RobjectModelTestCase(TestCase):
         field = Robject._meta.get_field("receptor")
         self.assertTrue(field.blank)
 
+    def test_names_field_is_blank(self):
+        field = Robject._meta.get_field("names")
+        self.assertTrue(field.blank)
+
 
 class NameModelTestCase(TestCase):
     def test_Name_has_name_field(self):
@@ -247,3 +251,13 @@ class TagModelTestCase(TestCase):
     def test_str_method(self):
         t = Tag.objects.create(name="bye")
         self.assertEqual(t.__str__(), "bye")
+
+    def test_Tag_has_project_field(self):
+        try:
+            Tag._meta.get_field("project")
+        except models.FieldDoesNotExist:
+            self.fail("Tag doesn't have 'name' field.")
+
+    def test_project_field_is_blank(self):
+        field = Robject._meta.get_field("project")
+        self.assertTrue(field.blank)
