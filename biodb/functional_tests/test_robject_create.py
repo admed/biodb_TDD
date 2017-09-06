@@ -211,6 +211,7 @@ class RobjectCreateTestCase(FunctionalTest):
         self.fill_cke_field(field_id="cke_id_ref_clinical",
                             text="Should ever be forgot.")
 
+        time.sleep(10)
         # Finally, user fills rest of fields.
         # Name
         self.browser.find_element_by_id("id_name").send_keys("ROBJ_NAME")
@@ -239,7 +240,6 @@ class RobjectCreateTestCase(FunctionalTest):
             Name.objects.filter(robjects=r)))
         self.assertEqual(list(r.tags.all()), list(
             Tag.objects.filter(robjects=r)))
-
         # CKE fields
         self.assertEqual(
             r.ref_seq, "<p>Remember, remember the 5th of November,</p>")

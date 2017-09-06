@@ -18,7 +18,7 @@ class Robject(models.Model):
     names = models.ManyToManyField("Name", related_name="robjects")
     notes = '<p>These are notes.</p>'
     ref_seq = RichTextField()
-    mod_seq = '<p>These are mod seq.</p>'
+    mod_seq = RichTextField()
     description = "<p>This is description.</p>"
     bibliography = '<p>This is bibliography.</p>'
     ref_commercial = "<p>This is ref commercial.</p>"

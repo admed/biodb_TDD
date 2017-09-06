@@ -118,9 +118,6 @@ class RobjectModelTestCase(TestCase):
     def test_Robject_has_mod_seq_attr(self):
         self.check_Robject_has_attr("mod_seq")
 
-    def test_Robject_mod_seq_hardcoded_value(self):
-        self.assertEqual(Robject.mod_seq, '<p>These are mod seq.</p>')
-
     def test_Robject_has_description_attr(self):
         self.check_Robject_has_attr("description")
 
@@ -160,6 +157,10 @@ class RobjectModelTestCase(TestCase):
 
     def test_ref_seq_field_is_RichTextField_instance(self):
         field = Robject._meta.get_field("ref_seq")
+        self.assertIsInstance(field, RichTextField)
+
+    def test_mod_seq_field_is_RichTextField_instance(self):
+        field = Robject._meta.get_field("mod_seq")
         self.assertIsInstance(field, RichTextField)
 
 
