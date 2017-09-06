@@ -18,6 +18,7 @@ class Robject(models.Model):
     notes = '<p>These are notes.</p>'
     ref_seq = '<p>These are ref seq.</p>'
     mod_seq = '<p>These are mod seq.</p>'
+    description = "<p>This is description.</p>"
 
     def __str__(self):
         return "Robject " + str(self.id)
