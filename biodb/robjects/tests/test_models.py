@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from projects.models import Project
 from django.db import models
 from robjects.models import Name, Tag
+from ckeditor.fields import RichTextField
 
 
 class RobjectModelTestCase(TestCase):
@@ -114,9 +115,6 @@ class RobjectModelTestCase(TestCase):
     def test_Robject_has_ref_seq_attr(self):
         self.check_Robject_has_attr("ref_seq")
 
-    def test_Robject_ref_seq_hardcoded_value(self):
-        self.assertEqual(Robject.ref_seq, '<p>These are ref seq.</p>')
-
     def test_Robject_has_mod_seq_attr(self):
         self.check_Robject_has_attr("mod_seq")
 
@@ -159,6 +157,10 @@ class RobjectModelTestCase(TestCase):
 
     def test_Robject_receptor_hardcoded_value(self):
         self.assertEqual(Robject.receptor, 'receptor')
+
+    def test_ref_seq_field_is_RichTextField_instance(self):
+        field = Robject._meta.get_field("ref_seq")
+        self.assertIsInstance(field, RichTextField)
 
 
 class NameModelTestCase(TestCase):

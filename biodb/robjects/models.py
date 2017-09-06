@@ -1,6 +1,7 @@
 from django.db import models
 from projects.models import Project
 from django.contrib.auth.models import User
+from ckeditor.fields import RichTextField
 # Create your models here.
 
 
@@ -16,7 +17,7 @@ class Robject(models.Model):
     tags = models.ManyToManyField("Tag", related_name="robjects")
     names = models.ManyToManyField("Name", related_name="robjects")
     notes = '<p>These are notes.</p>'
-    ref_seq = '<p>These are ref seq.</p>'
+    ref_seq = RichTextField()
     mod_seq = '<p>These are mod seq.</p>'
     description = "<p>This is description.</p>"
     bibliography = '<p>This is bibliography.</p>'
