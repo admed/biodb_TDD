@@ -27,7 +27,6 @@ class RobjectCreateTestCase(FunctionalTest):
         name_input.send_keys(name)
         self.browser.find_element_by_css_selector(
             "input[type='submit']").click()
-        time.sleep(20)
         self.switch_to_main()
 
     def check_for_related_in_input(self, input_id, name):
@@ -66,11 +65,9 @@ class RobjectCreateTestCase(FunctionalTest):
 
     def submit_and_assert_valid_redirect(self, proj):
         self.browser.find_element_by_css_selector("button").click()
-        time.sleep(20)
         self.assertEqual(self.browser.current_url, self.live_server_url +
                          reverse("robjects_list", args=(proj.name,)))
 
-    @skip
     def test_user_fill_full_form_with_multiple_names_tags_and_files(self):
         proj, user = self.set_project_and_user(
             project_name="sample", username="username", password="password")
@@ -175,7 +172,6 @@ class RobjectCreateTestCase(FunctionalTest):
         self.assertEqual(r.ligand, "ligand")
         self.assertEqual(r.receptor, "receptor")
 
-    @skip
     def test_user_fill_form_without_less_likely_fields(self):
         proj, user = self.set_project_and_user(
             project_name="sample", username="USERNAME", password="PASSWORD")
@@ -256,7 +252,6 @@ class RobjectCreateTestCase(FunctionalTest):
         self.assertEqual(r.ligand, "XYZ_123")
         self.assertEqual(r.receptor, "mTOR")
 
-    @skip
     def test_user_creates_new_additional_names_but_not_picks_all(self):
         proj, user = self.set_project_and_user(
             project_name="proj_1", username="Albert", password="Einstein")

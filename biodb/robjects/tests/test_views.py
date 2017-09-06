@@ -242,10 +242,26 @@ class RobjectCreateViewTestCase(FunctionalTest):
         user, proj = self.default_set_up_for_robjects_page()
         response = self.client.post(
             self.get_robject_create_url(proj),
-            data={"key": "value"}
+            data={"name": "whatever"}
         )
         self.assertRedirects(response, reverse(
             "robjects_list", args=(proj.name,)))
+
+    def test_name_field_is_required(self):
+        proj = Project.objects.create(name="proj")
+        response = self.client.post(
+            self.get_robject_create_url(proj),
+            data={"hello": "world"}  # request.POST pass, form.is_valid() fails
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.post(
+            self.get_robject_create_url(proj),
+            data={"name": "whatever"}
+        )
+
+        self.assertEqual(response.status_code, 302)
 
 
 class NameCreateViewTestCase(FunctionalTest):
