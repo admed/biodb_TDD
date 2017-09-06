@@ -17,6 +17,7 @@ class Robject(models.Model):
     names = models.ManyToManyField("Name", related_name="robjects")
     notes = '<p>These are notes.</p>'
     ref_seq = '<p>These are ref seq.</p>'
+    mod_seq = '<p>These are mod seq.</p>'
 
     def __str__(self):
         return "Robject " + str(self.id)

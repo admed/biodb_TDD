@@ -119,6 +119,15 @@ class RobjectModelTestCase(TestCase):
     def test_Robject_ref_seq_hardcoded_value(self):
         self.assertEqual(Robject.ref_seq, '<p>These are ref seq.</p>')
 
+    def test_Robject_has_mod_seq_attr(self):
+        try:
+            Robject.mod_seq
+        except:
+            self.fail("Robject doesn't have 'mod_seq' attr.")
+
+    def test_Robject_mod_seq_hardcoded_value(self):
+        self.assertEqual(Robject.mod_seq, '<p>These are mod seq.</p>')
+
 
 class NameModelTestCase(TestCase):
     def test_Name_has_name_field(self):
