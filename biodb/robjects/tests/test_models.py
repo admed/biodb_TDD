@@ -83,11 +83,11 @@ class RobjectModelTestCase(TestCase):
         field = Robject._meta.get_field("create_by")
         self.assertTrue(field.blank)
 
-    def test_create_date_field_is_not_blank(self):
+    def test_create_date_field_is_blank(self):
         field = Robject._meta.get_field("create_date")
         self.assertTrue(field.blank)
 
-    def test_modify_by_field_is_not_blank(self):
+    def test_modify_by_field_is_blank(self):
         field = Robject._meta.get_field("modify_by")
         self.assertTrue(field.blank)
 
@@ -121,14 +121,8 @@ class RobjectModelTestCase(TestCase):
     def test_Robject_has_description_attr(self):
         self.check_Robject_has_attr("description")
 
-    def test_Robject_description_hardcoded_value(self):
-        self.assertEqual(Robject.description, "<p>This is description.</p>")
-
     def test_Robject_has_bibliography_attr(self):
         self.check_Robject_has_attr("bibliography")
-
-    def test_Robject_bibliography_hardcoded_value(self):
-        self.assertEqual(Robject.bibliography, '<p>This is bibliography.</p>')
 
     def test_Robject_has_ref_commercial_attr(self):
         self.check_Robject_has_attr("ref_commercial")
@@ -167,6 +161,30 @@ class RobjectModelTestCase(TestCase):
         field = Robject._meta.get_field("receptor")
         self.assertIsInstance(field, models.CharField)
         self.assertEqual(field.max_length, 100)
+
+    def test_notes_field_is_RichTextField_instance(self):
+        field = Robject._meta.get_field("notes")
+        self.assertIsInstance(field, RichTextField)
+
+    def test_bibliography_field_is_RichTextField_instance(self):
+        field = Robject._meta.get_field("bibliography")
+        self.assertIsInstance(field, RichTextField)
+
+    def test_description_field_is_RichTextField_instance(self):
+        field = Robject._meta.get_field("description")
+        self.assertIsInstance(field, RichTextField)
+
+    def test_notes_field_is_blank(self):
+        field = Robject._meta.get_field("notes")
+        self.assertTrue(field.blank)
+
+    def test_bibliography_field_is_blank(self):
+        field = Robject._meta.get_field("bibliography")
+        self.assertTrue(field.blank)
+
+    def test_description_field_is_blank(self):
+        field = Robject._meta.get_field("description")
+        self.assertTrue(field.blank)
 
 
 class NameModelTestCase(TestCase):

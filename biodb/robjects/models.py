@@ -16,11 +16,11 @@ class Robject(models.Model):
     modify_by = models.ForeignKey(to=User, null=True, blank=True)
     tags = models.ManyToManyField("Tag", related_name="robjects")
     names = models.ManyToManyField("Name", related_name="robjects")
-    notes = '<p>These are notes.</p>'
+    notes = RichTextField(blank=True)
     ref_seq = RichTextField()
     mod_seq = RichTextField()
-    description = "<p>This is description.</p>"
-    bibliography = '<p>This is bibliography.</p>'
+    description = RichTextField(blank=True)
+    bibliography = RichTextField(blank=True)
     ref_commercial = RichTextField()
     ref_clinical = RichTextField()
     ligand = models.CharField(max_length=100)
