@@ -186,6 +186,38 @@ class RobjectModelTestCase(TestCase):
         field = Robject._meta.get_field("description")
         self.assertTrue(field.blank)
 
+    def test_author_field_is_blank(self):
+        field = Robject._meta.get_field("author")
+        self.assertTrue(field.blank)
+
+    def test_tags_field_is_blank(self):
+        field = Robject._meta.get_field("tags")
+        self.assertTrue(field.blank)
+
+    def test_ref_seq_field_is_blank(self):
+        field = Robject._meta.get_field("ref_seq")
+        self.assertTrue(field.blank)
+
+    def test_mod_seq_field_is_blank(self):
+        field = Robject._meta.get_field("mod_seq")
+        self.assertTrue(field.blank)
+
+    def test_ref_commercial_field_is_blank(self):
+        field = Robject._meta.get_field("ref_commercial")
+        self.assertTrue(field.blank)
+
+    def test_ref_clinical_field_is_blank(self):
+        field = Robject._meta.get_field("ref_clinical")
+        self.assertTrue(field.blank)
+
+    def test_ligand_field_is_blank(self):
+        field = Robject._meta.get_field("ligand")
+        self.assertTrue(field.blank)
+
+    def test_receptor_field_is_blank(self):
+        field = Robject._meta.get_field("receptor")
+        self.assertTrue(field.blank)
+
 
 class NameModelTestCase(TestCase):
     def test_Name_has_name_field(self):

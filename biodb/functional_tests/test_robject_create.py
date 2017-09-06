@@ -66,7 +66,6 @@ class RobjectCreateTestCase(FunctionalTest):
 
     def submit_and_assert_valid_redirect(self, proj):
         self.browser.find_element_by_css_selector("button").click()
-        time.sleep(20)
         self.assertEqual(self.browser.current_url, self.live_server_url +
                          reverse("robjects_list", args=(proj.name,)))
 
@@ -254,7 +253,6 @@ class RobjectCreateTestCase(FunctionalTest):
         self.assertEqual(r.ligand, "XYZ_123")
         self.assertEqual(r.receptor, "mTOR")
 
-    @skip
     def test_user_creates_new_additional_names_but_not_picks_all(self):
         proj, user = self.set_project_and_user(
             project_name="proj_1", username="Albert", password="Einstein")
