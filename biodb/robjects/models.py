@@ -23,7 +23,7 @@ class Robject(models.Model):
     bibliography = '<p>This is bibliography.</p>'
     ref_commercial = RichTextField()
     ref_clinical = RichTextField()
-    ligand = "ligand"
+    ligand = models.CharField(max_length=100)
     receptor = "receptor"
 
     def __str__(self):
