@@ -129,6 +129,37 @@ class RobjectModelTestCase(TestCase):
     def test_Robject_description_hardcoded_value(self):
         self.assertEqual(Robject.description, "<p>This is description.</p>")
 
+    def test_Robject_has_bibliography_attr(self):
+        self.check_Robject_has_attr("bibliography")
+
+    def test_Robject_bibliography_hardcoded_value(self):
+        self.assertEqual(Robject.bibliography, '<p>This is bibliography.</p>')
+
+    def test_Robject_has_ref_commercial_attr(self):
+        self.check_Robject_has_attr("ref_commercial")
+
+    def test_Robject_ref_commercial_hardcoded_value(self):
+        self.assertEqual(Robject.ref_commercial,
+                         "<p>This is ref commercial.</p>")
+
+    def test_Robject_has_ref_clinical_attr(self):
+        self.check_Robject_has_attr("ref_clinical")
+
+    def test_Robject_ref_clinical_hardcoded_value(self):
+        self.assertEqual(Robject.ref_clinical, '<p>This is ref clinical.</p>')
+
+    def test_Robject_has_ligand_attr(self):
+        self.check_Robject_has_attr("ligand")
+
+    def test_Robject_ligand_hardcoded_value(self):
+        self.assertEqual(Robject.ligand, 'ligand')
+
+    def test_Robject_has_ligand_attr(self):
+        self.check_Robject_has_attr("receptor")
+
+    def test_Robject_receptor_hardcoded_value(self):
+        self.assertEqual(Robject.receptor, 'receptor')
+
 
 class NameModelTestCase(TestCase):
     def test_Name_has_name_field(self):

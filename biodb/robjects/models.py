@@ -19,6 +19,11 @@ class Robject(models.Model):
     ref_seq = '<p>These are ref seq.</p>'
     mod_seq = '<p>These are mod seq.</p>'
     description = "<p>This is description.</p>"
+    bibliography = '<p>This is bibliography.</p>'
+    ref_commercial = "<p>This is ref commercial.</p>"
+    ref_clinical = '<p>This is ref clinical.</p>'
+    ligand = "ligand"
+    receptor = "receptor"
 
     def __str__(self):
         return "Robject " + str(self.id)
