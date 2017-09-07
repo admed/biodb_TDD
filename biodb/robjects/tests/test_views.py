@@ -8,6 +8,7 @@ from django import forms
 from django_addanother.views import CreatePopupMixin
 from django.views import generic
 from robjects.views import NameCreateView, TagCreateView
+from biodb import settings
 
 
 class RObjectsListViewTests(FunctionalTest):
@@ -185,7 +186,7 @@ class RobjectCreateViewTestCase(FunctionalTest):
         return reverse("robject_create", args=(proj.name,))
 
     def get_form_from_context(self):
-        proj = Project.objects.create(name="proj")
+        user, proj = self.default_set_up_for_robjects_page()
         response = self.client.get(
             reverse("robject_create", args=(proj.name,)))
         form = response.context["form"]
@@ -193,14 +194,14 @@ class RobjectCreateViewTestCase(FunctionalTest):
         return form
 
     def test_renders_template(self):
-        proj = Project.objects.create(name="proj")
+        user, proj = self.default_set_up_for_robjects_page()
         response = self.client.get(
             reverse("robject_create", args=(proj.name,)))
         self.assertTemplateUsed(
             response, template_name="robjects/robject_create.html")
 
     def test_renders_form_in_context(self):
-        proj = Project.objects.create(name="proj")
+        user, proj = self.default_set_up_for_robjects_page()
 
         response = self.client.get(
             reverse("robject_create", args=(proj.name,)))
@@ -248,7 +249,7 @@ class RobjectCreateViewTestCase(FunctionalTest):
             "robjects_list", args=(proj.name,)))
 
     def test_name_field_is_required(self):
-        proj = Project.objects.create(name="proj")
+        user, proj = self.default_set_up_for_robjects_page()
         response = self.client.post(
             self.get_robject_create_url(proj),
             data={"hello": "world"}  # request.POST pass, form.is_valid() fails
@@ -262,6 +263,26 @@ class RobjectCreateViewTestCase(FunctionalTest):
         )
 
         self.assertEqual(response.status_code, 302)
+
+    def test_annonymous_user_is_redirect_to_login_page_on_get(self):
+        proj = Project.objects.create(name="proj")
+        response = self.client.get(self.get_robject_create_url(proj))
+
+        self.assertRedirects(
+            response,
+            settings.LOGIN_URL + "?next=" + self.get_robject_create_url(proj)
+        )
+
+    def test_annonymous_user_is_redirect_to_login_page_on_post(self):
+        proj = Project.objects.create(name="proj")
+        response = self.client.post(self.get_robject_create_url(proj), data={})
+
+        self.assertRedirects(
+            response,
+            settings.LOGIN_URL + "?next=" + self.get_robject_create_url(proj)
+        )
+
+    # def test_user_without_permissions_gets_403
 
 
 class NameCreateViewTestCase(FunctionalTest):

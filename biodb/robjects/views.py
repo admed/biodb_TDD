@@ -15,6 +15,7 @@ from django_addanother.widgets import AddAnotherWidgetWrapper
 from django.core.urlresolvers import reverse
 from django.shortcuts import redirect
 from django_addanother.views import CreatePopupMixin
+from guardian.mixins import LoginRequiredMixin as GuardianLoginRequiredMixin
 # Create your views here.
 
 
@@ -118,7 +119,7 @@ class SearchRobjectsView(LoginRequiredMixin, View):
         return self.model.objects.filter(qs, project__name=project_name)
 
 
-class RobjectCreateView(CreateView):
+class RobjectCreateView(GuardianLoginRequiredMixin, CreateView):
     model = Robject
     template_name = "robjects/robject_create.html"
 

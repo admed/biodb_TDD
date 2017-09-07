@@ -9,17 +9,6 @@
     <form class="" action="" method="post">
       {% csrf_token %}
       {{ form }}
-      <div id="cke_id_notes">
-        <iframe src="" width="" height=""></iframe>
-      </div>
-      <div id="cke_id_description">
-        <iframe src="" width="" height=""></iframe>
-      </div>
-      <div id="cke_id_bibliography">
-        <iframe src="" width="" height=""></iframe>
-      </div>
-      <input id="id_ligand"></input>
-      <input id="id_receptor"></input>
       <button name="button">Submit</button>
       <script src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
       {{ form.media }}
