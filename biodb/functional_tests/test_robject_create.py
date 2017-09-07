@@ -68,7 +68,6 @@ class RobjectCreateTestCase(FunctionalTest):
         self.assertEqual(self.browser.current_url, self.live_server_url +
                          reverse("robjects_list", args=(proj.name,)))
 
-    @skip
     def test_user_fill_full_form_with_multiple_names_tags_and_files(self):
         proj, user = self.set_project_and_user(
             project_name="sample", username="username", password="password")
@@ -173,7 +172,6 @@ class RobjectCreateTestCase(FunctionalTest):
         self.assertEqual(r.ligand, "ligand")
         self.assertEqual(r.receptor, "receptor")
 
-    @skip
     def test_user_fill_form_without_less_likely_fields(self):
         proj, user = self.set_project_and_user(
             project_name="sample", username="USERNAME", password="PASSWORD")
@@ -254,7 +252,6 @@ class RobjectCreateTestCase(FunctionalTest):
         self.assertEqual(r.ligand, "XYZ_123")
         self.assertEqual(r.receptor, "mTOR")
 
-    @skip
     def test_user_creates_new_additional_names_but_not_picks_all(self):
         proj, user = self.set_project_and_user(
             project_name="proj_1", username="Albert", password="Einstein")
@@ -298,7 +295,6 @@ class RobjectCreateTestCase(FunctionalTest):
         self.assertEqual(r.ligand, "C6H12O6")
         self.assertEqual(r.receptor, "USP8")
 
-    @skip
     def test_user_creates_new_tag_and_chooses_existing(self):
         proj, user = self.set_project_and_user(
             project_name="random_proj", username="Muhammad", password="Ali")
@@ -344,7 +340,6 @@ class RobjectCreateTestCase(FunctionalTest):
             reverse("login") + f"?next=/projects/{proj.name}/robjects/create/"
         )
 
-    @skip
     def test_user_without_project_mod_permission_try_to_get_robject_form(self):
         proj = Project.objects.create(name="proj_1")
 

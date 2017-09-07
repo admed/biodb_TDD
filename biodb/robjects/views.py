@@ -16,6 +16,8 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import redirect
 from django_addanother.views import CreatePopupMixin
 from guardian.mixins import LoginRequiredMixin as GuardianLoginRequiredMixin
+from guardian.mixins import PermissionRequiredMixin
+from biodb import settings
 # Create your views here.
 
 
@@ -119,9 +121,20 @@ class SearchRobjectsView(LoginRequiredMixin, View):
         return self.model.objects.filter(qs, project__name=project_name)
 
 
-class RobjectCreateView(GuardianLoginRequiredMixin, CreateView):
+class RobjectCreateView(CreateView):
     model = Robject
     template_name = "robjects/robject_create.html"
+    # raise_exception = True
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated():
+            permission_obj = self.get_permission_object()
+            if request.user.has_perm("projects.can_modify_project", permission_obj):
+                return super().dispatch(request, *args, **kwargs)
+            else:
+                raise PermissionDenied
+        else:
+            return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
 
     def get_form_class(self):
         form = forms.modelform_factory(model=Robject, fields="__all__", widgets={
@@ -138,6 +151,10 @@ class RobjectCreateView(GuardianLoginRequiredMixin, CreateView):
 
     def get_success_url(self):
         return reverse("robjects_list", args=(self.args[0],))
+
+    def get_permission_object(self):
+        project = Project.objects.get(name=self.args[0])
+        return project
 
 
 class NameCreateView(CreatePopupMixin, CreateView):

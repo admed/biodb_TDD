@@ -9,6 +9,7 @@ from django_addanother.views import CreatePopupMixin
 from django.views import generic
 from robjects.views import NameCreateView, TagCreateView
 from biodb import settings
+from guardian.shortcuts import assign_perm
 
 
 class RObjectsListViewTests(FunctionalTest):
@@ -187,6 +188,7 @@ class RobjectCreateViewTestCase(FunctionalTest):
 
     def get_form_from_context(self):
         user, proj = self.default_set_up_for_robjects_page()
+        assign_perm("projects.can_modify_project", user, proj)
         response = self.client.get(
             reverse("robject_create", args=(proj.name,)))
         form = response.context["form"]
@@ -195,6 +197,7 @@ class RobjectCreateViewTestCase(FunctionalTest):
 
     def test_renders_template(self):
         user, proj = self.default_set_up_for_robjects_page()
+        assign_perm("projects.can_modify_project", user, proj)
         response = self.client.get(
             reverse("robject_create", args=(proj.name,)))
         self.assertTemplateUsed(
@@ -202,7 +205,7 @@ class RobjectCreateViewTestCase(FunctionalTest):
 
     def test_renders_form_in_context(self):
         user, proj = self.default_set_up_for_robjects_page()
-
+        assign_perm("projects.can_modify_project", user, proj)
         response = self.client.get(
             reverse("robject_create", args=(proj.name,)))
 
@@ -241,6 +244,7 @@ class RobjectCreateViewTestCase(FunctionalTest):
 
     def test_view_redirects_to_robject_list_page_on_post(self):
         user, proj = self.default_set_up_for_robjects_page()
+        assign_perm("projects.can_modify_project", user, proj)
         response = self.client.post(
             self.get_robject_create_url(proj),
             data={"name": "whatever"}
@@ -250,6 +254,7 @@ class RobjectCreateViewTestCase(FunctionalTest):
 
     def test_name_field_is_required(self):
         user, proj = self.default_set_up_for_robjects_page()
+        assign_perm("projects.can_modify_project", user, proj)
         response = self.client.post(
             self.get_robject_create_url(proj),
             data={"hello": "world"}  # request.POST pass, form.is_valid() fails
@@ -282,7 +287,11 @@ class RobjectCreateViewTestCase(FunctionalTest):
             settings.LOGIN_URL + "?next=" + self.get_robject_create_url(proj)
         )
 
-    # def test_user_without_permissions_gets_403
+    def test_user_without_project_mod_permission_gets_403_on_get(self):
+        user, proj = self.default_set_up_for_robjects_page()
+        response = self.client.get(self.get_robject_create_url(proj))
+
+        self.assertEqual(response.status_code, 403)
 
 
 class NameCreateViewTestCase(FunctionalTest):
