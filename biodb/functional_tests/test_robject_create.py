@@ -464,6 +464,7 @@ class RobjectCreateTestCase(FunctionalTest):
             "random_receptor"
         )
 
+    @skip
     def test_user_tries_add_additional_name_that_already_exists_in_project(self):
         # SET PROJECT AND USER
         proj, user = self.set_project_and_user(
@@ -493,7 +494,6 @@ class RobjectCreateTestCase(FunctionalTest):
         self.assertEqual(
             error.text, "Name with this Name already exists.")
 
-    @skip
     def test_user_tries_add_tag_that_already_exists_in_project(self):
         # SET PROJECT AND USER
         proj, user = self.set_project_and_user(
@@ -522,7 +522,7 @@ class RobjectCreateTestCase(FunctionalTest):
         # User sees error message.
         error = self.browser.find_element_by_css_selector("ul.errorlist li")
         self.assertEqual(
-            error.text, "Tag with this Name and Project already exists.")
+            error.text, "Tag with this Name already exists.")
 
     @skip
     def test_user_create_addit_names_but_refresh_page_instead_submit_form(self):

@@ -277,3 +277,8 @@ class TagModelTestCase(TestCase):
     def test_project_field_is_blank(self):
         field = Robject._meta.get_field("project")
         self.assertTrue(field.blank)
+
+    def test_name_field_is_uniqe(self):
+        Tag.objects.create(name="taken")
+        with self.assertRaises(db.IntegrityError):
+            Tag.objects.create(name="taken")
