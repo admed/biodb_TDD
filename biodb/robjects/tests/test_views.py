@@ -302,6 +302,10 @@ class RobjectCreateViewTestCase(FunctionalTest):
         self.client.get(self.get_robject_create_url(proj))
         self.assertEqual(Name.objects.filter(robjects=None).count(), 0)
 
+    def test_rendered_form_has_no_project_field(self):
+        form = self.get_form_from_context()
+        self.assertNotIn("project", form.fields)
+
 
 class NameCreateViewTestCase(FunctionalTest):
     def test_view_parents(self):

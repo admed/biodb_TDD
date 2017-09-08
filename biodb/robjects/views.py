@@ -137,16 +137,19 @@ class RobjectCreateView(CreateView):
             return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
 
     def get_form_class(self):
-        form = forms.modelform_factory(model=Robject, fields="__all__", widgets={
-            "names": AddAnotherWidgetWrapper(
-                widget=forms.SelectMultiple,
-                add_related_url=reverse("names_create", args=(self.args[0],))
-            ),
-            "tags":  AddAnotherWidgetWrapper(
-                widget=forms.SelectMultiple,
-                add_related_url=reverse("tags_create", args=(self.args[0],))
-            )
-        })
+        form = forms.modelform_factory(
+            model=Robject, fields="__all__", exclude=["project"], widgets={
+                "names": AddAnotherWidgetWrapper(
+                    widget=forms.SelectMultiple,
+                    add_related_url=reverse(
+                        "names_create", args=(self.args[0],))
+                ),
+                "tags":  AddAnotherWidgetWrapper(
+                    widget=forms.SelectMultiple,
+                    add_related_url=reverse(
+                        "tags_create", args=(self.args[0],))
+                )
+            })
         return form
 
     def get_success_url(self):
