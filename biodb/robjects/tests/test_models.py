@@ -233,6 +233,10 @@ class RobjectModelTestCase(TestCase):
                 Robject.objects.create(project=proj_1, name="taken_name")
         Robject.objects.create(project=proj_2, name="taken_name")
 
+    def test_empty_Robject_name_is_null(self):
+        r = Robject.objects.create()
+        self.assertEqual(r.name, None)
+
 
 class NameModelTestCase(TestCase):
     def test_Name_has_name_field(self):

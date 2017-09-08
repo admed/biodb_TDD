@@ -494,6 +494,7 @@ class RobjectCreateTestCase(FunctionalTest):
         self.assertEqual(
             error.text, "Name with this Name already exists.")
 
+    @skip
     def test_user_tries_add_tag_that_already_exists_in_project(self):
         # SET PROJECT AND USER
         proj, user = self.set_project_and_user(

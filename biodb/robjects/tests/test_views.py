@@ -293,6 +293,15 @@ class RobjectCreateViewTestCase(FunctionalTest):
 
         self.assertEqual(response.status_code, 403)
 
+    def test_view_removes_all_robject_less_names_on_get(self):
+        Name.objects.create(name="name_1")
+        Name.objects.create(name="name_2")
+        self.assertEqual(Name.objects.filter(robjects=None).count(), 2)
+        user, proj = self.default_set_up_for_robjects_page()
+        assign_perm("projects.can_modify_project", user, proj)
+        self.client.get(self.get_robject_create_url(proj))
+        self.assertEqual(Name.objects.filter(robjects=None).count(), 0)
+
 
 class NameCreateViewTestCase(FunctionalTest):
     def test_view_parents(self):

@@ -9,7 +9,7 @@ class Robject(models.Model):
     project = models.ForeignKey(to=Project, null=True, blank=True)
     author = models.ForeignKey(
         to=User, blank=True, null=True, related_name="robjects_in_which_user_is_author")
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, null=True)
     create_by = models.ForeignKey(
         to=User, related_name="robjects_created_by_user", null=True, blank=True)
     create_date = models.DateTimeField(null=True, blank=True)

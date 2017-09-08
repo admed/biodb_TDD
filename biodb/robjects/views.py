@@ -156,6 +156,10 @@ class RobjectCreateView(CreateView):
         project = Project.objects.get(name=self.args[0])
         return project
 
+    def get(self, request, *args, **kwargs):
+        Name.objects.filter(robjects=None).delete()
+        return super().get(request, *args, **kwargs)
+
 
 class NameCreateView(CreatePopupMixin, CreateView):
     model = Name
