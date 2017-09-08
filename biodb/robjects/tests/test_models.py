@@ -5,6 +5,7 @@ from projects.models import Project
 from django.db import models
 from robjects.models import Name, Tag
 from ckeditor.fields import RichTextField
+from django import db
 
 
 class RobjectModelTestCase(TestCase):
@@ -223,12 +224,11 @@ class RobjectModelTestCase(TestCase):
         self.assertTrue(field.blank)
 
     def test_Robject_name_is_uniqe_within_project_only(self):
-        from django.db import IntegrityError
         from django.db import transaction
         proj_1 = Project.objects.create(name="proj_1")
         proj_2 = Project.objects.create(name="proj_2")
         Robject.objects.create(project=proj_1, name="taken_name")
-        with self.assertRaises(IntegrityError):
+        with self.assertRaises(db.IntegrityError):
             with transaction.atomic():
                 Robject.objects.create(project=proj_1, name="taken_name")
         Robject.objects.create(project=proj_2, name="taken_name")
@@ -247,6 +247,11 @@ class NameModelTestCase(TestCase):
     def test_str_method(self):
         n = Name.objects.create(name="hello")
         self.assertEqual(n.__str__(), "hello")
+
+    def test_name_field_is_uniqe(self):
+        Name.objects.create(name="taken")
+        with self.assertRaises(db.IntegrityError):
+            Name.objects.create(name="taken")
 
 
 class TagModelTestCase(TestCase):

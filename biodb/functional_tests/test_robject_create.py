@@ -420,6 +420,7 @@ class RobjectCreateTestCase(FunctionalTest):
         # He submits the form. Nothing happens, form process normally.
         self.submit_and_assert_valid_redirect(proj)
 
+    @skip
     def test_user_pick_already_taken_name_for_robj(self):
         # SET PROJECT AND USER
         proj, user = self.set_project_and_user(
@@ -463,7 +464,6 @@ class RobjectCreateTestCase(FunctionalTest):
             "random_receptor"
         )
 
-    @skip
     def test_user_tries_add_additional_name_that_already_exists_in_project(self):
         # SET PROJECT AND USER
         proj, user = self.set_project_and_user(
@@ -491,7 +491,7 @@ class RobjectCreateTestCase(FunctionalTest):
         # User sees error message.
         error = self.browser.find_element_by_css_selector("ul.errorlist li")
         self.assertEqual(
-            error.text, "Name with this Name and Project already exists.")
+            error.text, "Name with this Name already exists.")
 
     @skip
     def test_user_tries_add_tag_that_already_exists_in_project(self):
