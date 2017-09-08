@@ -138,7 +138,7 @@ class RobjectCreateView(CreateView):
 
     def get_form_class(self):
         form = forms.modelform_factory(
-            model=Robject, fields="__all__", exclude=["project"], widgets={
+            model=Robject, fields="__all__", exclude=["project", "create_by"], widgets={
                 "names": AddAnotherWidgetWrapper(
                     widget=forms.SelectMultiple,
                     add_related_url=reverse(

@@ -306,6 +306,10 @@ class RobjectCreateViewTestCase(FunctionalTest):
         form = self.get_form_from_context()
         self.assertNotIn("project", form.fields)
 
+    def test_rendered_form_has_no_project_field(self):
+        form = self.get_form_from_context()
+        self.assertNotIn("create_by", form.fields)
+
 
 class NameCreateViewTestCase(FunctionalTest):
     def test_view_parents(self):
