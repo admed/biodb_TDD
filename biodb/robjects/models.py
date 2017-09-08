@@ -29,6 +29,9 @@ class Robject(models.Model):
     def __str__(self):
         return "Robject " + str(self.id)
 
+    class Meta:
+        unique_together = ("name", "project")
+
 
 class Name(models.Model):
     name = models.CharField(max_length=100)

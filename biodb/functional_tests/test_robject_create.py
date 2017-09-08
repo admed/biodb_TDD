@@ -398,6 +398,7 @@ class RobjectCreateTestCase(FunctionalTest):
             "random_receptor"
         )
 
+    @skip
     def test_user_uses_name_for_robj_from_already_used_in_different_proj(self):
         # SET PROJECT AND USER
         proj, user = self.set_project_and_user(
@@ -419,7 +420,6 @@ class RobjectCreateTestCase(FunctionalTest):
         # He submits the form. Nothing happens, form process normally.
         self.submit_and_assert_valid_redirect(proj)
 
-    @skip
     def test_user_pick_already_taken_name_for_robj(self):
         # SET PROJECT AND USER
         proj, user = self.set_project_and_user(
@@ -431,21 +431,25 @@ class RobjectCreateTestCase(FunctionalTest):
         # User want to create new robject. He goes to robject form page.
         self.get_robject_create_page(proj=proj)
 
-        # User fill some fields but picks name already existing in project.
+        # User picks project and name already existing in this project.
         self.browser.find_element_by_css_selector(
             "#id_name").send_keys("xyz")
+
+        # He fill some additional fields.
         self.browser.find_element_by_css_selector(
             "#id_ligand").send_keys("random_ligand")
         self.browser.find_element_by_css_selector(
             "#id_receptor").send_keys("random_receptor")
 
         # He submits the form.
+        self.browser.find_element_by_css_selector(
+            "select#id_project option[value='1']").click()
         self.browser.find_element_by_tag_name("button").click()
 
         # User sees name validation error message above name field.
         error = self.browser.find_element_by_css_selector("ul.errorlist li")
         self.assertEqual(
-            error.text, "Robject with such name already exists in this project")
+            error.text, "Robject with this Name and Project already exists.")
 
         # All previously filled fields remains unchanged.
         self.assertEqual(

@@ -222,6 +222,17 @@ class RobjectModelTestCase(TestCase):
         field = Robject._meta.get_field("names")
         self.assertTrue(field.blank)
 
+    def test_Robject_name_is_uniqe_within_project_only(self):
+        from django.db import IntegrityError
+        from django.db import transaction
+        proj_1 = Project.objects.create(name="proj_1")
+        proj_2 = Project.objects.create(name="proj_2")
+        Robject.objects.create(project=proj_1, name="taken_name")
+        with self.assertRaises(IntegrityError):
+            with transaction.atomic():
+                Robject.objects.create(project=proj_1, name="taken_name")
+        Robject.objects.create(project=proj_2, name="taken_name")
+
 
 class NameModelTestCase(TestCase):
     def test_Name_has_name_field(self):
