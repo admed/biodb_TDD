@@ -8,6 +8,8 @@ import os
 from robjects.models import Robject, Name, Tag
 from unittest import skip
 from selenium.common.exceptions import NoSuchElementException
+import datetime
+from django.utils import timezone
 
 
 @override_settings(DEBUG=True)
@@ -602,7 +604,7 @@ class RobjectCreateTestCase(FunctionalTest):
             self.browser.find_element_by_css_selector("#id_modify_date")
 
         # Now user submits form.
-        moment_of_creation = time.time()
+        moment_of_creation = timezone.now()
         self.submit_and_assert_valid_redirect(proj=proj)
 
         # He realize that even though he didnt specify project, create_by,
@@ -612,5 +614,11 @@ class RobjectCreateTestCase(FunctionalTest):
         self.assertEqual(r.project, proj)
         self.assertEqual(r.create_by, user)
         self.assertEqual(r.modify_by, user)
-        self.assertAlmostEqual(r.create_date, moment_of_creation)
-        self.assertAlmostEqual(r.modify_date, moment_of_creation)
+
+        # NOTE: this assertions may crash becouse they depends on time execution
+        # which may vary
+        # Consider this solution: https://bytes.vokal.io/almost-equal/
+        self.assertAlmostEqual(
+            r.create_date, moment_of_creation, delta=datetime.timedelta(seconds=1))
+        self.assertAlmostEqual(
+            r.modify_date, moment_of_creation, delta=datetime.timedelta(seconds=1))

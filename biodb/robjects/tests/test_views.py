@@ -306,9 +306,45 @@ class RobjectCreateViewTestCase(FunctionalTest):
         form = self.get_form_from_context()
         self.assertNotIn("project", form.fields)
 
-    def test_rendered_form_has_no_project_field(self):
+    def test_rendered_form_has_no_create_by_field(self):
         form = self.get_form_from_context()
         self.assertNotIn("create_by", form.fields)
+
+    def test_rendered_form_has_no_modify_by_field(self):
+        form = self.get_form_from_context()
+        self.assertNotIn("modify_by", form.fields)
+
+    def test_rendered_form_has_no_create_date_field(self):
+        form = self.get_form_from_context()
+        self.assertNotIn("create_date", form.fields)
+
+    def test_rendered_form_has_no_modify_date_field(self):
+        form = self.get_form_from_context()
+        self.assertNotIn("modify_date", form.fields)
+
+    def test_view_assign_project_to_new_robject(self):
+        user, proj = self.default_set_up_for_robjects_page()
+        assign_perm("projects.can_modify_project", user, proj)
+        response = self.client.post(
+            self.get_robject_create_url(proj), {"name": "test"})
+        r = Robject.objects.last()
+        self.assertEqual(r.project, proj)
+
+    def test_view_assign_create_by_to_new_robject(self):
+        user, proj = self.default_set_up_for_robjects_page()
+        assign_perm("projects.can_modify_project", user, proj)
+        response = self.client.post(
+            self.get_robject_create_url(proj), {"name": "test"})
+        r = Robject.objects.last()
+        self.assertEqual(r.create_by, user)
+
+    def test_view_assign_modify_by_to_new_robject(self):
+        user, proj = self.default_set_up_for_robjects_page()
+        assign_perm("projects.can_modify_project", user, proj)
+        response = self.client.post(
+            self.get_robject_create_url(proj), {"name": "test"})
+        r = Robject.objects.last()
+        self.assertEqual(r.modify_by, user)
 
 
 class NameCreateViewTestCase(FunctionalTest):

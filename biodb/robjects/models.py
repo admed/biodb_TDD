@@ -12,8 +12,10 @@ class Robject(models.Model):
     name = models.CharField(max_length=100, null=True)
     create_by = models.ForeignKey(
         to=User, related_name="robjects_created_by_user", null=True, blank=True)
-    create_date = models.DateTimeField(null=True, blank=True)
+    create_date = models.DateTimeField(
+        null=True, blank=True, auto_now_add=True)
     modify_by = models.ForeignKey(to=User, null=True, blank=True)
+    modify_date = models.DateTimeField(null=True, auto_now=True)
     tags = models.ManyToManyField("Tag", related_name="robjects", blank=True)
     names = models.ManyToManyField("Name", related_name="robjects", blank=True)
     notes = RichTextField(blank=True)

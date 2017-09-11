@@ -6,6 +6,8 @@ from django.db import models
 from robjects.models import Name, Tag
 from ckeditor.fields import RichTextField
 from django import db
+import datetime
+from django.utils import timezone
 
 
 class RobjectModelTestCase(TestCase):
@@ -236,6 +238,29 @@ class RobjectModelTestCase(TestCase):
     def test_empty_Robject_name_is_null(self):
         r = Robject.objects.create()
         self.assertEqual(r.name, None)
+
+    def test_create_date_field_is_assigned_automatically_to_creation_time(self):
+        # NOTE: this test may crash becouse it depends on time execution which
+        # may vary
+        # Consider this solution: https://bytes.vokal.io/almost-equal/
+        t = timezone.now()
+        r = Robject.objects.create()
+        self.assertAlmostEqual(r.create_date, t,
+                               delta=datetime.timedelta(milliseconds=1))
+
+    def test_modify_date_is_assigned_automatically_when_robject_is_saved(self):
+        # NOTE: this test may crash becouse it depends on time execution which
+        # may vary
+        # Consider this solution: https://bytes.vokal.io/almost-equal/
+        t1 = timezone.now()
+        r = Robject.objects.create()
+        self.assertAlmostEqual(r.modify_date, t1,
+                               delta=datetime.timedelta(milliseconds=1))
+
+        t2 = timezone.now()
+        r.save()
+        self.assertAlmostEqual(r.modify_date, t2,
+                               delta=datetime.timedelta(milliseconds=1))
 
 
 class NameModelTestCase(TestCase):
