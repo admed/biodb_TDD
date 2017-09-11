@@ -181,5 +181,11 @@ class NameCreateView(CreatePopupMixin, CreateView):
 
 class TagCreateView(CreatePopupMixin, CreateView):
     model = Tag
-    fields = "__all__"
+    fields = ["name"]
     template_name = "robjects/tags_create.html"
+    success_url = "/"  # not required, for test pass purpose only!
+
+    def form_valid(self, form):
+        tag = form.save()
+        tag.project = Project.objects.get(name=self.args[0])
+        return super().form_valid(form)

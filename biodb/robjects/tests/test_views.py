@@ -372,10 +372,20 @@ class TagCreateViewTestCase(FunctionalTest):
     def test_view_model_attr(self):
         self.assertEqual(TagCreateView.model, Tag)
 
-    def test_view_fields_attr(self):
-        self.assertEqual(TagCreateView.fields, "__all__")
-
     def test_render_template(self):
         proj = Project.objects.create(name="proj_1")
         response = self.client.get(reverse("tags_create", args=(proj.name,)))
         self.assertTemplateUsed(response, "robjects/tags_create.html")
+
+    def test_view_renders_form_without_project_field(self):
+        proj = Project.objects.create(name="proj_1")
+        response = self.client.get(reverse("tags_create", args=(proj.name,)))
+        self.assertNotIn("project", response.context["form"].fields)
+
+    def test_project_is_assigned_automatically_in_view(self):
+        proj = Project.objects.create(name="proj_1")
+        self.client.post(
+            reverse("tags_create", args=(proj.name,)), data={"name": "tag_name"})
+        t = Tag.objects.last()
+        self.assertEqual(t.name, "tag_name")
+        self.assertEqual(t.project, proj)

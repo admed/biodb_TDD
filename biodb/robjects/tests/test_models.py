@@ -311,3 +311,7 @@ class TagModelTestCase(TestCase):
         Tag.objects.create(name="taken")
         with self.assertRaises(db.IntegrityError):
             Tag.objects.create(name="taken")
+
+    def test_project_field_may_be_null(self):
+        t = Tag.objects.create()
+        self.assertEqual(t.project, None)

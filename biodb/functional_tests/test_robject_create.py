@@ -578,7 +578,8 @@ class RobjectCreateTestCase(FunctionalTest):
             "#id_names option")
         self.assertEqual(len(names_in_select_tag), 0)
 
-    def test_some_fields_are_hidden_and_prefilled(self):
+    @skip
+    def test_some_fields_are_hidden_but_auto_assigned(self):
         # SET UP
         proj, user = self.set_project_and_user(
             project_name="test_proj", username="Lebron", password="James")
@@ -622,3 +623,34 @@ class RobjectCreateTestCase(FunctionalTest):
             r.create_date, moment_of_creation, delta=datetime.timedelta(seconds=1))
         self.assertAlmostEqual(
             r.modify_date, moment_of_creation, delta=datetime.timedelta(seconds=1))
+
+    def test_Tag_form_not_contains_project_field_but_project_is_auto_assigned(self):
+        # SET UP
+        proj, user = self.set_project_and_user(
+            project_name="test_proj", username="Lebron", password="James")
+
+        # User visits robject page.
+        self.get_robject_create_page(proj=proj)
+
+        # He clicks plus button and goes to popup form.
+        plus_btn = self.browser.find_element_by_css_selector(
+            f".related-widget-wrapper select#id_tags + a")
+        plus_btn.click()
+        self.switch_to_popup()
+
+        # User can't see project field.
+        with self.assertRaises(NoSuchElementException):
+            self.browser.find_element_by_css_selector("#id_project")
+
+        # Next he enters tag's name and clicks submit.
+        name_input = self.browser.find_element_by_css_selector(
+            "input[name='name']")
+        name_input.send_keys("test_name")
+        self.browser.find_element_by_css_selector(
+            "input[type='submit']").click()
+        self.switch_to_main()
+
+        # He realize that even though he didnt specify project this field is
+        # assigned anyway to project from url.
+        t = Tag.objects.last()
+        self.assertEqual(t.project, proj)
