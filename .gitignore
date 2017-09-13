@@ -51,6 +51,7 @@ requirements.txt
 # coverage files
 htmlcov
 .coverage
+.coveragerc
 
 # files dir
 files/
