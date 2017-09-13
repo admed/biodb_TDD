@@ -139,7 +139,7 @@ class RobjectCreateView(CreateView):
     def get_form_class(self):
         form = forms.modelform_factory(
             model=Robject, fields="__all__",
-            exclude=["project", "create_by", "create_date", "modify_by"],
+            exclude=["create_by", "create_date", "modify_by"],
             widgets={
                 "names": AddAnotherWidgetWrapper(
                     widget=forms.SelectMultiple,
@@ -150,7 +150,8 @@ class RobjectCreateView(CreateView):
                     widget=forms.SelectMultiple,
                     add_related_url=reverse(
                         "tags_create", args=(self.args[0],))
-                )
+                ),
+                'project': forms.HiddenInput()
             })
         return form
 
@@ -167,10 +168,14 @@ class RobjectCreateView(CreateView):
 
     def form_valid(self, form):
         robject = form.save()
-        robject.project = Project.objects.get(name=self.args[0])
         robject.create_by = self.request.user
         robject.modify_by = self.request.user
         return super().form_valid(form)
+
+    def get_initial(self):
+        return {
+            "project": Project.objects.get(name=self.args[0])
+        }
 
 
 class NameCreateView(CreatePopupMixin, CreateView):

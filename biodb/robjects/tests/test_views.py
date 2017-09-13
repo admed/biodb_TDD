@@ -302,10 +302,6 @@ class RobjectCreateViewTestCase(FunctionalTest):
         self.client.get(self.get_robject_create_url(proj))
         self.assertEqual(Name.objects.filter(robjects=None).count(), 0)
 
-    def test_rendered_form_has_no_project_field(self):
-        form = self.get_form_from_context()
-        self.assertNotIn("project", form.fields)
-
     def test_rendered_form_has_no_create_by_field(self):
         form = self.get_form_from_context()
         self.assertNotIn("create_by", form.fields)
@@ -322,14 +318,6 @@ class RobjectCreateViewTestCase(FunctionalTest):
         form = self.get_form_from_context()
         self.assertNotIn("modify_date", form.fields)
 
-    def test_view_assign_project_to_new_robject(self):
-        user, proj = self.default_set_up_for_robjects_page()
-        assign_perm("projects.can_modify_project", user, proj)
-        response = self.client.post(
-            self.get_robject_create_url(proj), {"name": "test"})
-        r = Robject.objects.last()
-        self.assertEqual(r.project, proj)
-
     def test_view_assign_create_by_to_new_robject(self):
         user, proj = self.default_set_up_for_robjects_page()
         assign_perm("projects.can_modify_project", user, proj)
@@ -345,6 +333,14 @@ class RobjectCreateViewTestCase(FunctionalTest):
             self.get_robject_create_url(proj), {"name": "test"})
         r = Robject.objects.last()
         self.assertEqual(r.modify_by, user)
+
+    def test_project_field_from_context_form_is_hidden(self):
+        form = self.get_form_from_context()
+        self.assertTrue(form.fields["project"].widget.is_hidden)
+
+    def test_project_field_from_context_form_initial(self):
+        form = self.get_form_from_context()
+        self.assertEqual(form.initial, {"project": Project.objects.first()})
 
 
 class NameCreateViewTestCase(FunctionalTest):
