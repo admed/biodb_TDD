@@ -575,10 +575,8 @@ class RobjectCreateTestCase(FunctionalTest):
         self.browser.find_element_by_css_selector(
             "#id_name").send_keys("whatever")
 
-        # User cant see any of following fields: project, create_by,
+        # User cant see any of following fields: create_by,
         # create_date, modify_by or modify_date fields
-        with self.assertRaises(NoSuchElementException):
-            self.browser.find_element_by_css_selector("#id_project")
         with self.assertRaises(NoSuchElementException):
             self.browser.find_element_by_css_selector("#id_create_by")
         with self.assertRaises(NoSuchElementException):
