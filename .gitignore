@@ -55,3 +55,10 @@ htmlcov
 
 # files dir
 files/
+
+# meld/merge files
+*BACKUP*
+*BASE*
+*LOCAL*
+*REMOTE*
+*.save
