@@ -18,6 +18,7 @@ from django_addanother.views import CreatePopupMixin
 from guardian.mixins import LoginRequiredMixin as GuardianLoginRequiredMixin
 from guardian.mixins import PermissionRequiredMixin
 from biodb import settings
+from django.http import HttpResponseBadRequest, HttpResponse
 # Create your views here.
 
 
@@ -182,6 +183,19 @@ class NameCreateView(CreatePopupMixin, CreateView):
     model = Name
     fields = "__all__"
     template_name = "robjects/names_create.html"
+
+    def dispatch(self, request, *args, **kwargs):
+        from urllib.parse import urlparse
+        previously_visited_path = urlparse(
+            request.META.get("HTTP_REFERER", None)).path
+        print(request.META.get("HTTP_REFERER", None))
+        robject_create_path = reverse("robject_create", args=args)
+
+        if previously_visited_path == robject_create_path:
+            return super().dispatch(request, *args, **kwargs)
+        else:
+            return HttpResponseBadRequest(
+                "<h1>Error 400</h1><p>Form available from robject form only</p>")
 
 
 class TagCreateView(CreatePopupMixin, CreateView):
