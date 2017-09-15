@@ -637,7 +637,7 @@ class RobjectCreateTestCase(FunctionalTest):
         t = Tag.objects.last()
         self.assertEqual(t.project, proj)
 
-    def test_user_opens_popup_using_url_not_plus_button(self):
+    def test_user_opens_Name_popup_using_url_not_plus_button(self):
         # SET UP
         proj, user = self.set_project_and_user(
             project_name="test_proj", username="Lebron", password="James")
@@ -648,6 +648,25 @@ class RobjectCreateTestCase(FunctionalTest):
         # User wants to visit popup form using url adress instead of plus
         # button.
         self.browser.get(name_popup_url)
+
+        # He sees 400 bad request error and message explains error.
+        error = self.browser.find_element_by_css_selector("h1")
+        message = self.browser.find_element_by_css_selector("p")
+
+        self.assertEqual(error.text, "Error 400")
+        self.assertEqual(message.text, "Form available from robject form only")
+
+    def test_user_opens_Tag_popup_using_url_not_plus_button(self):
+        # SET UP
+        proj, user = self.set_project_and_user(
+            project_name="test_proj", username="Coby", password="Briant")
+
+        tag_popup_url = self.live_server_url + \
+            reverse("tags_create", args=(proj.name,))
+
+        # User wants to visit popup form using url adress instead of plus
+        # button.
+        self.browser.get(tag_popup_url)
 
         # He sees 400 bad request error and message explains error.
         error = self.browser.find_element_by_css_selector("h1")
