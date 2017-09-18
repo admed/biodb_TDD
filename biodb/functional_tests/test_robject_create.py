@@ -631,7 +631,6 @@ class RobjectCreateTestCase(FunctionalTest):
         self.browser.find_element_by_css_selector(
             "input[type='submit']").click()
         self.switch_to_main()
-
         # He realize that even though he didnt specify project this field is
         # assigned anyway to project from url.
         t = Tag.objects.last()
