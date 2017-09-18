@@ -344,6 +344,13 @@ class RobjectCreateViewTestCase(FunctionalTest):
 
 
 class NameCreateViewTestCase(FunctionalTest):
+    def get_names_create_url(self, proj):
+        url = reverse("names_create", args=(proj.name,))
+        return url
+
+    def get_robject_create_url(self, proj):
+        return reverse("robject_create", args=(proj.name,))
+
     def test_view_parents(self):
         self.assertEqual(NameCreateView.__bases__,
                          (CreatePopupMixin, generic.CreateView))
@@ -356,11 +363,40 @@ class NameCreateViewTestCase(FunctionalTest):
 
     def test_render_template(self):
         proj = Project.objects.create(name="proj_1")
-        response = self.client.get(reverse("names_create", args=(proj.name,)))
+        response = self.client.get(
+            self.get_names_create_url(proj),
+            HTTP_REFERER=self.get_robject_create_url(proj))
         self.assertTemplateUsed(response, "robjects/names_create.html")
+
+    def test_view_return_400_when_requested_using_url(self):
+        proj = Project.objects.create(name="proj_1")
+
+        # Note: when form is open in popup window, request contains HTTP_REFERER
+        # key in request.META dictionary. Otherwise, key doesn't exists.
+        # HTTP_REFERER holds url to page from popup is open.
+
+        # Test view gets request object without "HTTP_REFERER" key.
+        response = self.client.get(self.get_names_create_url(proj))
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(
+            "<h1>Error 400</h1><p>Form available from robject form only</p>",
+            response.content.decode())
+
+        # Test view gets request with META["HTTP_REFERER"].
+        response = self.client.get(
+            self.get_names_create_url(proj),
+            HTTP_REFERER=self.get_robject_create_url(proj))
+        self.assertEqual(response.status_code, 200)
 
 
 class TagCreateViewTestCase(FunctionalTest):
+    def get_tags_create_url(self, proj):
+        url = reverse("tags_create", args=(proj.name,))
+        return url
+
+    def get_robject_create_url(self, proj):
+        return reverse("robject_create", args=(proj.name,))
+
     def test_view_parents(self):
         self.assertEqual(TagCreateView.__bases__,
                          (CreatePopupMixin, generic.CreateView))
@@ -370,18 +406,41 @@ class TagCreateViewTestCase(FunctionalTest):
 
     def test_render_template(self):
         proj = Project.objects.create(name="proj_1")
-        response = self.client.get(reverse("tags_create", args=(proj.name,)))
+        response = self.client.get(reverse("tags_create", args=(
+            proj.name,)), HTTP_REFERER=self.get_robject_create_url(proj))
         self.assertTemplateUsed(response, "robjects/tags_create.html")
 
     def test_view_renders_form_without_project_field(self):
         proj = Project.objects.create(name="proj_1")
-        response = self.client.get(reverse("tags_create", args=(proj.name,)))
+        response = self.client.get(reverse("tags_create", args=(
+            proj.name,)), HTTP_REFERER=self.get_robject_create_url(proj))
         self.assertNotIn("project", response.context["form"].fields)
 
     def test_project_is_assigned_automatically_in_view(self):
         proj = Project.objects.create(name="proj_1")
         self.client.post(
-            reverse("tags_create", args=(proj.name,)), data={"name": "tag_name"})
+            reverse("tags_create", args=(proj.name,)), data={"name": "tag_name"},
+            HTTP_REFERER=self.get_robject_create_url(proj))
         t = Tag.objects.last()
         self.assertEqual(t.name, "tag_name")
         self.assertEqual(t.project, proj)
+
+    def test_view_return_400_when_requested_using_url(self):
+        proj = Project.objects.create(name="proj_1")
+
+        # Note: when form is open in popup window, request contains HTTP_REFERER
+        # key in request.META dictionary. Otherwise, key doesn't exists.
+        # HTTP_REFERER holds url to page from popup is open.
+
+        # Test view gets request object without "HTTP_REFERER" key.
+        response = self.client.get(self.get_tags_create_url(proj))
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(
+            "<h1>Error 400</h1><p>Form available from robject form only</p>",
+            response.content.decode())
+
+        # Test view gets request with META["HTTP_REFERER"].
+        response = self.client.get(
+            self.get_tags_create_url(proj),
+            HTTP_REFERER=self.get_robject_create_url(proj))
+        self.assertEqual(response.status_code, 200)
