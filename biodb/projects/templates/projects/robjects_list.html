@@ -6,6 +6,7 @@
 </form>
 <table id="robjects_table">
   <tr id="header_row">
+    <th><input type="checkbox" class="select-all"></th>
     <th>id</th>
     <th>name</th>
     <th>author</th>
@@ -15,6 +16,7 @@
   </tr>
   {% for robject in robject_list %}
   <tr class="row {{ robject.name }}">
+    <td><input type="checkbox"></td>
     <td>{{ robject.id }}</td>
     <td>{{ robject.name }}</td>
     <td>{{ robject.author }}</td>

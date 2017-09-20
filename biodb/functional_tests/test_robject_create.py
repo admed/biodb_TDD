@@ -50,7 +50,8 @@ class RobjectCreateTestCase(FunctionalTest):
             "body").send_keys(text)
         self.switch_to_main()
 
-    def set_project_and_user(self, project_name, username, password):
+    def set_project_and_user(self, project_name="proj_1", username="username",
+                             password="password"):
         proj = Project.objects.create(name=project_name)
         user = self.login_user(username, password)
         assign_perm("can_visit_project", user, proj)

@@ -6,6 +6,8 @@ import time
 from django.contrib.auth.models import User
 from django.db.utils import IntegrityError
 from projects.models import Project
+from django.core.urlresolvers import reverse
+from guardian.shortcuts import assign_perm
 
 
 class FunctionalTest(StaticLiveServerTestCase):
@@ -68,16 +70,28 @@ class FunctionalTest(StaticLiveServerTestCase):
 
         return u
 
-    def project_set_up_using_default_data(self):
+    def project_set_up_and_get_robject_page(self, username="USERNAME",
+                                            password="PASSWORD", project_name="proj_1"):
         """ Helper method for all robject page related tests.
 
             Method include logged user with default creadentials and project
             with default name.
         """
-        user = self.login_user("USERNAME", "PASSWORD")
+        user = self.login_user(username, password)
 
-        proj = Project.objects.create(name="project_1")
+        proj = Project.objects.create(project_name)
 
         self.browser.get(self.live_server_url + f"/projects/{proj}/robjects/")
 
         return user, proj
+
+    def set_up_robject_list(self, project_name="default_proj", username="username",
+                            password="password", assign_visit_perm=True):
+        proj = Project.objects.create(name=project_name)
+        user = self.login_user(username, password)
+        if assign_visit_perm:
+            assign_perm("can_visit_project", user, proj)
+        return proj, user
+
+    def default_url_robject_list(self):
+        return self.live_server_url + reverse("robjects_list", args=("default_proj",))

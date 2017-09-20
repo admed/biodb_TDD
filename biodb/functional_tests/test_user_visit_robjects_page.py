@@ -22,7 +22,7 @@ class UserVisitRobjectsPage(FunctionalTest):
 
     @tag('slow')
     def test_logged_user_visit_robjects_page___no_robjects_exists(self):
-        user, proj = self.project_set_up_using_default_data()
+        user, proj = self.project_set_up_and_get_robject_page()
 
         # Logged user visit robjects page. He sees robjects table. Table has
         # several columns: robject id, robject name, robject create date,
@@ -47,7 +47,7 @@ class UserVisitRobjectsPage(FunctionalTest):
 
     @tag('slow')
     def test_logged_user_visit_robjects_page___robjects_exists_in_project(self):
-        usr, proj = self.project_set_up_using_default_data()
+        usr, proj = self.project_set_up_and_get_robject_page()
 
         # Create sample robjects.
         robj1 = Robject.objects.create(
@@ -111,7 +111,7 @@ class SearchEngineTests(FunctionalTest):
     @tag('slow')
     def create_sample_robject_then_search_for_him_using_query(self, query,
                                                               robject_kwargs):
-        user, proj = self.project_set_up_using_default_data()
+        user, proj = self.project_set_up_and_get_robject_page()
 
         # Create sample robject.
         # User goes to robjects page.
@@ -139,7 +139,7 @@ class SearchEngineTests(FunctionalTest):
 
     @tag('slow')
     def test_user_perform_search_based_on_whole_robj_name_and_find_robject(self):
-        user, project = self.project_set_up_using_default_data()
+        user, project = self.project_set_up_and_get_robject_page()
 
         # Create sample robjects.
         Robject.objects.create(name="robject_1", project=project, id=1)
@@ -170,7 +170,7 @@ class SearchEngineTests(FunctionalTest):
     @tag('slow')
     def test_user_search_for_one_robject_using_name_fragment(self):
         # Default setup for robjects page.
-        user, proj = self.project_set_up_using_default_data()
+        user, proj = self.project_set_up_and_get_robject_page()
 
         # Create sample robjects.
         Robject.objects.create(name="robject_1", project=proj)
@@ -199,7 +199,7 @@ class SearchEngineTests(FunctionalTest):
     @tag('slow')
     def test_user_search_for_multiple_robjects_using_name_fragment(self):
         # Make set up for robjects page.
-        user, proj = self.project_set_up_using_default_data()
+        user, proj = self.project_set_up_and_get_robject_page()
 
         # Create sample robjects.
         Robject.objects.create(name="robject_1", project=proj)
@@ -249,7 +249,7 @@ class SearchEngineTests(FunctionalTest):
         # results.
 
         # Make set up for robjects page.
-        user, proj = self.project_set_up_using_default_data()
+        user, proj = self.project_set_up_and_get_robject_page()
 
         # Create sample robject.
         robj = Robject.objects.create(name="RoBjEcT_1", project=proj)
@@ -297,7 +297,7 @@ class SearchEngineTests(FunctionalTest):
     @tag('slow')
     def test_user_can_display_all_robjects_leaving_search_input_empty(self):
         # Make set up for robjects page.
-        user, proj = self.project_set_up_using_default_data()
+        user, proj = self.project_set_up_and_get_robject_page()
 
         # Create sample robjects.
         robj_1 = Robject.objects.create(name="robj_1", project=proj)
@@ -325,7 +325,7 @@ class SearchEngineTests(FunctionalTest):
     @tag('slow')
     def test_user_cant_search_robjects_from_outside_project(self):
         # Make set up for robjects page.
-        user, proj = self.project_set_up_using_default_data()
+        user, proj = self.project_set_up_and_get_robject_page()
 
         # Create new project and attach robject to it.
         other_proj = Project.objects.create(name="other_proj")
@@ -348,7 +348,7 @@ class SearchEngineTests(FunctionalTest):
     @tag('slow')
     def test_user_can_search_with_many_words(self):
         # Make set up for robjects page.
-        user, proj = self.project_set_up_using_default_data()
+        user, proj = self.project_set_up_and_get_robject_page()
 
         # Create sample robjects.
         robj_1 = Robject.objects.create(
