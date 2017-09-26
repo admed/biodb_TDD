@@ -143,7 +143,7 @@ class TestUserVisitsSampleList(FunctionalTest):
         # He looks for data in every cell in row and copare it with sample data.
         self.assert_cells_content_in_row(proj, sample)
 
-    def test_user_sees_one_sample_in_table(self):
+    def test_user_sees_multiple_samples_in_table_for_certain_project(self):
         # CREATE SAMPLE PROJECT AND ROBJECT
         usr, proj1 = self.project_set_up_using_default_data()
         # CREATE EXTRA PROJECT
