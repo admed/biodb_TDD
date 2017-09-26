@@ -2,6 +2,8 @@
 # from django.test import TestCase
 from projects.models import Project
 from unit_tests.base import FunctionalTest
+from guardian.shortcuts import assign_perm
+
 
 
 class ProjectListViewTestCase(FunctionalTest):
@@ -36,7 +38,15 @@ class TagListViewTestCase(FunctionalTest):
         self.assertRedirects(response, f'/accounts/login/?next=/projects/{proj.name}/tags/')
 
     def test_template_used(self):
+        user = self.login_default_user()
+        proj = Project.objects.create(name='Project_1')
+        assign_perm("projects.can_visit_project", user, proj)
+        response = self.client.get(f"/projects/{proj.name}/tags/")
+        self.assertTemplateUsed(response, "projects/tags_list.html")
+
+    def test_user_without_permision_seas_permission_denied(self):
         self.login_default_user()
         proj = Project.objects.create(name='Project_1')
         response = self.client.get(f"/projects/{proj.name}/tags/")
-        self.assertTemplateUsed(response, "projects/tags_list.html")
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual("<h1>403 Forbidden</h1>", response.content.decode("utf-8") )

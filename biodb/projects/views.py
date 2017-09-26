@@ -11,7 +11,6 @@ from projects.models import Tag
 from django.shortcuts import redirect
 from biodb import settings
 
-
 # Create your views here.
 
 
@@ -25,6 +24,14 @@ class TagsListView(ListView):
 
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated():
-            return super().dispatch(request, *args, **kwargs)
+            permission_obj = self.get_permission_object()
+            if request.user.has_perm("projects.can_visit_project", permission_obj):
+                return super().dispatch(request, *args, **kwargs)
+            else:
+                raise PermissionDenied
         else:
             return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
+
+    def get_permission_object(self):
+        project = Project.objects.get(name=self.kwargs['project_name'])
+        return project
