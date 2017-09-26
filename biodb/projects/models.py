@@ -27,3 +27,6 @@ class Project(models.Model):
         permissions = (
             ("can_visit_project", "User can see project elements."),
             ("can_modify_project", "User can modify project elements."))
+
+class Tag(models.Model):
+    pass

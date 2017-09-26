@@ -26,3 +26,17 @@ class ProjectListViewTestCase(FunctionalTest):
     def test_login_requirement(self):
         response = self.client.get("/projects/")
         self.assertEqual(response.status_code, 403)
+
+
+class TagListViewTestCase(FunctionalTest):
+    def test_anonymous_user_is_redirected_to_login_page(self):
+        proj = Project.objects.create(name='Project_1')
+        response = self.client.get(f"/projects/{proj.name}/tags/")
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, f'/accounts/login/?next=/projects/{proj.name}/tags/')
+
+    def test_template_used(self):
+        self.login_default_user()
+        proj = Project.objects.create(name='Project_1')
+        response = self.client.get(f"/projects/{proj.name}/tags/")
+        self.assertTemplateUsed(response, "projects/tags_list.html")
