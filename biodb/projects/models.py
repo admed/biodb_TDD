@@ -28,5 +28,7 @@ class Project(models.Model):
             ("can_visit_project", "User can see project elements."),
             ("can_modify_project", "User can modify project elements."))
 
+
 class Tag(models.Model):
-    pass
+    name = models.CharField(max_length=100, unique=True)
+    # project = models.ForeignKey(to=Project, null=True, blank=True)

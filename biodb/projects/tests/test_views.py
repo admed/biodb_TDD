@@ -5,7 +5,6 @@ from unit_tests.base import FunctionalTest
 from guardian.shortcuts import assign_perm
 
 
-
 class ProjectListViewTestCase(FunctionalTest):
     def test_renders_given_template(self):
         self.login_default_user()
@@ -35,7 +34,8 @@ class TagListViewTestCase(FunctionalTest):
         proj = Project.objects.create(name='Project_1')
         response = self.client.get(f"/projects/{proj.name}/tags/")
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, f'/accounts/login/?next=/projects/{proj.name}/tags/')
+        self.assertRedirects(response,
+                             f'/accounts/login/?next=/projects/{proj.name}/tags/')
 
     def test_template_used(self):
         user = self.login_default_user()
@@ -49,4 +49,5 @@ class TagListViewTestCase(FunctionalTest):
         proj = Project.objects.create(name='Project_1')
         response = self.client.get(f"/projects/{proj.name}/tags/")
         self.assertEqual(response.status_code, 403)
-        self.assertEqual("<h1>403 Forbidden</h1>", response.content.decode("utf-8") )
+        self.assertEqual("<h1>403 Forbidden</h1>",
+                         response.content.decode("utf-8"))

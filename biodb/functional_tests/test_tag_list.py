@@ -61,9 +61,9 @@ class UserVisitsTagList(FunctionalTest):
         assign_perm("projects.can_visit_project", usr, proj)
         # User gets tag list page.
         self.get_tag_list(proj)
-        empty_list_message = self.browser.find_element_by_css_selector('spam')
+        empty_list_message = self.browser.find_element_by_css_selector('span')
         self.assertEqual(empty_list_message.text,
-                         "There is no tags attached to this project.")
+                         "There are no tags attached to this project.")
 
     def test_user_creates_tag_for_project(self):
         # CREATE SAMPLE PROJECT AND USER
@@ -77,6 +77,8 @@ class UserVisitsTagList(FunctionalTest):
         list_of_tags = self.browser.find_elements_by_css_selector('li')
         # He seas that list has two tags in it.
         self.assertEqual(len(list_of_tags), 1)
+        page_content = self.browser.find_element_by_css_selector('body')
+        self.assertNotIn('span', page_content)
 
     def test_user_creates_several_tags_for_several_projects(self):
         # CREATE SAMPLE PROJECT AND USER

@@ -38,3 +38,12 @@ class ProjectModelTestCase(TestCase):
         self.assertIn(
             ("can_modify_project", "User can modify project elements."),
             Project._meta.permissions)
+
+
+class TagsListViewTestCase(TestCase):
+    def test_fields_classes(self):
+        name_field = Project._meta.get_field("name")
+        self.assertIsInstance(name_field, models.CharField)
+
+        # project_field = Sample._meta.get_field("project")'
+        # self.assertIsInstance(project_field, models.ForeignKey)'
