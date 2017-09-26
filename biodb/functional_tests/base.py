@@ -12,10 +12,12 @@ class FunctionalTest(StaticLiveServerTestCase):
     MAX_WAIT = 10
 
     def setUp(self):
-        self.browser = webdriver.Chrome()
-        self.main_window = None
-        while not self.main_window:
-            self.main_window = self.browser.current_window_handle
+        fp = webdriver.FirefoxProfile()
+        fp.set_preference('browser.download.folderList', 2) # custom location
+        fp.set_preference('browser.download.manager.showWhenStarting', False)
+        fp.set_preference('browser.download.dir', '/tmp')
+        fp.set_preference('browser.helperApps.neverAsk.openFile', '*.*')
+        self.browser = webdriver.Firefox(firefox_profile=fp)
 
     def tearDown(self):
         self.browser.quit()
@@ -70,7 +72,6 @@ class FunctionalTest(StaticLiveServerTestCase):
 
     def project_set_up_using_default_data(self):
         """ Helper method for all robject page related tests.
-
             Method include logged user with default creadentials and project
             with default name.
         """

@@ -1,0 +1,55 @@
+{% extends "biodb/base.html" %} {% block content %} {% load render_table from django_tables2 %} {% load static %}
+<link rel="stylesheet" href="{% static 'django_tables2/themes/paleblue/css/screen.css' %}" />
+
+<h1>Samples:</h1>
+
+<table>
+  <tr>
+
+  <th>Id</th>
+  <th>Code</th>
+  <th>Robject</th>
+  <th>Owner</th>
+  <th>Create date</th>
+  <th>Modify date</th>
+  <th>Modify by</th>
+  <th>Notes</th>
+  <th>Form</th>
+  <th>Source</th>
+  <th>Status</th>
+  <th>Edit</th>
+  </tr>
+  {% for object in object_list  %}
+    <tr class="row sample">
+      <td>{{ object.id }}</td>
+      <td>{{ object.code }}</td>
+      <td>{{ object.robject.name }}</td>
+      <td>{{ object.owner }}</td>
+      <td>{{ object.create_date }}</td>
+      <td>{{ object.modify_date }}</td>
+      <td>{{ object.modify_by }}</td>
+      <td>{{ object.notes }}</td>
+      <td>{{ object.form }}</td>
+      <td>{{ object.source }}</td>
+      <td>{{ object.get_status_display }}</td>
+      <td>
+        <a href='/projects/{{project.name}}/samples/{{object.id}}/update/'>edit</a>
+      </td>
+    </tr>
+  {% endfor %}
+
+</table>
+<style media="screen">
+  table {
+     border: solid thin;
+     border-collapse: collapse;
+  }
+  th, td {
+    border: solid thin;
+    text-align: center;
+  }
+
+</style>
+<a class="link_back" href="{% url 'projects:robjects:robjects_list' project.name %}">back to robject list</a>
+
+{% endblock %}
