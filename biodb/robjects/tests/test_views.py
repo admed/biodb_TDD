@@ -184,13 +184,13 @@ class SearchRobjectsViewTests(FunctionalTest):
 
 class RobjectCreateViewTestCase(FunctionalTest):
     def get_robject_create_url(self, proj):
-        return reverse("robject_create", args=(proj.name,))
+        return reverse("projects:robjects:robject_create", kwargs={"project_name": proj.name})
 
     def get_form_from_context(self):
         user, proj = self.default_set_up_for_robjects_page()
         assign_perm("projects.can_modify_project", user, proj)
         response = self.client.get(
-            reverse("robject_create", args=(proj.name,)))
+            reverse("projects:robjects:robject_create", kwargs={"project_name": proj.name}))
         form = response.context["form"]
 
         return form
@@ -199,7 +199,7 @@ class RobjectCreateViewTestCase(FunctionalTest):
         user, proj = self.default_set_up_for_robjects_page()
         assign_perm("projects.can_modify_project", user, proj)
         response = self.client.get(
-            reverse("robject_create", args=(proj.name,)))
+            reverse("projects:robjects:robject_create", args=(proj.name,)))
         self.assertTemplateUsed(
             response, template_name="robjects/robject_create.html")
 
@@ -207,7 +207,7 @@ class RobjectCreateViewTestCase(FunctionalTest):
         user, proj = self.default_set_up_for_robjects_page()
         assign_perm("projects.can_modify_project", user, proj)
         response = self.client.get(
-            reverse("robject_create", args=(proj.name,)))
+            reverse("projects:robjects:robject_create", args=(proj.name,)))
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("form", response.context)
@@ -227,7 +227,7 @@ class RobjectCreateViewTestCase(FunctionalTest):
         add_related_url = form.base_fields["names"].widget.add_related_url
         self.assertIsInstance(widget, forms.SelectMultiple)
         self.assertEqual(add_related_url, reverse(
-            "names_create", args=(Project.objects.last().name,)))
+            "projects:robjects:names_create", args=(Project.objects.last().name,)))
 
     def test_widget_instance_of_tags_field_in_form(self):
         form = self.get_form_from_context()
@@ -240,7 +240,7 @@ class RobjectCreateViewTestCase(FunctionalTest):
         add_related_url = form.base_fields["tags"].widget.add_related_url
         self.assertIsInstance(widget, forms.SelectMultiple)
         self.assertEqual(add_related_url, reverse(
-            "tags_create", args=(Project.objects.last().name,)))
+            "projects:robjects:tags_create", args=(Project.objects.last().name,)))
 
     def test_view_redirects_to_robject_list_page_on_post(self):
         user, proj = self.default_set_up_for_robjects_page()
@@ -250,7 +250,7 @@ class RobjectCreateViewTestCase(FunctionalTest):
             data={"name": "whatever"}
         )
         self.assertRedirects(response, reverse(
-            "robjects_list", args=(proj.name,)))
+            "projects:robjects:robjects_list", args=(proj.name,)))
 
     def test_name_field_is_required(self):
         user, proj = self.default_set_up_for_robjects_page()
@@ -345,11 +345,12 @@ class RobjectCreateViewTestCase(FunctionalTest):
 
 class NameCreateViewTestCase(FunctionalTest):
     def get_names_create_url(self, proj):
-        url = reverse("names_create", args=(proj.name,))
+        url = reverse("projects:robjects:names_create",
+                      kwargs={"project_name": proj.name})
         return url
 
     def get_robject_create_url(self, proj):
-        return reverse("robject_create", args=(proj.name,))
+        return reverse("projects:robjects:robject_create", args=(proj.name,))
 
     def test_view_parents(self):
         self.assertEqual(NameCreateView.__bases__,
@@ -391,11 +392,12 @@ class NameCreateViewTestCase(FunctionalTest):
 
 class TagCreateViewTestCase(FunctionalTest):
     def get_tags_create_url(self, proj):
-        url = reverse("tags_create", args=(proj.name,))
+        url = reverse("projects:robjects:tags_create",
+                      kwargs={"project_name": proj.name})
         return url
 
     def get_robject_create_url(self, proj):
-        return reverse("robject_create", args=(proj.name,))
+        return reverse("projects:robjects:robject_create", args=(proj.name,))
 
     def test_view_parents(self):
         self.assertEqual(TagCreateView.__bases__,
@@ -406,20 +408,20 @@ class TagCreateViewTestCase(FunctionalTest):
 
     def test_render_template(self):
         proj = Project.objects.create(name="proj_1")
-        response = self.client.get(reverse("tags_create", args=(
-            proj.name,)), HTTP_REFERER=self.get_robject_create_url(proj))
+        response = self.client.get(reverse("projects:robjects:tags_create", kwargs={
+                                   "project_name": proj.name}), HTTP_REFERER=self.get_robject_create_url(proj))
         self.assertTemplateUsed(response, "robjects/tags_create.html")
 
     def test_view_renders_form_without_project_field(self):
         proj = Project.objects.create(name="proj_1")
-        response = self.client.get(reverse("tags_create", args=(
-            proj.name,)), HTTP_REFERER=self.get_robject_create_url(proj))
+        response = self.client.get(reverse("projects:robjects:tags_create", kwargs={
+                                   "project_name": proj.name}), HTTP_REFERER=self.get_robject_create_url(proj))
         self.assertNotIn("project", response.context["form"].fields)
 
     def test_project_is_assigned_automatically_in_view(self):
         proj = Project.objects.create(name="proj_1")
         self.client.post(
-            reverse("tags_create", args=(proj.name,)), data={"name": "tag_name"},
+            reverse("projects:robjects:tags_create", kwargs={"project_name": proj.name}), data={"name": "tag_name"},
             HTTP_REFERER=self.get_robject_create_url(proj))
         t = Tag.objects.last()
         self.assertEqual(t.name, "tag_name")

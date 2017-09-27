@@ -17,7 +17,6 @@ from .email_settings import *
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
 
@@ -52,6 +51,7 @@ INSTALLED_APPS = (
     'ckeditor',
     'easy_pdf',
     'django_tables2',
+    'django_addanother'
 )
 
 MIDDLEWARE_CLASSES = (

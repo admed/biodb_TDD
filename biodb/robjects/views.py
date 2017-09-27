@@ -146,19 +146,19 @@ class RobjectCreateView(CreateView):
                 "names": AddAnotherWidgetWrapper(
                     widget=forms.SelectMultiple,
                     add_related_url=reverse(
-                        "names_create", kwargs=self.kwargs)
+                        "projects:robjects:names_create", kwargs=self.kwargs)
                 ),
                 "tags":  AddAnotherWidgetWrapper(
                     widget=forms.SelectMultiple,
                     add_related_url=reverse(
-                        "tags_create", kwargs=self.kwargs)
+                        "projects:robjects:tags_create", kwargs=self.kwargs)
                 ),
                 'project': forms.HiddenInput()
             })
         return form
 
     def get_success_url(self):
-        return reverse("robjects_list", kwargs=self.kwargs)
+        return reverse("projects:robjects:robjects_list", kwargs=self.kwargs)
 
     def get_permission_object(self):
         project = Project.objects.get(name=self.kwargs["project_name"])
@@ -189,7 +189,8 @@ class NameCreateView(CreatePopupMixin, CreateView):
         from urllib.parse import urlparse
         previously_visited_path = urlparse(
             request.META.get("HTTP_REFERER", None)).path
-        robject_create_path = reverse("robject_create", kwargs=kwargs)
+        robject_create_path = reverse(
+            "projects:robjects:robject_create", kwargs=kwargs)
 
         if previously_visited_path == robject_create_path:
             return super().get(request, *args, **kwargs)
@@ -208,7 +209,8 @@ class TagCreateView(CreatePopupMixin, CreateView):
         from urllib.parse import urlparse
         previously_visited_path = urlparse(
             request.META.get("HTTP_REFERER", None)).path
-        robject_create_path = reverse("robject_create", kwargs=kwargs)
+        robject_create_path = reverse(
+            "projects:robjects:robject_create", kwargs=kwargs)
 
         if previously_visited_path == robject_create_path:
             return super().get(request, *args, **kwargs)
