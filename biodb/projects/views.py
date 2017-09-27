@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.views.generic import View
 from django.views.generic import TemplateView
+from django.views.generic import ListView
 from projects.models import Tag
 from django.shortcuts import redirect
 from biodb import settings
@@ -19,7 +20,7 @@ class ProjectListView(LoginRequiredMixin, ListView):
     model = Project
 
 
-class TagsListView(TemplateView):
+class TagsListView(ListView):
     model = Tag
     template_name = 'projects/tags_list.html'
 

@@ -3,6 +3,7 @@ from django.db import IntegrityError
 from django.db import models
 from django.test import TestCase
 from projects.models import Project
+from projects.models import Tag
 
 
 class ProjectModelTestCase(TestCase):
@@ -40,10 +41,22 @@ class ProjectModelTestCase(TestCase):
             Project._meta.permissions)
 
 
-class TagsListViewTestCase(TestCase):
+class TagModelTestCase(TestCase):
     def test_fields_classes(self):
-        name_field = Project._meta.get_field("name")
+        name_field = Tag._meta.get_field("name")
         self.assertIsInstance(name_field, models.CharField)
 
-        # project_field = Sample._meta.get_field("project")'
-        # self.assertIsInstance(project_field, models.ForeignKey)'
+        # project_field = Tag._meta.get_field("project")
+        # self.assertIsInstance(project_field, models.ForeignKey)
+
+    # def test_Tag_related_to_project(self):
+    #     is_related = hasattr(Tag, "project")
+    #     self.assertEqual(is_related, "True")
+
+    def test_relation_between_Tag_and_Project(self):
+        p = Project.objects.create(name="test_proj")
+        t1 = Tag.objects.create(name="test_tag_1", project=p)
+        t2 = Tag.objects.create(name="test_tag_2", project=p)
+        self.assertListEqual(list(p.tags.all()), [t1, t2])
+        self.assertEqual(t1.project, p)
+        self.assertEqual(t2.project, p)

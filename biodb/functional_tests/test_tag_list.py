@@ -11,8 +11,7 @@ from robjects.models import Robject
 from selenium.common.exceptions import NoSuchElementException
 from guardian.shortcuts import assign_perm
 
-
-class UserVisitsTagList(FunctionalTest):
+class TagListTestCase(FunctionalTest):
     def get_tag_list(self, proj):
         self.browser.get(self.live_server_url +
                          f"/projects/{proj.name}/tags/")
@@ -65,7 +64,7 @@ class UserVisitsTagList(FunctionalTest):
         self.assertEqual(empty_list_message.text,
                          "There are no tags attached to this project.")
 
-    def test_user_creates_tag_for_project(self):
+    def test_user_seas_one_tag_in_project_tag_list(self):
         # CREATE SAMPLE PROJECT AND USER
         usr, proj = self.project_set_up_using_default_data()
         # ASSIGN PERMISSION TO PROJECTS
@@ -75,10 +74,11 @@ class UserVisitsTagList(FunctionalTest):
         self.get_tag_list(proj)
         # User seas list of tags.
         list_of_tags = self.browser.find_elements_by_css_selector('li')
-        # He seas that list has two tags in it.
+        # He seas that list has one tag in it.
         self.assertEqual(len(list_of_tags), 1)
-        page_content = self.browser.find_element_by_css_selector('body')
-        self.assertNotIn('span', page_content)
+        with self.assertRaises(NoSuchElementException):
+            self.browser.find_element_by_css_selector(".empty_tag_msg")
+
 
     def test_user_creates_several_tags_for_several_projects(self):
         # CREATE SAMPLE PROJECT AND USER

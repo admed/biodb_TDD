@@ -1,6 +1,6 @@
 # from django.contrib.auth.models import User
 # from django.test import TestCase
-from projects.models import Project
+from projects.models import Project, Tag
 from unit_tests.base import FunctionalTest
 from guardian.shortcuts import assign_perm
 
@@ -51,3 +51,15 @@ class TagListViewTestCase(FunctionalTest):
         self.assertEqual(response.status_code, 403)
         self.assertEqual("<h1>403 Forbidden</h1>",
                          response.content.decode("utf-8"))
+
+    def test_view_pass_tag_list_to_context(self):
+        user = self.login_default_user()
+        proj = Project.objects.create(name='Project_1')
+        assign_perm("projects.can_visit_project", user, proj)
+        tag1 = Tag.objects.create(name="t1", project=proj)
+        tag2 = Tag.objects.create(name="t2", project=proj)
+        response = self.client.get(f"/projects/{proj.name}/tags/")
+        self.assertIn("object_list", response.context)
+        self.assertEqual(len(response.context["object_list"]), 2)
+        self.assertIn(tag1, response.context["object_list"])
+        self.assertIn(tag2, response.context["object_list"])
