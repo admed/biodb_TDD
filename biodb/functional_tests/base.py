@@ -64,7 +64,7 @@ class FunctionalTest(StaticLiveServerTestCase):
         password_input.send_keys(password)
         submit_button.click()
         expected_url = self.live_server_url + "/projects/"
-        assert self.browser.current_url == expected_url, "User login failed!"
+        assert self.browser.current_url == expected_url, f"User login failed!"
 
         return u
 
