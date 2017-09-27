@@ -38,3 +38,13 @@ class TagsListView(ListView):
     def get_permission_object(self):
         project = Project.objects.get(name=self.kwargs['project_name'])
         return project
+
+    def get_queryset(self):
+        """
+        Overwrite orginal qs and add filtering by project_name
+        """
+        # original queryset
+        qs = super().get_queryset()
+
+        # return filtered qs by project
+        return qs.filter(project__name=self.kwargs['project_name'])

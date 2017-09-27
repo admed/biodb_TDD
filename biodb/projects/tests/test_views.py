@@ -63,3 +63,17 @@ class TagListViewTestCase(FunctionalTest):
         self.assertEqual(len(response.context["object_list"]), 2)
         self.assertIn(tag1, response.context["object_list"])
         self.assertIn(tag2, response.context["object_list"])
+
+    def test_view_filter_tag_queryset_in_context(self):
+        user = self.login_default_user()
+        proj1 = Project.objects.create(name='Project_1')
+        proj2 = Project.objects.create(name='Project_2')
+        assign_perm("projects.can_visit_project", user, proj1)
+        tag1 = Tag.objects.create(name="t1", project=proj1)
+        tag2 = Tag.objects.create(name="t2", project=proj1)
+        tag3 = Tag.objects.create(name="t_3", project=proj2)
+        tag4 = Tag.objects.create(name="t_4", project=proj2)
+        response = self.client.get(f"/projects/{proj1.name}/tags/")
+        self.assertEqual(len(response.context["object_list"]), 2)
+        self.assertIn(tag1, response.context["object_list"])
+        self.assertIn(tag2, response.context["object_list"])
