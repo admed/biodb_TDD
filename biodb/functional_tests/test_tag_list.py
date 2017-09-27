@@ -11,6 +11,7 @@ from robjects.models import Robject
 from selenium.common.exceptions import NoSuchElementException
 from guardian.shortcuts import assign_perm
 
+
 class TagListTestCase(FunctionalTest):
     def get_tag_list(self, proj):
         self.browser.get(self.live_server_url +
@@ -53,6 +54,21 @@ class TagListTestCase(FunctionalTest):
         self.assertEqual(self.browser.current_url,
                          self.live_server_url + f"/projects/{proj.name}/robjects/")
 
+    def test_user_checks_return_link_to_projects_project(self):
+        # CREATE SAMPLE PROJECT AND USER
+        usr = self.login_user("USERNAME", "PASSWORD")
+        proj = Project.objects.create(name="project_test")
+        # ASSIGN PERMISSION TO PROJECT
+        assign_perm("projects.can_visit_project", usr, proj)
+        # User gets sample list.
+        self.get_tag_list(proj)
+        # He seas to come back to robjects list of project
+        link = self.browser.find_element_by_css_selector("a.link_back")
+        self.assertEqual(link.text, "Return back to project robjects page")
+        link.click()
+        self.assertEqual(self.browser.current_url,
+                         self.live_server_url + f"/projects/{proj.name}/robjects/")
+
     def test_user_checks_empty_tag_section(self):
         # CREATE SAMPLE PROJECT AND USER
         usr, proj = self.project_set_up_using_default_data()
@@ -78,7 +94,6 @@ class TagListTestCase(FunctionalTest):
         self.assertEqual(len(list_of_tags), 1)
         with self.assertRaises(NoSuchElementException):
             self.browser.find_element_by_css_selector(".empty_tag_msg")
-
 
     def test_user_creates_several_tags_for_several_projects(self):
         # CREATE SAMPLE PROJECT AND USER

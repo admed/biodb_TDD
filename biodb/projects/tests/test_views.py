@@ -64,6 +64,19 @@ class TagListViewTestCase(FunctionalTest):
         self.assertIn(tag1, response.context["object_list"])
         self.assertIn(tag2, response.context["object_list"])
 
+    def test_view_pass_project_name_to_context(self):
+        user = self.login_default_user()
+        proj1 = Project.objects.create(name='Project_1')
+        proj2 = Project.objects.create(name='Project_2')
+        assign_perm("projects.can_visit_project", user, proj1)
+        assign_perm("projects.can_visit_project", user, proj2)
+        tag1 = Tag.objects.create(name="t1", project=proj1)
+        tag2 = Tag.objects.create(name="t2", project=proj2)
+        response1 = self.client.get(f"/projects/{proj1.name}/tags/")
+        self.assertIn("Project_1", response1.context["project_name"])
+        response2 = self.client.get(f"/projects/{proj2.name}/tags/")
+        self.assertIn("Project_2", response2.context["project_name"])        
+
     def test_view_filter_tag_queryset_in_context(self):
         user = self.login_default_user()
         proj1 = Project.objects.create(name='Project_1')
