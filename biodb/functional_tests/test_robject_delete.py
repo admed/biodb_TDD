@@ -54,6 +54,7 @@ class RobjectDeleteTestCase(FunctionalTest):
                          f"/projects/{proj.name}/robjects/delete/?{robj.name}={robj.id}")
 
         # He gets permission denied message.
+        time.sleep(10)
         error = self.browser.find_element_by_css_selector("h1")
         self.assertEqual(error.text, "403 Forbidden")
 

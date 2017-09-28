@@ -450,13 +450,5 @@ class TagCreateViewTestCase(FunctionalTest):
 
 class RobjectDeleteTestCase(FunctionalTest):
     def test_annonymous_user_is_redirect_to_login_page(self):
-        proj = Project.objects.create(name="test_proj")
-        r_delete_url = reverse("projects:robjects:robject_delete", kwargs={
-                               "project_name": proj.name})
-        response = self.client.get(r_delete_url)
-        robjects_list_url = reverse("projects:robjects:robjects_list",
-                                    kwargs={"project_name": proj.name})
-        self.assertRedirects(
-            response,
-            reverse("login") + f"?next={robjects_list_url}"
-        )
+        self.annonymous_testing_helper(
+            self.ROBJECT_DELETE_URL, self.ROBJECT_LIST_URL)
