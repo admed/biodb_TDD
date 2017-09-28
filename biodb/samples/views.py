@@ -74,3 +74,37 @@ class SampleListView(SingleTableView, ListView):
         # print(context)
         context['project'] = self.project
         return context
+
+
+class SampleDetailView(DetailView):
+    model = Sample
+    template_name = 'samples/sample_details.html'
+    pk_url_kwarg = "sample_id"
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated():
+            permission_obj = self.get_permission_object()
+            if request.user.has_perm("projects.can_visit_project", permission_obj):
+                return super().dispatch(request, *args, **kwargs)
+            else:
+                raise PermissionDenied
+        else:
+            return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
+
+    def get(self, request, *args, **kwargs):
+        """A base view for displaying a list of objects."""
+        # check if project exists
+        try:
+
+            sample_id = kwargs['sample_id']
+            sample = Sample.objects.get(id=sample_id)
+            # add project to view attributes
+            self.sample = sample
+        except Sample.DoesNotExist:
+            raise Http404
+        return super(SampleDetailView, self).get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(SampleDetailView, self).get_context_data(**kwargs)
+        context['sample'] = self.sample
+        return context

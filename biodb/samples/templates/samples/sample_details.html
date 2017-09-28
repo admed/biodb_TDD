@@ -1,0 +1,20 @@
+{% extends "biodb/base.html" %} {% block content %} {% load render_table from django_tables2 %} {% load static %}
+
+<h1>
+  {{ sample.code }}
+</h1>
+<ul class="sample-details">
+
+<li>Robject name : {{ sample.robject.name }}</li>
+<li>Notes : {{ sample.notes }}</li>
+<li>Form : {{ sample.form }}</li>
+<li>Source :  {{ sample.source }}</li>
+<li>Status : {{ sample.get_status_display }}</li>
+
+</ul>
+
+
+
+<a class="link_back" href="{% url 'projects:samples:sample_list' sample.robject.project.name %}">Back to sample table</a>
+
+{% endblock %}

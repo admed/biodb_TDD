@@ -63,3 +63,13 @@ class SampleListViewTest(FunctionalTest):
         samp1 = Sample.objects.create(code='1a1a', robject=robj)
         response = self.client.get(f"/projects/{proj.name}/samples/")
         self.assertEqual(proj, response.context['project'])
+
+class SampleDetailViewTest(FunctionalTest):
+    def test_anonymous_user_is_redirected_to_login_page(self):
+        proj = Project.objects.create(name='Project_1')
+        robj = Robject.objects.create(name='Robject', project=proj)
+        samp = Sample.objects.create(code='code', robject=robj)
+        response = self.client.get(f"/projects/{proj.name}/samples/{samp.id}/")
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response,
+                             f'/accounts/login/?next=/projects/{proj.name}/samples/{samp.id}/')
