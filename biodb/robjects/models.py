@@ -1,5 +1,5 @@
 from django.db import models
-from projects.models import Project
+from projects.models import Project, Tag
 from django.contrib.auth.models import User
 from ckeditor.fields import RichTextField
 # Create your models here.
@@ -16,7 +16,7 @@ class Robject(models.Model):
         null=True, blank=True, auto_now_add=True)
     modify_by = models.ForeignKey(to=User, null=True, blank=True)
     modify_date = models.DateTimeField(null=True, auto_now=True)
-    tags = models.ManyToManyField("Tag", related_name="robjects", blank=True)
+    tags = models.ManyToManyField(Tag, related_name="robjects", blank=True)
     names = models.ManyToManyField("Name", related_name="robjects", blank=True)
     notes = RichTextField(blank=True)
     ref_seq = RichTextField(blank=True)
@@ -37,14 +37,6 @@ class Robject(models.Model):
 
 class Name(models.Model):
     name = models.CharField(max_length=100, unique=True)
-
-    def __str__(self):
-        return self.name
-
-
-class Tag(models.Model):
-    name = models.CharField(max_length=100, unique=True)
-    project = models.ForeignKey(to=Project, null=True)
 
     def __str__(self):
         return self.name
