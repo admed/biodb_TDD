@@ -82,3 +82,11 @@ class SampleDetailViewTest(FunctionalTest):
         self.assertEqual(response.status_code, 403)
         self.assertEqual("<h1>403 Forbidden</h1>",
                          response.content.decode("utf-8"))
+
+    def test_render_template_on_get(self):
+        user, proj = self.default_set_up_for_robjects_page()
+        robj = Robject.objects.create(name='Robject', project=proj)
+        samp = Sample.objects.create(code='code', robject=robj)
+        assign_perm("projects.can_visit_project", user, proj)                
+        response = self.client.get(f"/projects/{proj.name}/samples/{samp.id}/")
+        self.assertTemplateUsed(response, "samples/sample_details.html")
