@@ -73,3 +73,12 @@ class SampleDetailViewTest(FunctionalTest):
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response,
                              f'/accounts/login/?next=/projects/{proj.name}/samples/{samp.id}/')
+
+    def test_user_without_permision_seas_permission_denied(self):
+        user, proj = self.default_set_up_for_robjects_page()
+        robj = Robject.objects.create(name='Robject', project=proj)
+        samp = Sample.objects.create(code='code', robject=robj)
+        response = self.client.get(f"/projects/{proj.name}/samples/{samp.id}/")
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual("<h1>403 Forbidden</h1>",
+                         response.content.decode("utf-8"))

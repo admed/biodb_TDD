@@ -81,6 +81,10 @@ class SampleDetailView(DetailView):
     template_name = 'samples/sample_details.html'
     pk_url_kwarg = "sample_id"
 
+    def get_permission_object(self):
+        project = Project.objects.get(name=self.kwargs['project_name'])
+        return project
+
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated():
             permission_obj = self.get_permission_object()

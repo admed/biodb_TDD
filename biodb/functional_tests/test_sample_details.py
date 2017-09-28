@@ -38,6 +38,7 @@ class TestUserVisitsSampleDetails(FunctionalTest):
         # User want to visit sample detail page.
         self.browser.get(self.live_server_url +
                          f"/projects/{proj.name}/samples/{samp.id}/")
+        time.sleep(10)
         error = self.browser.find_element_by_css_selector("h1")
         self.assertEqual(error.text, "403 Forbidden")
 
