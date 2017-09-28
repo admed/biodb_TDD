@@ -13,6 +13,16 @@ from guardian.shortcuts import assign_perm
 
 
 class TestUserVisitsSampleDetails(FunctionalTest):
+
+    def create_sample_data(self):
+        # CREATE SAMPLE USER AND PROJECT.
+        usr, proj = self.project_set_up_using_default_data()
+        # CREATE SAMPLE ROBJECT.
+        robj = Robject.objects.create(name='robject_1', project=proj)
+        # CREATE SAMPLE SAMPLE FOR PROJECT.
+        samp = Sample.objects.create(code='sample_1', robject=robj)
+        return(usr, proj, robj, samp)
+
     def test_annonymous_user_visits_samples_details(self):
         # CREATE SAMPLE PROJECT BASIC INFORMATIONS.
         proj = Project.objects.create(name="project_1")
@@ -29,27 +39,19 @@ class TestUserVisitsSampleDetails(FunctionalTest):
         self.assertEqual(current_url, expected_url)
 
     def test_user_without_project_permission_wants_to_vist_sample_detail_page(self):
-        # CREATE SAMPLE USER AND PROJECT.
-        usr, proj = self.project_set_up_using_default_data()
-        # CREATE SAMPLE ROBJECT.
-        robj = Robject.objects.create(name='robject_1', project=proj)
-        # CREATE SAMPLE SAMPLE FOR PROJECT.
-        samp = Sample.objects.create(code='sample_1', robject=robj)
+        # CREATE SAMPLE DATA.
+        usr, proj, robj, samp = self.create_sample_data()
         # User want to visit sample detail page.
         self.browser.get(self.live_server_url +
                          f"/projects/{proj.name}/samples/{samp.id}/")
-        time.sleep(10)
         error = self.browser.find_element_by_css_selector("h1")
         self.assertEqual(error.text, "403 Forbidden")
 
     def test_user_with_permission_seas_single_sample_detail_page_and_checks_static_elements(self):
-        # CREATE SAMPLE USER AND PROJECT.
-        usr, proj = self.project_set_up_using_default_data()
-        # SET USER PERMISSION FOR PROJECT.
+        # CREATE SAMPLE DATA.
+        usr, proj, robj, samp = self.create_sample_data()
+        # ASSIGN PERMISSIONS FOR PROJECT.
         assign_perm("projects.can_visit_project", usr, proj)
-        # CREATE SAMPLE ROBJECT.
-        robj = Robject.objects.create(name='robject_1', project=proj)
-        # CREATE SAMPLE SAMPLE FOR PROJECT.
         samp = Sample.objects.create(code='sample_1', robject=robj)
         # User want to visit sample detail page.
         self.browser.get(self.live_server_url +

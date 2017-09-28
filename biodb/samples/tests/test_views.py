@@ -9,6 +9,7 @@ from unit_tests.base import FunctionalTest
 from samples.views import SampleListView
 from guardian.shortcuts import assign_perm
 
+
 class SampleListViewTest(FunctionalTest):
     def test_anonymous_user_gets_samples_page(self):
         Project.objects.create(name="PROJECT_1")
@@ -64,7 +65,14 @@ class SampleListViewTest(FunctionalTest):
         response = self.client.get(f"/projects/{proj.name}/samples/")
         self.assertEqual(proj, response.context['project'])
 
+
 class SampleDetailViewTest(FunctionalTest):
+    def create_sample_data(self):
+        user, proj = self.default_set_up_for_robjects_page()
+        robj = Robject.objects.create(name='Robject', project=proj)
+        samp = Sample.objects.create(code='code', robject=robj)
+        return(user, proj, robj, samp)
+
     def test_anonymous_user_is_redirected_to_login_page(self):
         proj = Project.objects.create(name='Project_1')
         robj = Robject.objects.create(name='Robject', project=proj)
@@ -75,27 +83,40 @@ class SampleDetailViewTest(FunctionalTest):
                              f'/accounts/login/?next=/projects/{proj.name}/samples/{samp.id}/')
 
     def test_user_without_permision_seas_permission_denied(self):
-        user, proj = self.default_set_up_for_robjects_page()
-        robj = Robject.objects.create(name='Robject', project=proj)
-        samp = Sample.objects.create(code='code', robject=robj)
+        user, proj, robj, samp = self.create_sample_data()
         response = self.client.get(f"/projects/{proj.name}/samples/{samp.id}/")
         self.assertEqual(response.status_code, 403)
         self.assertEqual("<h1>403 Forbidden</h1>",
                          response.content.decode("utf-8"))
 
     def test_render_template_on_get(self):
-        user, proj = self.default_set_up_for_robjects_page()
-        robj = Robject.objects.create(name='Robject', project=proj)
-        samp = Sample.objects.create(code='code', robject=robj)
+        user, proj, robj, samp = self.create_sample_data()
         assign_perm("projects.can_visit_project", user, proj)
         response = self.client.get(f"/projects/{proj.name}/samples/{samp.id}/")
         self.assertTemplateUsed(response, "samples/sample_details.html")
 
     def test_view_pass_sample_to_context(self):
-        user = self.login_default_user()
-        proj = Project.objects.create(name='Project_1')
-        robj = Robject.objects.create(name='Robject', project=proj)
+        user, proj, robj, samp = self.create_sample_data()
         assign_perm("projects.can_visit_project", user, proj)
-        samp = Sample.objects.create(code='code', robject=robj)
         response = self.client.get(f"/projects/{proj.name}/samples/{samp.id}/")
-        self.assertEqual(samp , response.context["sample"])
+        self.assertEqual(samp, response.context["sample"])
+
+    def test_view_filter_sample_get_in_context(self):
+        user = self.login_default_user()
+        proj1 = Project.objects.create(name='Project_1')
+        proj2 = Project.objects.create(name='Project_2')
+        assign_perm("projects.can_visit_project", user, proj1)
+
+        robj1 = Robject.objects.create(name='Robject1', project=proj1)
+        robj2 = Robject.objects.create(name='Robject2', project=proj2)
+
+        samp1 = Sample.objects.create(code="samp1", robject=robj1)
+        samp2 = Sample.objects.create(code="samp_2", robject=robj2)
+
+        response = self.client.get(f"/projects/{proj1.name}/samples/{samp1.id}/")
+        responsed_sample = response.context['sample']
+        self.assertEqual(responsed_sample.code, "samp1")
+
+        response = self.client.get(f"/projects/{proj1.name}/samples/{samp2.id}/")
+        responsed_sample = response.context['sample']
+        self.assertEqual(responsed_sample.code, "samp_2")
