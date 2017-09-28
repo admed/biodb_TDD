@@ -12,6 +12,11 @@ from guardian.shortcuts import assign_perm
 
 class FunctionalTest(StaticLiveServerTestCase):
     MAX_WAIT = 10
+    # DEFAULT SHORTCUT URLS
+    ROBJECT_LIST_URL = reverse("projects:robjects:robjects_list", kwargs={
+                               "project_name": "test_proj"})
+    ROBJECT_DELETE_URL = reverse("projects:robjects:robject_delete", kwargs={
+                                 "project_name": "test_proj"})
 
     def setUp(self):
         self.browser = webdriver.Chrome()
@@ -94,3 +99,20 @@ class FunctionalTest(StaticLiveServerTestCase):
 
     def default_url_robject_list(self):
         return self.live_server_url + reverse("projects:robjects:robjects_list", kwargs={"project_name": "default_proj"})
+
+    def annonymous_testing_helper(self, requested_url, after_login_url=None):
+        # SET UP
+        proj = Project.objects.create(name="sample_proj")
+
+        # Annonymous user goes to requested page
+        self.browser.get(self.live_server_url + requested_url)
+
+        if not after_login_url:
+            after_login_url = requested_url
+        time.sleep(10)
+        # He is redirect to login page.
+        self.assertEqual(
+            self.browser.current_url,
+            self.live_server_url +
+            reverse("login") + "?next=" + after_login_url
+        )

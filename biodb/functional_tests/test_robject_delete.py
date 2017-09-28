@@ -32,17 +32,8 @@ class RobjectDeleteTestCase(FunctionalTest):
                 "td:first-child input[type='checkbox']")
 
     def test_annonymous_user_goes_to_confirmation_page(self):
-        # SET UP
-        proj = Project.objects.create(name="sample_proj")
-        robj = Robject.objects.create(project=proj, name="sample_robj")
-
-        # Annonymous user goes to robject delete confirmation page
-        self.browser.get(self.live_server_url +
-                         f"/projects/{proj.name}/robjects/delete/?{robj.name}={robj.id}")
-        # He is redirect to login page.
-        self.assertEqual(self.browser.current_url,
-                         self.live_server_url +
-                         f"/accounts/login/?next=/projects/{proj.name}/robjects/")
+        self.annonymous_testing_helper(
+            self.ROBJECT_DELETE_URL, self.ROBJECT_LIST_URL)
 
     def test_user_without_delete_permission_goes_to_confirmation_page(self):
         # SET UP
@@ -54,7 +45,6 @@ class RobjectDeleteTestCase(FunctionalTest):
                          f"/projects/{proj.name}/robjects/delete/?{robj.name}={robj.id}")
 
         # He gets permission denied message.
-        time.sleep(10)
         error = self.browser.find_element_by_css_selector("h1")
         self.assertEqual(error.text, "403 Forbidden")
 

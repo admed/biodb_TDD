@@ -10,7 +10,7 @@ class FunctionalTest(TestCase):
     ROBJECT_LIST_URL = reverse("projects:robjects:robjects_list", kwargs={
                                "project_name": "test_proj"})
     ROBJECT_DELETE_URL = reverse("projects:robjects:robject_delete", kwargs={
-        "project_name": "test_proj"})
+                                 "project_name": "test_proj"})
 
     def login_default_user(self):
         user = User.objects.create_user(
