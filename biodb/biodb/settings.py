@@ -45,10 +45,13 @@ INSTALLED_APPS = (
     'accounts',
     'projects',
     'robjects',
+    'samples',
+    #'tags',
     'guardian',
-    'debug_toolbar',
-    'django_addanother',
-    'ckeditor'
+    'ckeditor',
+    'easy_pdf',
+    'django_tables2',
+    'django_addanother'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -60,7 +63,6 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 
 ROOT_URLCONF = 'biodb.urls'
@@ -76,6 +78,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.request',
             ],
         },
     },
@@ -104,7 +107,7 @@ TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
-USE_L10N = True
+# USE_L10N = True
 
 USE_TZ = True
 
@@ -112,7 +115,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
+
 
 # add for userena app
 AUTHENTICATION_BACKENDS = (
@@ -122,8 +127,5 @@ AUTHENTICATION_BACKENDS = (
 
 ADMINS = (("Adrian", DEFAULT_TO_EMAIL), )
 EMAIL_SUBJECT_PREFIX = "[BioDB] "
-
-# INTERNAL_IPS = '127.0.0.1'
-
-DEBUG_TOOLBAR_PATCH_SETTINGS = False
-LOGIN_URL = '/accounts/login/'
+LOGIN_URL = "/accounts/login/"
+DATETIME_FORMAT = 'Y-m-d, H:i'

@@ -66,14 +66,13 @@ class FunctionalTest(StaticLiveServerTestCase):
         password_input.send_keys(password)
         submit_button.click()
         expected_url = self.live_server_url + "/projects/"
-        assert self.browser.current_url == expected_url, "User login failed!"
+        assert self.browser.current_url == expected_url, f"User login failed!"
 
         return u
 
     def project_set_up_and_get_robject_page(self, username="USERNAME",
                                             password="PASSWORD", project_name="proj_1"):
         """ Helper method for all robject page related tests.
-
             Method include logged user with default creadentials and project
             with default name.
         """

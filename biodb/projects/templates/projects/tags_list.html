@@ -1,0 +1,14 @@
+{% extends "biodb/base.html" %} {% block content %}
+<h1>Tags:</h1>
+<ul class="tag_list">
+
+    {% if tag_list %}
+      {% for tag in tag_list %}
+        <li>{{ tag.name }} </li>
+      {% endfor %}
+      {% else %}
+        <span class="empty_tag_msg">There are no tags attached to this project.</sapn>
+    {% endif %}
+</ul>
+
+<a class='link_back' href="/projects/{{ project_name }}/robjects/">Return back to project robjects page</a> {% endblock %}

@@ -8,8 +8,8 @@ from django.db.models import Q
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render
 from django.views.generic import View, CreateView
-from projects.models import Project
-from robjects.models import Robject, Name, Tag
+from projects.models import Project, Tag
+from robjects.models import Robject, Name
 from django import forms
 from django_addanother.widgets import AddAnotherWidgetWrapper
 from django.core.urlresolvers import reverse
@@ -146,22 +146,22 @@ class RobjectCreateView(CreateView):
                 "names": AddAnotherWidgetWrapper(
                     widget=forms.SelectMultiple,
                     add_related_url=reverse(
-                        "names_create", args=(self.args[0],))
+                        "projects:robjects:names_create", kwargs=self.kwargs)
                 ),
                 "tags":  AddAnotherWidgetWrapper(
                     widget=forms.SelectMultiple,
                     add_related_url=reverse(
-                        "tags_create", args=(self.args[0],))
+                        "projects:robjects:tags_create", kwargs=self.kwargs)
                 ),
                 'project': forms.HiddenInput()
             })
         return form
 
     def get_success_url(self):
-        return reverse("robjects_list", args=(self.args[0],))
+        return reverse("projects:robjects:robjects_list", kwargs=self.kwargs)
 
     def get_permission_object(self):
-        project = Project.objects.get(name=self.args[0])
+        project = Project.objects.get(name=self.kwargs["project_name"])
         return project
 
     def get(self, request, *args, **kwargs):
@@ -176,7 +176,7 @@ class RobjectCreateView(CreateView):
 
     def get_initial(self):
         return {
-            "project": Project.objects.get(name=self.args[0])
+            "project": Project.objects.get(name=self.kwargs["project_name"])
         }
 
 
@@ -189,7 +189,8 @@ class NameCreateView(CreatePopupMixin, CreateView):
         from urllib.parse import urlparse
         previously_visited_path = urlparse(
             request.META.get("HTTP_REFERER", None)).path
-        robject_create_path = reverse("robject_create", args=args)
+        robject_create_path = reverse(
+            "projects:robjects:robject_create", kwargs=kwargs)
 
         if previously_visited_path == robject_create_path:
             return super().get(request, *args, **kwargs)
@@ -208,7 +209,8 @@ class TagCreateView(CreatePopupMixin, CreateView):
         from urllib.parse import urlparse
         previously_visited_path = urlparse(
             request.META.get("HTTP_REFERER", None)).path
-        robject_create_path = reverse("robject_create", args=args)
+        robject_create_path = reverse(
+            "projects:robjects:robject_create", kwargs=kwargs)
 
         if previously_visited_path == robject_create_path:
             return super().get(request, *args, **kwargs)
@@ -218,5 +220,5 @@ class TagCreateView(CreatePopupMixin, CreateView):
 
     def form_valid(self, form):
         tag = form.save()
-        tag.project = Project.objects.get(name=self.args[0])
+        tag.project = Project.objects.get(name=self.kwargs["project_name"])
         return super().form_valid(form)

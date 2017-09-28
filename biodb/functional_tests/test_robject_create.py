@@ -15,7 +15,7 @@ from django.utils import timezone
 @override_settings(DEBUG=True)
 class RobjectCreateTestCase(FunctionalTest):
     def get_robject_form_url(self, proj):
-        return self.live_server_url + reverse("robject_create", args=(proj.name,))
+        return self.live_server_url + reverse("projects:robjects:robject_create", args=(proj.name,))
 
     def add_related(self, input_id, name):
         """User click in plus button, switch to popup, add related and get back.
@@ -64,13 +64,13 @@ class RobjectCreateTestCase(FunctionalTest):
         return r
 
     def get_robject_create_page(self, proj):
-        self.browser.get(self.live_server_url + reverse("robject_create",
+        self.browser.get(self.live_server_url + reverse("projects:robjects:robject_create",
                                                         args=(proj.name,)))
 
     def submit_and_assert_valid_redirect(self, proj):
         self.browser.find_element_by_css_selector("button").click()
         self.assertEqual(self.browser.current_url, self.live_server_url +
-                         reverse("robjects_list", args=(proj.name,)))
+                         reverse("projects:robjects:robjects_list", args=(proj.name,)))
 
     def test_user_fill_full_form_with_multiple_names_tags_and_files(self):
         proj, user = self.set_project_and_user(
@@ -643,7 +643,7 @@ class RobjectCreateTestCase(FunctionalTest):
             project_name="test_proj", username="Lebron", password="James")
 
         name_popup_url = self.live_server_url + \
-            reverse("names_create", args=(proj.name,))
+            reverse("projects:robjects:names_create", args=(proj.name,))
 
         # User wants to visit popup form using url adress instead of plus
         # button.
@@ -662,7 +662,7 @@ class RobjectCreateTestCase(FunctionalTest):
             project_name="test_proj", username="Coby", password="Briant")
 
         tag_popup_url = self.live_server_url + \
-            reverse("tags_create", args=(proj.name,))
+            reverse("projects:robjects:tags_create", args=(proj.name,))
 
         # User wants to visit popup form using url adress instead of plus
         # button.

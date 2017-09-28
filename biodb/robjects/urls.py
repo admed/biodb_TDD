@@ -3,6 +3,7 @@ from robjects.views import robjects_list_view, SearchRobjectsView
 from django.http import HttpResponse
 from robjects.views import RobjectCreateView, NameCreateView, TagCreateView
 
+app_name = 'robjects'
 urlpatterns = [
     url(r"^search/$",
         SearchRobjectsView.as_view(), name="search_robjects"),
