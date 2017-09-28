@@ -220,3 +220,17 @@ class TagCreateView(CreatePopupMixin, CreateView):
         tag = form.save()
         tag.project = Project.objects.get(name=self.kwargs["project_name"])
         return super().form_valid(form)
+
+class RobjectSamplesList(SampleListView):
+
+    def get_queryset(self):
+        """
+        Overwrite orginal qs and add filtering by robject
+        """
+        # original queryset
+        project_name = self.kwargs['project_name']
+        robject_id = self.kwargs['robject_id']
+        qs = super(RobjectSamplesList, self).get_queryset()
+
+        qs = qs.filter(robject__pk=robject_id)
+        return qs
