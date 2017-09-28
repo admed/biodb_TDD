@@ -93,4 +93,4 @@ class FunctionalTest(StaticLiveServerTestCase):
         return proj, user
 
     def default_url_robject_list(self):
-        return self.live_server_url + reverse("robjects_list", args=("default_proj",))
+        return self.live_server_url + reverse("projects:robjects:robjects_list", kwargs={"project_name": "default_proj"})

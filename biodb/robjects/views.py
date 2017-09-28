@@ -222,3 +222,14 @@ class TagCreateView(CreatePopupMixin, CreateView):
         tag = form.save()
         tag.project = Project.objects.get(name=self.kwargs["project_name"])
         return super().form_valid(form)
+
+
+class RobjectDeleteView(View):
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated():
+            return super().dispatch(request, *args, **kwargs)
+        else:
+            redirect_url = reverse("projects:robjects:robjects_list", kwargs={
+                "project_name": self.kwargs["project_name"]
+            })
+            return redirect(reverse("login") + f"?next={redirect_url}")

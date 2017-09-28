@@ -446,3 +446,17 @@ class TagCreateViewTestCase(FunctionalTest):
             self.get_tags_create_url(proj),
             HTTP_REFERER=self.get_robject_create_url(proj))
         self.assertEqual(response.status_code, 200)
+
+
+class RobjectDeleteTestCase(FunctionalTest):
+    def test_annonymous_user_is_redirect_to_login_page(self):
+        proj = Project.objects.create(name="test_proj")
+        r_delete_url = reverse("projects:robjects:robject_delete", kwargs={
+                               "project_name": proj.name})
+        response = self.client.get(r_delete_url)
+        robjects_list_url = reverse("projects:robjects:robjects_list",
+                                    kwargs={"project_name": proj.name})
+        self.assertRedirects(
+            response,
+            reverse("login") + f"?next={robjects_list_url}"
+        )
