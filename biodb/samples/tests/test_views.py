@@ -87,6 +87,15 @@ class SampleDetailViewTest(FunctionalTest):
         user, proj = self.default_set_up_for_robjects_page()
         robj = Robject.objects.create(name='Robject', project=proj)
         samp = Sample.objects.create(code='code', robject=robj)
-        assign_perm("projects.can_visit_project", user, proj)                
+        assign_perm("projects.can_visit_project", user, proj)
         response = self.client.get(f"/projects/{proj.name}/samples/{samp.id}/")
         self.assertTemplateUsed(response, "samples/sample_details.html")
+
+    def test_view_pass_sample_to_context(self):
+        user = self.login_default_user()
+        proj = Project.objects.create(name='Project_1')
+        robj = Robject.objects.create(name='Robject', project=proj)
+        assign_perm("projects.can_visit_project", user, proj)
+        samp = Sample.objects.create(code='code', robject=robj)
+        response = self.client.get(f"/projects/{proj.name}/samples/{samp.id}/")
+        self.assertEqual(samp , response.context["sample"])
