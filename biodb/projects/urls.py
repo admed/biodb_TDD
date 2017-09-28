@@ -9,4 +9,5 @@ urlpatterns = [
     url(r"^(?P<project_name>\w+)/robjects/", include("robjects.urls")),
     url(r"^(?P<project_name>\w+)/samples/", include("samples.urls")),
     url(r"^(?P<project_name>\w+)/tags/", TagsListView.as_view(), name="tag_list"),
+    url(r"^(?P<project_name>\w+)/samples/", include("samples.urls")),
 ]
