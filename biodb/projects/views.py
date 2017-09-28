@@ -48,3 +48,9 @@ class TagsListView(ListView):
 
         # return filtered qs by project
         return qs.filter(project__name=self.kwargs['project_name'])
+
+    def get_context_data(self, **kwargs):
+        context = super(TagsListView, self).get_context_data(**kwargs)
+        project = self.kwargs['project_name']
+        context['project_name'] = project
+        return context
