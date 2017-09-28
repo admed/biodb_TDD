@@ -109,7 +109,6 @@ class FunctionalTest(StaticLiveServerTestCase):
 
         if not after_login_url:
             after_login_url = requested_url
-        time.sleep(10)
         # He is redirect to login page.
         self.assertEqual(
             self.browser.current_url,

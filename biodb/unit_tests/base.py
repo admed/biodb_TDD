@@ -8,9 +8,9 @@ from django.core.urlresolvers import reverse
 class FunctionalTest(TestCase):
     # DEFAULT SHORTCUT URLS
     ROBJECT_LIST_URL = reverse("projects:robjects:robjects_list", kwargs={
-                               "project_name": "test_proj"})
+                               "project_name": "project_1"})
     ROBJECT_DELETE_URL = reverse("projects:robjects:robject_delete", kwargs={
-                                 "project_name": "test_proj"})
+                                 "project_name": "project_1"})
 
     def login_default_user(self):
         user = User.objects.create_user(

@@ -7,7 +7,7 @@ from django.db.models import TextField
 from django.db.models import Q
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render
-from django.views.generic import View, CreateView
+from django.views.generic import View, CreateView, TemplateView
 from projects.models import Project, Tag
 from robjects.models import Robject, Name
 from django import forms
@@ -225,9 +225,14 @@ class TagCreateView(CreatePopupMixin, CreateView):
 
 
 class RobjectDeleteView(View):
-    def dispatch(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         if request.user.is_authenticated():
-            return super().dispatch(request, *args, **kwargs)
+            permission_obj = Project.objects.get(
+                name=self.kwargs["project_name"])
+            if request.user.has_perm("projects.can_modify_project", permission_obj):
+                return HttpResponse("works")
+            else:
+                raise PermissionDenied
         else:
             redirect_url = reverse("projects:robjects:robjects_list", kwargs={
                 "project_name": self.kwargs["project_name"]

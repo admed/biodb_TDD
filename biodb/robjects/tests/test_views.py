@@ -452,3 +452,10 @@ class RobjectDeleteTestCase(FunctionalTest):
     def test_annonymous_user_is_redirect_to_login_page(self):
         self.annonymous_testing_helper(
             self.ROBJECT_DELETE_URL, self.ROBJECT_LIST_URL)
+
+    def test_view_refuse_access_to_users_without_project_permission(self):
+        self.default_set_up_for_robjects_page()
+        response = self.client.get(self.ROBJECT_DELETE_URL)
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual("<h1>403 Forbidden</h1>",
+                         response.content.decode("utf-8"))
