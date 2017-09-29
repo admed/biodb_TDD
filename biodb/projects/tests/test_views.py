@@ -35,7 +35,7 @@ class TagListViewTestCase(FunctionalTest):
         response = self.client.get(f"/projects/{proj.name}/tags/")
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response,
-                         f'/accounts/login/?next=/projects/{proj.name}/tags/')
+                             f'/accounts/login/?next=/projects/{proj.name}/tags/')
 
     def test_template_used(self):
         user = self.login_default_user()
@@ -91,13 +91,14 @@ class TagListViewTestCase(FunctionalTest):
         self.assertIn(tag1, response.context["object_list"])
         self.assertIn(tag2, response.context["object_list"])
 
+
 class TagCreateViewTest(FunctionalTest):
     def test_anonymous_user_is_redirected_to_login_page(self):
         proj = Project.objects.create(name='Project_1')
         response = self.client.get(f"/projects/{proj.name}/tags/create/")
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response,
-                         f'/accounts/login/?next=/projects/{proj.name}/tags/create/')
+                             f'/accounts/login/?next=/projects/{proj.name}/tags/create/')
 
     def test_user_without_permision_seas_permission_denied(self):
         self.login_default_user()
@@ -106,3 +107,14 @@ class TagCreateViewTest(FunctionalTest):
         self.assertEqual(response.status_code, 403)
         self.assertEqual("<h1>403 Forbidden</h1>",
                          response.content.decode("utf-8"))
+
+    def test_view_pass_project_name_to_context(self):
+        user = self.login_default_user()
+        proj1 = Project.objects.create(name='Project_1')
+        proj2 = Project.objects.create(name='Project_2')
+        assign_perm("projects.can_visit_project", user, proj1)
+        assign_perm("projects.can_visit_project", user, proj2)
+        response1 = self.client.get(f"/projects/{proj1.name}/tags/create/")
+        self.assertIn("Project_1", response1.context["project_name"])
+        response2 = self.client.get(f"/projects/{proj2.name}/tags/create/")
+        self.assertIn("Project_2", response2.context["project_name"])

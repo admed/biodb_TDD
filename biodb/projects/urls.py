@@ -9,6 +9,6 @@ urlpatterns = [
     url(r"^$", ProjectListView.as_view(), name="projects_list"),
     url(r"^(?P<project_name>\w+)/robjects/", include("robjects.urls")),
     url(r"^(?P<project_name>\w+)/samples/", include("samples.urls")),
-    url(r"^(?P<project_name>\w+)/tags/", TagsListView.as_view(), name="tag_list"),
-    url(r"^(?P<project_name>\w+)/tags/create/", TagCreateView.as_view(), name="tag_creare"),
+    url(r"^(?P<project_name>\w+)/tags/$", TagsListView.as_view(), name="tag_list"),
+    url(r"^(?P<project_name>\w+)/tags/create/$", TagCreateView.as_view(), name="tag_create"),
 ]
