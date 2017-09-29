@@ -1,6 +1,7 @@
 from unit_tests.base import FunctionalTest
 from robjects.models import Robject, Name, Tag
 from projects.models import Project
+from samples.models import Sample
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django_addanother.widgets import AddAnotherWidgetWrapper
@@ -10,6 +11,47 @@ from django.views import generic
 from robjects.views import NameCreateView, TagCreateView
 from biodb import settings
 from guardian.shortcuts import assign_perm
+
+class RobjectSamplesListTest(FunctionalTest):
+    def test_anonymous_user_gets_samples_page(self):
+        proj = Project.objects.create(name="PROJECT_1")
+        Robject.objects.create(name="Robject_1", project=proj)
+        response = self.client.get("/projects/PROJECT_1/robjects/1/samples/")
+        self.assertEqual(response.status_code, 302)
+        self.assertIn('/accounts/login/?next=', response.url)
+
+    def test_render_template_on_get(self):
+        user, proj = self.default_set_up_for_robjects_page()
+        robj = Robject.objects.create(name="rob")
+        assign_perm("projects.can_visit_project", user, proj)
+        samp = Sample(code='1a2b3c')
+        response = self.client.get(f"/projects/{proj.name}/robjects/{robj.id}/samples/")
+        self.assertTemplateUsed(response, "samples/samples_list.html")
+
+    def test_view_get_list_of_samples_and_pass_it_to_context(self):
+        user, proj = self.default_set_up_for_robjects_page()
+        assign_perm("projects.can_visit_project", user, proj)
+
+        robj = Robject.objects.create(name='robject', project=proj)
+
+        samp1 = Sample.objects.create(code='1a1a', robject=robj)
+        samp2 = Sample.objects.create(code='2a2a', robject=robj)
+        samp3 = Sample.objects.create(code='3a3a', robject=robj)
+        response = self.client.get(f"/projects/{proj.name}/robjects/{robj.id}/samples/")
+
+        self.assertIn(samp1, response.context["sample_list"])
+        self.assertIn(samp2, response.context["sample_list"])
+        self.assertIn(samp3, response.context["sample_list"])
+
+    def test_context_data(self):
+        user, proj = self.default_set_up_for_robjects_page()
+        assign_perm("projects.can_visit_project", user, proj)
+
+        robj = Robject.objects.create(name='robject', project=proj)
+
+        samp1 = Sample.objects.create(code='1a1a', robject=robj)
+        response = self.client.get(f"/projects/{proj.name}/robjects/{robj.id}/samples/")
+        self.assertEqual(proj, response.context['project'])
 
 
 class RObjectsListViewTests(FunctionalTest):
