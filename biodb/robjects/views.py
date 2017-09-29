@@ -18,7 +18,7 @@ from django_addanother.views import CreatePopupMixin
 from guardian.mixins import LoginRequiredMixin as GuardianLoginRequiredMixin
 from guardian.mixins import PermissionRequiredMixin
 from biodb import settings
-from django.http import HttpResponseBadRequest, HttpResponse
+from django.http import HttpResponseBadRequest, HttpResponse, HttpResponseForbidden
 # Create your views here.
 
 
@@ -235,7 +235,7 @@ class RobjectDeleteView(DeleteView):
             if request.user.has_perm("projects.can_delete_robjects", permission_obj):
                 return super().get(request, *args, **kwargs)
             else:
-                raise PermissionDenied
+                return HttpResponseForbidden("<h1>User doesn't have permission to delete robjects in this project.</h1>")
         else:
             redirect_url = reverse("projects:robjects:robjects_list", kwargs={
                 "project_name": self.kwargs["project_name"]

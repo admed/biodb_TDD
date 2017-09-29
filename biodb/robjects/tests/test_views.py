@@ -459,11 +459,10 @@ class RobjectDeleteTestCase(FunctionalTest):
             self.ROBJECT_DELETE_URL, self.ROBJECT_LIST_URL)
 
     def test_view_refuse_access_to_users_without_project_permission(self):
-        self.default_set_up_for_robjects_pages()
-        response = self.client.get(self.ROBJECT_DELETE_URL)
-        self.assertEqual(response.status_code, 403)
-        self.assertEqual("<h1>403 Forbidden</h1>",
-                         response.content.decode("utf-8"))
+        self.other_permission_testing_helper(
+            url=self.ROBJECT_DELETE_URL,
+            error_message="User doesn't have permission to delete robjects in this project."
+        )
 
     def test_view_renders_delete_confirmattion_template(self):
         self.default_set_up_for_robject_delete()

@@ -29,7 +29,7 @@ class FunctionalTest(TestCase):
     def annonymous_testing_helper(self, requested_url, after_login_url=None):
         """ Helper method to use in annonymous redirections tests.
         """
-        proj = Project.objects.create(name="test_proj")
+        proj = Project.objects.create(name="project_1")
         response = self.client.get(requested_url)
 
         if not after_login_url:
@@ -39,3 +39,17 @@ class FunctionalTest(TestCase):
             response,
             reverse("login") + f"?next={after_login_url}"
         )
+
+    def visit_permission_testing_helper(self, url):
+        user = self.default_set_up_for_projects_pages()
+        proj = Project.objects.create(name="project_1")
+        error_message = "User doesn't have permission to visit the project."
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(f"<h1>{error_message}</h1>", response.content.decode("utf-8"))
+
+    def other_permission_testing_helper(self, url, error_message):
+        user, proj = self.default_set_up_for_robjects_pages()
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(f"<h1>{error_message}</h1>", response.content.decode("utf-8"))
