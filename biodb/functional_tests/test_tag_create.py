@@ -26,3 +26,12 @@ class TagCreateTestCase(FunctionalTest):
         current_url = self.browser.current_url
         expected_url = self.live_server_url + f"/accounts/login/?next=/projects/{proj.name}/tags/create/"
         self.assertEqual(current_url, expected_url)
+
+    def test_user_without_project_visit_permission_tries_to_get_tag_list(self):
+        # CREATE SAMPLE PROJECT AND USER
+        usr, proj = self.project_set_up_using_default_data()
+        # User gets tag list. He doesn't have project visit permission.
+        self.get_tag_list(proj)
+        # He sees perrmision denied error.
+        error = self.browser.find_element_by_css_selector("h1")
+        self.assertEqual(error.text, "403 Forbidden")
