@@ -21,14 +21,14 @@ class SampleListViewTest(FunctionalTest):
         self.assertIn('/accounts/login/?next=', response.url)
 
     def test_render_template_on_get(self):
-        user, proj = self.default_set_up_for_robjects_page()
+        user, proj = self.default_set_up_for_robjects_pages()
         assign_perm("projects.can_visit_project", user, proj)
         samp = Sample(code='1a2b3c')
         response = self.client.get(f"/projects/{proj.name}/samples/")
         self.assertTemplateUsed(response, "samples/samples_list.html")
 
     def test_view_get_list_of_samples_and_pass_it_to_context(self):
-        user, proj = self.default_set_up_for_robjects_page()
+        user, proj = self.default_set_up_for_robjects_pages()
         assign_perm("projects.can_visit_project", user, proj)
 
         robj = Robject.objects.create(name='robject', project=proj)
@@ -43,7 +43,7 @@ class SampleListViewTest(FunctionalTest):
         self.assertIn(samp3, response.context["sample_list"])
 
     def test_function_used(self):
-        user, proj = self.default_set_up_for_robjects_page()
+        user, proj = self.default_set_up_for_robjects_pages()
         assign_perm("projects.can_visit_project", user, proj)
 
         robj = Robject.objects.create(name='robject', project=proj)
@@ -55,7 +55,7 @@ class SampleListViewTest(FunctionalTest):
                          SampleListView.as_view().__name__)
 
     def test_context_data(self):
-        user, proj = self.default_set_up_for_robjects_page()
+        user, proj = self.default_set_up_for_robjects_pages()
         assign_perm("projects.can_visit_project", user, proj)
 
         robj = Robject.objects.create(name='robject', project=proj)

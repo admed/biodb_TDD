@@ -7,19 +7,19 @@ from guardian.shortcuts import assign_perm
 
 class ProjectListViewTestCase(FunctionalTest):
     def test_renders_given_template(self):
-        self.login_default_user()
+        self.default_set_up_for_projects_pages()
         response = self.client.get("/projects/")
         self.assertTemplateUsed(response, "projects/project_list.html")
 
     def test_pass_project_list_to_template_context(self):
-        self.login_default_user()
+        self.default_set_up_for_projects_pages()
         response = self.client.get("/projects/")
         self.assertIn("project_list", response.context)
 
     def test_get_project_list_from_db(self):
         proj1 = Project.objects.create(name="project_1")
         proj2 = Project.objects.create(name="project_2")
-        self.login_default_user()
+        self.default_set_up_for_projects_pages()
         response = self.client.get("/projects/")
         self.assertIn(proj1, response.context["project_list"])
         self.assertIn(proj2, response.context["project_list"])
@@ -38,14 +38,14 @@ class TagListViewTestCase(FunctionalTest):
                              f'/accounts/login/?next=/projects/{proj.name}/tags/')
 
     def test_template_used(self):
-        user = self.login_default_user()
+        user = self.default_set_up_for_projects_pages()
         proj = Project.objects.create(name='Project_1')
         assign_perm("projects.can_visit_project", user, proj)
         response = self.client.get(f"/projects/{proj.name}/tags/")
         self.assertTemplateUsed(response, "projects/tags_list.html")
 
     def test_user_without_permision_seas_permission_denied(self):
-        self.login_default_user()
+        self.default_set_up_for_projects_pages()
         proj = Project.objects.create(name='Project_1')
         response = self.client.get(f"/projects/{proj.name}/tags/")
         self.assertEqual(response.status_code, 403)
@@ -53,7 +53,7 @@ class TagListViewTestCase(FunctionalTest):
                          response.content.decode("utf-8"))
 
     def test_view_pass_tag_list_to_context(self):
-        user = self.login_default_user()
+        user = self.default_set_up_for_projects_pages()
         proj = Project.objects.create(name='Project_1')
         assign_perm("projects.can_visit_project", user, proj)
         tag1 = Tag.objects.create(name="t1", project=proj)
@@ -65,7 +65,7 @@ class TagListViewTestCase(FunctionalTest):
         self.assertIn(tag2, response.context["object_list"])
 
     def test_view_pass_project_name_to_context(self):
-        user = self.login_default_user()
+        user = self.default_set_up_for_projects_pages()
         proj1 = Project.objects.create(name='Project_1')
         proj2 = Project.objects.create(name='Project_2')
         assign_perm("projects.can_visit_project", user, proj1)
@@ -78,7 +78,7 @@ class TagListViewTestCase(FunctionalTest):
         self.assertIn("Project_2", response2.context["project_name"])        
 
     def test_view_filter_tag_queryset_in_context(self):
-        user = self.login_default_user()
+        user = self.default_set_up_for_projects_pages()
         proj1 = Project.objects.create(name='Project_1')
         proj2 = Project.objects.create(name='Project_2')
         assign_perm("projects.can_visit_project", user, proj1)

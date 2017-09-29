@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from projects.models import Project
 from robjects.models import Robject
 from django.core.urlresolvers import reverse
+from guardian.shortcuts import assign_perm
 
 
 class FunctionalTest(TestCase):
@@ -12,15 +13,16 @@ class FunctionalTest(TestCase):
     ROBJECT_DELETE_URL = reverse("projects:robjects:robject_delete", kwargs={
                                  "project_name": "project_1"})
 
-    def login_default_user(self):
+    def default_set_up_for_projects_pages(self):
         user = User.objects.create_user(
             username="USERNAME", password="PASSWORD")
         self.client.login(username="USERNAME", password="PASSWORD")
         return user
 
-    def default_set_up_for_robjects_page(self):
-        user = self.login_default_user()
+    def default_set_up_for_robjects_pages(self):
+        user = self.default_set_up_for_projects_pages()
         proj = Project.objects.create(name="project_1")
+        assign_perm("can_visit_project", user, proj)
 
         return user, proj
 

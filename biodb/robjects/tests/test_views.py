@@ -19,13 +19,13 @@ class RObjectsListViewTests(FunctionalTest):
         self.assertEqual(response.status_code, 403)
 
     def test_render_template_on_get(self):
-        user, proj = self.default_set_up_for_robjects_page()
+        user, proj = self.default_set_up_for_robjects_pages()
         response = self.client.get(f"/projects/{proj.name}/robjects/")
 
         self.assertTemplateUsed(response, "projects/robjects_list.html")
 
     def test_view_create_list_of_robjects_and_pass_it_to_context(self):
-        user, proj = self.default_set_up_for_robjects_page()
+        user, proj = self.default_set_up_for_robjects_pages()
 
         robj1 = Robject.objects.create(author=user, project=proj)
         robj2 = Robject.objects.create(author=user, project=proj)
@@ -38,14 +38,14 @@ class RObjectsListViewTests(FunctionalTest):
 
 class SearchRobjectsViewTests(FunctionalTest):
     def test_view_renders_robjects_page_template(self):
-        user, proj = self.default_set_up_for_robjects_page()
+        user, proj = self.default_set_up_for_robjects_pages()
 
         response = self.client.get(f"/projects/{proj.name}/robjects/search/",
                                    {"query": ""})
         self.assertTemplateUsed(response, "projects/robjects_list.html")
 
     def test_view_gets_valid_query_on_get__view_pass_qs_to_template(self):
-        user, proj = self.default_set_up_for_robjects_page()
+        user, proj = self.default_set_up_for_robjects_pages()
 
         robject_1 = Robject.objects.create(name="robject_1", project=proj)
         robject_2 = Robject.objects.create(name="robject_2", project=proj)
@@ -64,7 +64,7 @@ class SearchRobjectsViewTests(FunctionalTest):
         self.assertEqual(resp.status_code, 403)
 
     def test_view_can_perform_search_basing_on_part_of_robject_name(self):
-        user, proj = self.default_set_up_for_robjects_page()
+        user, proj = self.default_set_up_for_robjects_pages()
 
         robject_1 = Robject.objects.create(name="robject_1", project=proj)
         robject_2 = Robject.objects.create(name="robject_2", project=proj)
@@ -79,7 +79,7 @@ class SearchRobjectsViewTests(FunctionalTest):
             response.context["robject_list"], map(repr, queryset))
 
     def test_search_is_case_insensitive(self):
-        user, proj = self.default_set_up_for_robjects_page()
+        user, proj = self.default_set_up_for_robjects_pages()
 
         robj = Robject.objects.create(name="RoBjEcT_1", project=proj)
 
@@ -98,7 +98,7 @@ class SearchRobjectsViewTests(FunctionalTest):
                          [robj])
 
     def test_view_pass_project_name_to_context(self):
-        user, proj = self.default_set_up_for_robjects_page()
+        user, proj = self.default_set_up_for_robjects_pages()
 
         resp = self.client.get(f"/projects/{proj.name}/robjects/search/",
                                {"query": "robject_1"})
@@ -116,7 +116,7 @@ class SearchRobjectsViewTests(FunctionalTest):
 
     def create_sample_robject_search_for_it_and_confirm_results(
             self, query, robject_kwargs):
-        user, proj = self.default_set_up_for_robjects_page()
+        user, proj = self.default_set_up_for_robjects_pages()
 
         robj, resp = self.create_sample_robject_and_send_query_to_search_view(
             project=proj, query=query, **robject_kwargs)
@@ -151,7 +151,7 @@ class SearchRobjectsViewTests(FunctionalTest):
         )
 
     def test_empty_query_will_display_all_robjects(self):
-        user, proj = self.default_set_up_for_robjects_page()
+        user, proj = self.default_set_up_for_robjects_pages()
 
         robj_1 = Robject.objects.create(project=proj)
         robj_2 = Robject.objects.create(project=proj)
@@ -167,7 +167,7 @@ class SearchRobjectsViewTests(FunctionalTest):
         )
 
     def test_search_include_robjects_from_given_project(self):
-        user, proj = self.default_set_up_for_robjects_page()
+        user, proj = self.default_set_up_for_robjects_pages()
 
         other_proj = Project.objects.create(name="other_proj")
         robj = Robject.objects.create(project=other_proj, name="robj")
@@ -187,7 +187,7 @@ class RobjectCreateViewTestCase(FunctionalTest):
         return reverse("projects:robjects:robject_create", kwargs={"project_name": proj.name})
 
     def get_form_from_context(self):
-        user, proj = self.default_set_up_for_robjects_page()
+        user, proj = self.default_set_up_for_robjects_pages()
         assign_perm("projects.can_modify_project", user, proj)
         response = self.client.get(
             reverse("projects:robjects:robject_create", kwargs={"project_name": proj.name}))
@@ -196,7 +196,7 @@ class RobjectCreateViewTestCase(FunctionalTest):
         return form
 
     def test_renders_template(self):
-        user, proj = self.default_set_up_for_robjects_page()
+        user, proj = self.default_set_up_for_robjects_pages()
         assign_perm("projects.can_modify_project", user, proj)
         response = self.client.get(
             reverse("projects:robjects:robject_create", args=(proj.name,)))
@@ -204,7 +204,7 @@ class RobjectCreateViewTestCase(FunctionalTest):
             response, template_name="robjects/robject_create.html")
 
     def test_renders_form_in_context(self):
-        user, proj = self.default_set_up_for_robjects_page()
+        user, proj = self.default_set_up_for_robjects_pages()
         assign_perm("projects.can_modify_project", user, proj)
         response = self.client.get(
             reverse("projects:robjects:robject_create", args=(proj.name,)))
@@ -243,7 +243,7 @@ class RobjectCreateViewTestCase(FunctionalTest):
             "projects:robjects:tags_create", args=(Project.objects.last().name,)))
 
     def test_view_redirects_to_robject_list_page_on_post(self):
-        user, proj = self.default_set_up_for_robjects_page()
+        user, proj = self.default_set_up_for_robjects_pages()
         assign_perm("projects.can_modify_project", user, proj)
         response = self.client.post(
             self.get_robject_create_url(proj),
@@ -253,7 +253,7 @@ class RobjectCreateViewTestCase(FunctionalTest):
             "projects:robjects:robjects_list", args=(proj.name,)))
 
     def test_name_field_is_required(self):
-        user, proj = self.default_set_up_for_robjects_page()
+        user, proj = self.default_set_up_for_robjects_pages()
         assign_perm("projects.can_modify_project", user, proj)
         response = self.client.post(
             self.get_robject_create_url(proj),
@@ -288,7 +288,7 @@ class RobjectCreateViewTestCase(FunctionalTest):
         )
 
     def test_user_without_project_mod_permission_gets_403_on_get(self):
-        user, proj = self.default_set_up_for_robjects_page()
+        user, proj = self.default_set_up_for_robjects_pages()
         response = self.client.get(self.get_robject_create_url(proj))
 
         self.assertEqual(response.status_code, 403)
@@ -297,7 +297,7 @@ class RobjectCreateViewTestCase(FunctionalTest):
         Name.objects.create(name="name_1")
         Name.objects.create(name="name_2")
         self.assertEqual(Name.objects.filter(robjects=None).count(), 2)
-        user, proj = self.default_set_up_for_robjects_page()
+        user, proj = self.default_set_up_for_robjects_pages()
         assign_perm("projects.can_modify_project", user, proj)
         self.client.get(self.get_robject_create_url(proj))
         self.assertEqual(Name.objects.filter(robjects=None).count(), 0)
@@ -319,7 +319,7 @@ class RobjectCreateViewTestCase(FunctionalTest):
         self.assertNotIn("modify_date", form.fields)
 
     def test_view_assign_create_by_to_new_robject(self):
-        user, proj = self.default_set_up_for_robjects_page()
+        user, proj = self.default_set_up_for_robjects_pages()
         assign_perm("projects.can_modify_project", user, proj)
         response = self.client.post(
             self.get_robject_create_url(proj), {"name": "test"})
@@ -327,7 +327,7 @@ class RobjectCreateViewTestCase(FunctionalTest):
         self.assertEqual(r.create_by, user)
 
     def test_view_assign_modify_by_to_new_robject(self):
-        user, proj = self.default_set_up_for_robjects_page()
+        user, proj = self.default_set_up_for_robjects_pages()
         assign_perm("projects.can_modify_project", user, proj)
         response = self.client.post(
             self.get_robject_create_url(proj), {"name": "test"})
@@ -450,10 +450,7 @@ class TagCreateViewTestCase(FunctionalTest):
 
 class RobjectDeleteTestCase(FunctionalTest):
     def default_set_up_for_robject_delete(self):
-        user = User.objects.create_user(
-            username="USERNAME", password="PASSWORD")
-        self.client.login(username="USERNAME", password="PASSWORD")
-        proj = Project.objects.create(name="project_1")
+        user, proj = self.default_set_up_for_robjects_pages()
         assign_perm("can_delete_robjects", user, proj)
         return proj
 
@@ -462,7 +459,7 @@ class RobjectDeleteTestCase(FunctionalTest):
             self.ROBJECT_DELETE_URL, self.ROBJECT_LIST_URL)
 
     def test_view_refuse_access_to_users_without_project_permission(self):
-        self.default_set_up_for_robjects_page()
+        self.default_set_up_for_robjects_pages()
         response = self.client.get(self.ROBJECT_DELETE_URL)
         self.assertEqual(response.status_code, 403)
         self.assertEqual("<h1>403 Forbidden</h1>",
