@@ -9,6 +9,7 @@ from django.core.exceptions import PermissionDenied
 from django.views.generic import View
 from django.views.generic import TemplateView
 from django.views.generic import ListView
+from django.views.generic import CreateView
 from projects.models import Tag
 from django.shortcuts import redirect
 from biodb import settings
