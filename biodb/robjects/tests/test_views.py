@@ -449,6 +449,14 @@ class TagCreateViewTestCase(FunctionalTest):
 
 
 class RobjectDeleteTestCase(FunctionalTest):
+    def default_set_up_for_robject_delete(self):
+        user = User.objects.create_user(
+            username="USERNAME", password="PASSWORD")
+        self.client.login(username="USERNAME", password="PASSWORD")
+        proj = Project.objects.create(name="project_1")
+        assign_perm("can_delete_robjects", user, proj)
+        return proj
+
     def test_annonymous_user_is_redirect_to_login_page(self):
         self.annonymous_testing_helper(
             self.ROBJECT_DELETE_URL, self.ROBJECT_LIST_URL)
@@ -461,22 +469,18 @@ class RobjectDeleteTestCase(FunctionalTest):
                          response.content.decode("utf-8"))
 
     def test_view_renders_delete_confirmattion_template(self):
-        user, proj = self.default_set_up_for_robjects_page()
-        assign_perm("can_delete_robjects", user, proj)
+        self.default_set_up_for_robject_delete()
         response = self.client.get(self.ROBJECT_DELETE_URL)
         self.assertTemplateUsed(
             response, "robjects/robject_confirm_delete.html")
 
     def test_view_redirects_on_post(self):
-        user, proj = self.default_set_up_for_robjects_page()
-        assign_perm("can_delete_robjects", user, proj)
-        robj = Robject.objects.create(name="sample_robj", project=proj)
+        self.default_set_up_for_robject_delete()
         response = self.client.post(self.ROBJECT_DELETE_URL)
         self.assertRedirects(response, self.ROBJECT_LIST_URL)
 
     def test_view_add_delete_robjects_to_context(self):
-        user, proj = self.default_set_up_for_robjects_page()
-        assign_perm("can_delete_robjects", user, proj)
+        proj = self.default_set_up_for_robject_delete()
         robj_1 = Robject.objects.create(name="robject_1", project=proj)
         robj_2 = Robject.objects.create(name="robject_2", project=proj)
         response = self.client.get(self.ROBJECT_DELETE_URL, {
