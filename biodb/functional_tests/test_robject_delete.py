@@ -140,13 +140,18 @@ class RobjectDeleteTestCase(FunctionalTest):
         self.assertEqual(
             len(self.browser.find_elements_by_css_selector(".checkbox:checked")), 0)
 
-        # He clicks delete button but nothing happens. User stays in the same
-        # page and number of rows in the table is the same.
-        current_url_before_click = self.browser.current_url
+        # He clicks delete button and gets redirect to robjects delete
+        # confirmation page. However instead of confirmation message he sees
+        # msg informing that he hasn't choose any robject to delete.
         self.browser.find_element_by_css_selector(".delete-button").click()
-        self.assertEqual(self.browser.current_url, current_url_before_click)
-        rows = self.browser.find_elements_by_css_selector(".row")
-        self.assertEqual(len(rows), 2)
+        self.assertEqual(self.browser.current_url,
+                         self.ROBJECT_DELETE_URL + "?")
+        msg = self.browser.find_element_by_css_selector(
+            ".message")
+        self.assertEqual(
+            msg.text,
+            "You haven't choose any elements to delete. Please, step back and select elements from table."
+        )
 
     def test_user_select_all_rows_when_none_is_selected(self):
         # SET UP
