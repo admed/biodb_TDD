@@ -224,13 +224,15 @@ class TagCreateView(CreatePopupMixin, CreateView):
         return super().form_valid(form)
 
 
-class RobjectDeleteView(View):
+class RobjectDeleteView(TemplateView):
+    template_name = "robjects/robject_delete_confirmation.html"
+
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated():
             permission_obj = Project.objects.get(
                 name=self.kwargs["project_name"])
-            if request.user.has_perm("projects.can_modify_project", permission_obj):
-                return HttpResponse("works")
+            if request.user.has_perm("projects.can_delete_robjects", permission_obj):
+                return super().get(request, *args, **kwargs)
             else:
                 raise PermissionDenied
         else:
@@ -238,3 +240,7 @@ class RobjectDeleteView(View):
                 "project_name": self.kwargs["project_name"]
             })
             return redirect(reverse("login") + f"?next={redirect_url}")
+
+    def post(self, request, *args, **kwargs):
+        return redirect(to=reverse("projects:robjects:robjects_list",
+                                   kwargs=self.kwargs))

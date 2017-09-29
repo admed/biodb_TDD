@@ -60,7 +60,14 @@ class RobjectDeleteTestCase(FunctionalTest):
         # He marks one robject in table and clicks delete button.
         self.browser.find_element_by_css_selector(
             f".row.{robj.name} .checkbox").click()
-        self.browser.find_element_by_css_selector(f".delete-button").click()
+        self.browser.find_element_by_css_selector(f"#delete-form .delete-button").click()
+
+        # User is redirect to robject delete confirmation page. He sees GET data
+        # in url that following the format ?<robject-name>=<robject-id>.
+        self.assertEqual(
+            self.browser.current_url,
+            self.ROBJECT_DELETE_URL + f"?{robj.name}={robj.id}"
+        )
 
         # User sees page with confirmation message, confirm button and
         # 'get back' link.

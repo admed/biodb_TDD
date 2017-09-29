@@ -13,10 +13,16 @@ from guardian.shortcuts import assign_perm
 class FunctionalTest(StaticLiveServerTestCase):
     MAX_WAIT = 10
     # DEFAULT SHORTCUT URLS
-    ROBJECT_LIST_URL = reverse("projects:robjects:robjects_list", kwargs={
-                               "project_name": "test_proj"})
-    ROBJECT_DELETE_URL = reverse("projects:robjects:robject_delete", kwargs={
-                                 "project_name": "test_proj"})
+
+    @property
+    def ROBJECT_LIST_URL(self):
+        return self.live_server_url + reverse("projects:robjects:robjects_list",
+                                              kwargs={"project_name": "project_1"})
+
+    @property
+    def ROBJECT_DELETE_URL(self):
+        return self.live_server_url + reverse("projects:robjects:robject_delete",
+                                              kwargs={"project_name": "project_1"})
 
     def setUp(self):
         self.browser = webdriver.Chrome()
@@ -89,7 +95,7 @@ class FunctionalTest(StaticLiveServerTestCase):
 
         return user, proj
 
-    def set_up_robject_list(self, project_name="default_proj", username="username",
+    def set_up_robject_list(self, project_name="project_1", username="username",
                             password="password", assign_visit_perm=True):
         proj = Project.objects.create(name=project_name)
         user = self.login_user(username, password)

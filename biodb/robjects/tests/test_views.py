@@ -459,3 +459,18 @@ class RobjectDeleteTestCase(FunctionalTest):
         self.assertEqual(response.status_code, 403)
         self.assertEqual("<h1>403 Forbidden</h1>",
                          response.content.decode("utf-8"))
+
+    def test_view_renders_delete_confirmattion_template(self):
+        user, proj = self.default_set_up_for_robjects_page()
+        assign_perm("can_delete_robjects", user, proj)
+        response = self.client.get(self.ROBJECT_DELETE_URL)
+        self.assertTemplateUsed(
+            response, "robjects/robject_delete_confirmation.html")
+
+    def test_view_redirects_on_post(self):
+        user, proj = self.default_set_up_for_robjects_page()
+        assign_perm("can_delete_robjects", user, proj)
+        robj = Robject.objects.create(name="sample_robj", project=proj)
+        response = self.client.post(
+            self.ROBJECT_DELETE_URL, {robj.name: robj.id})
+        self.assertRedirects(response, self.ROBJECT_LIST_URL)

@@ -4,6 +4,10 @@
   <input type="text" name="query" id="search_input">
   <button id="search_button">Search</button>
 </form>
+<form id="delete-form"
+  action="{% url 'projects:robjects:robject_delete' project_name=request.resolver_match.kwargs.project_name %}">
+  <input type="submit" value="Delete button" class="delete-button">
+</form>
 <table id="robjects_table">
   <tr id="header_row">
     <th><input type="checkbox" class="select-all"></th>
@@ -16,7 +20,8 @@
   </tr>
   {% for robject in robject_list %}
   <tr class="row {{ robject.name }}">
-    <td><input type="checkbox"></td>
+    <td><input type="checkbox" class="checkbox" name="{{ robject.name }}"
+      value="{{ robject.id }}" form="delete-form"></td>
     <td>{{ robject.id }}</td>
     <td>{{ robject.name }}</td>
     <td>{{ robject.author }}</td>

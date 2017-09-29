@@ -26,7 +26,9 @@ class Project(models.Model):
     class Meta:
         permissions = (
             ("can_visit_project", "User can see project elements."),
-            ("can_modify_project", "User can modify project elements."))
+            ("can_modify_project", "User can modify project elements."),
+            ("can_delete_robjects", "User can delete robjects within project.")
+        )
 
 
 class Tag(models.Model):
