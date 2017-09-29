@@ -22,7 +22,8 @@
   {% for object in object_list  %}
     <tr class="row sample">
       <td>{{ object.id }}</td>
-      <td>{{ object.code }}</td>
+      <td><a class="sample-details" href='/projects/{{project.name}}/samples/{{object.id}}/'>
+      {{ object.code }}</td></a>
       <td>{{ object.robject.name }}</td>
       <td>{{ object.owner }}</td>
       <td>{{ object.create_date }}</td>
