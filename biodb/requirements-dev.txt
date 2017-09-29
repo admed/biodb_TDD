@@ -3,3 +3,4 @@ mock
 selenium
 ipython
 jupyter
+django-debug-toolbar
