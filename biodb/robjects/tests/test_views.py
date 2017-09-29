@@ -465,12 +465,25 @@ class RobjectDeleteTestCase(FunctionalTest):
         assign_perm("can_delete_robjects", user, proj)
         response = self.client.get(self.ROBJECT_DELETE_URL)
         self.assertTemplateUsed(
-            response, "robjects/robject_delete_confirmation.html")
+            response, "robjects/robject_confirm_delete.html")
 
     def test_view_redirects_on_post(self):
         user, proj = self.default_set_up_for_robjects_page()
         assign_perm("can_delete_robjects", user, proj)
         robj = Robject.objects.create(name="sample_robj", project=proj)
-        response = self.client.post(
-            self.ROBJECT_DELETE_URL, {robj.name: robj.id})
+        response = self.client.post(self.ROBJECT_DELETE_URL)
         self.assertRedirects(response, self.ROBJECT_LIST_URL)
+
+    def test_view_add_delete_robjects_to_context(self):
+        user, proj = self.default_set_up_for_robjects_page()
+        assign_perm("can_delete_robjects", user, proj)
+        robj_1 = Robject.objects.create(name="robject_1", project=proj)
+        robj_2 = Robject.objects.create(name="robject_2", project=proj)
+        response = self.client.get(self.ROBJECT_DELETE_URL, {
+            robj_1.name: robj_1.id,
+            robj_2.name: robj_2.id
+        })
+        robjects_context = response.context["robjects"]
+        self.assertEqual(len(robjects_context), 2)
+        self.assertIn(robj_1, robjects_context)
+        self.assertIn(robj_2, robjects_context)

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <p class="confirmation-message">
+      Are you sure you want to delete following robject(s):
+      {% for robject in robjects %}
+        {{ robject.name }}{% if object|length > forloop.counter %},{% endif %}
+      {% endfor %}
+      ?
+    </p>
+    <form class="" action="" method="post">
+      {% csrf_token %}
+      <input class="confirm-delete" type="submit" value="Confirm">
+    </form>
+    <a class="get-back-link"
+      href="{% url 'projects:robjects:robjects_list' project_name=request.resolver_match.kwargs.project_name %}">
+        Back to robjects list.
+    </a>
+  </body>
+</html>

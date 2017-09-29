@@ -7,7 +7,7 @@ from django.db.models import TextField
 from django.db.models import Q
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render
-from django.views.generic import View, CreateView, TemplateView
+from django.views.generic import View, CreateView, DeleteView
 from projects.models import Project, Tag
 from robjects.models import Robject, Name
 from django import forms
@@ -224,8 +224,9 @@ class TagCreateView(CreatePopupMixin, CreateView):
         return super().form_valid(form)
 
 
-class RobjectDeleteView(TemplateView):
-    template_name = "robjects/robject_delete_confirmation.html"
+class RobjectDeleteView(DeleteView):
+    model = Robject
+    context_object_name = "robjects"
 
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated():
@@ -241,6 +242,10 @@ class RobjectDeleteView(TemplateView):
             })
             return redirect(reverse("login") + f"?next={redirect_url}")
 
-    def post(self, request, *args, **kwargs):
-        return redirect(to=reverse("projects:robjects:robjects_list",
-                                   kwargs=self.kwargs))
+    def get_object(self):
+        ids = self.request.GET.values()
+        qs = self.model.objects.filter(pk__in=ids)
+        return qs
+
+    def get_success_url(self):
+        return reverse("projects:robjects:robjects_list", kwargs=self.kwargs)
