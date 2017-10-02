@@ -255,3 +255,11 @@ class RobjectDeleteView(DeleteView):
         else:
             redirect_url = reverse("projects:robjects:robjects_list", kwargs={
                 "project_name": self.kwargs["project_name"]})
+
+    def get_object(self):
+        ids = self.request.GET.values()
+        qs = self.model.objects.filter(pk__in=ids)
+        return qs
+
+    def get_success_url(self):
+        return reverse("projects:robjects:robjects_list", kwargs=self.kwargs)
