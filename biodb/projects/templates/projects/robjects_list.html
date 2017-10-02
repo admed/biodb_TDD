@@ -4,10 +4,28 @@
   <input type="text" name="query" id="search_input">
   <button id="search_button">Search</button>
 </form>
-<form id="delete-form"
-  action="{% url 'projects:robjects:robject_delete' project_name=request.resolver_match.kwargs.project_name %}">
-  <input type="submit" value="Delete" class="delete-button">
-</form>
+<div class="links">
+  Links:
+  <ul>
+    <li>
+      <a
+      href="{% url 'projects:samples:sample_list' project_name=request.resolver_match.kwargs.project_name %}">
+        Sample table
+      </a>
+    </li>
+  </ul>
+</div>
+<div class="actions">
+  Actions:
+  <ul>
+    <li>
+    <form id="delete-form"
+      action="{% url 'projects:robjects:robject_delete' project_name=request.resolver_match.kwargs.project_name %}">
+      <input type="submit" value="Delete" class="delete-button">
+    </form>
+    </li>
+  </ul>
+</div>
 <table id="robjects_table">
   <tr id="header_row">
     <th><input type="checkbox" class="select-all"></th>
@@ -30,4 +48,9 @@
     <td>{{ robject.modify_by }}</td>
   </tr>
   {% endfor %}
-</table> {% endblock %}
+</table>
+<style>
+  .links, .actions {
+    margin: 20px 0;
+  }
+</style>{% endblock %}

@@ -19,6 +19,7 @@ from guardian.mixins import LoginRequiredMixin as GuardianLoginRequiredMixin
 from guardian.mixins import PermissionRequiredMixin
 from biodb import settings
 from django.http import HttpResponseBadRequest, HttpResponse, HttpResponseForbidden
+from samples.views import SampleListView
 # Create your views here.
 
 
@@ -224,6 +225,20 @@ class TagCreateView(CreatePopupMixin, CreateView):
         return super().form_valid(form)
 
 
+class RobjectSamplesList(SampleListView):
+
+    def get_queryset(self):
+        """
+        Overwrite orginal qs and add filtering by robject
+        """
+        # original queryset
+        project_name = self.kwargs['project_name']
+        robject_id = self.kwargs['robject_id']
+        qs = super(RobjectSamplesList, self).get_queryset()
+
+        qs = qs.filter(robject__pk=robject_id)
+        return qs
+
 class RobjectDeleteView(DeleteView):
     model = Robject
     context_object_name = "robjects"
@@ -239,13 +254,3 @@ class RobjectDeleteView(DeleteView):
         else:
             redirect_url = reverse("projects:robjects:robjects_list", kwargs={
                 "project_name": self.kwargs["project_name"]
-            })
-            return redirect(reverse("login") + f"?next={redirect_url}")
-
-    def get_object(self):
-        ids = self.request.GET.values()
-        qs = self.model.objects.filter(pk__in=ids)
-        return qs
-
-    def get_success_url(self):
-        return reverse("projects:robjects:robjects_list", kwargs=self.kwargs)

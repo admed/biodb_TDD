@@ -49,7 +49,6 @@ INSTALLED_APPS = (
     #'tags',
     'guardian',
     'ckeditor',
-    'easy_pdf',
     'django_tables2',
     'django_addanother'
 )
