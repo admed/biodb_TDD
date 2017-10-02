@@ -4,11 +4,11 @@
 
 <h1>Create Tag:</h1>
 
-<form action="create" method="post">{% csrf_token %}
+<form action="" method="post">{% csrf_token %}
     {{ form.as_p }}
     <input type="submit" value="Save" />
 </form>
 
-<a class='link_back' href="/projects/{{ project_name }}/samples/">Return back to samples page</a>
+<a class='link_back' href="/projects/{{ project_name }}/tags/">Return back to projects tag page</a>
 
 {% endblock %}

@@ -13,6 +13,8 @@ from django.views.generic import CreateView
 from projects.models import Tag
 from django.shortcuts import redirect
 from biodb import settings
+from django.core.urlresolvers import reverse
+
 
 # Create your views here.
 
@@ -92,3 +94,12 @@ class TagCreateView(CreateView):
         project = self.kwargs['project_name']
         context['project_name'] = project
         return context
+
+    def form_valid(self, form):
+        project_name = self.kwargs['project_name']
+        try:
+            project = Project.objects.get(name=project_name)
+            form.instance.project = project
+        except Project.DoesNotExist:
+            raise Http404
+        return super(TagCreateView, self).form_valid(form)

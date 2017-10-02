@@ -11,6 +11,7 @@ from robjects.models import Robject
 from selenium.common.exceptions import NoSuchElementException
 from guardian.shortcuts import assign_perm
 
+
 class TagCreateTestCase(FunctionalTest):
     def get_tag_create(self, proj):
         self.browser.get(self.live_server_url +
@@ -51,7 +52,22 @@ class TagCreateTestCase(FunctionalTest):
         self.assertEquals(form.text, "Name:")
         # He seas link back to sample page.
         link = self.browser.find_element_by_css_selector("a.link_back")
-        self.assertEqual(link.text, "Return back to samples page")
+        self.assertEqual(link.text, "Return back to projects tag page")
         link.click()
         self.assertEqual(self.browser.current_url,
-                         self.live_server_url + f"/projects/{proj.name}/samples/")
+                         self.live_server_url + f"/projects/{proj.name}/tags/")
+
+    def test_user_creates_tag(self):
+        # CREATE SAMPLE PROJECT AND USER
+        usr, proj = self.project_set_up_using_default_data()
+        # ASSIGN PERMISION FOR USR TO PROJECT.
+        assign_perm("projects.can_visit_project", usr, proj)
+        # User gets tag list. He doesn't have project visit permission.
+        self.get_tag_create(proj)
+        # He input tah name into form.
+        self.browser.find_element_by_css_selector("#id_name").send_keys("tag")
+        # He clicks save button.
+        self.browser.find_element_by_css_selector("input[type='submit']").click()
+        # He seas tag created in tag list.
+        tags_list = self.browser.find_elements_by_css_selector("li")
+        self.assertEquals(len(tags_list), 1)        

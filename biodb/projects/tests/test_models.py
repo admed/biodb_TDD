@@ -60,3 +60,8 @@ class TagModelTestCase(TestCase):
         self.assertListEqual(list(p.tags.all()), [t1, t2])
         self.assertEqual(t1.project, p)
         self.assertEqual(t2.project, p)
+
+    def test_absolute_url(self):
+        p = Project.objects.create(name="test_proj")
+        t1 = Tag.objects.create(name="test_tag_1", project=p)
+        self.assertEqual(t1.get_absolute_url(), "/projects/test_proj/tags/")
