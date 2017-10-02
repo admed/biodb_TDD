@@ -46,7 +46,8 @@ class RobjectDeleteTestCase(FunctionalTest):
 
         # He gets permission denied message.
         error = self.browser.find_element_by_css_selector("h1")
-        self.assertEqual(error.text, "403 Forbidden")
+        self.assertEqual(
+            error.text, "User doesn't have permission to delete robjects in this project.")
 
     def test_user_can_delete_single_robject(self):
         # SET UP
@@ -72,7 +73,7 @@ class RobjectDeleteTestCase(FunctionalTest):
         # User sees page with confirmation message, confirm button and
         # 'get back' link.
         confirmation_message = self.browser.find_element_by_css_selector(
-            ".confirmation-message")
+            ".message")
         self.assertEqual(
             confirmation_message.text,
             f"Are you sure you want to delete following robject(s): {robj.name} ?"
@@ -112,7 +113,7 @@ class RobjectDeleteTestCase(FunctionalTest):
 
         # User see appriopriate message and clicks confirmation button.
         confirmation_message = self.browser.find_element_by_css_selector(
-            ".confirmation-message")
+            ".message")
         self.assertEqual(
             confirmation_message.text,
             f"Are you sure you want to delete following robject(s): {robj_1.name}, {robj_2.name} ?"

@@ -8,8 +8,11 @@ from django.db.utils import IntegrityError
 from projects.models import Project
 from django.core.urlresolvers import reverse
 from guardian.shortcuts import assign_perm
+from django.test import override_settings
+from urllib.parse import urlparse
 
 
+@override_settings(DEBUG=True)
 class FunctionalTest(StaticLiveServerTestCase):
     MAX_WAIT = 10
     # DEFAULT SHORTCUT URLS
@@ -104,17 +107,21 @@ class FunctionalTest(StaticLiveServerTestCase):
         return proj, user
 
     def default_url_robject_list(self):
-        return self.live_server_url + reverse("projects:robjects:robjects_list", kwargs={"project_name": "default_proj"})
+        return self.live_server_url + reverse("projects:robjects:robjects_list", kwargs={"project_name": "project_1"})
 
     def annonymous_testing_helper(self, requested_url, after_login_url=None):
         # SET UP
-        proj = Project.objects.create(name="sample_proj")
-
-        # Annonymous user goes to requested page
-        self.browser.get(self.live_server_url + requested_url)
+        proj = Project.objects.create(name="project_1")
 
         if not after_login_url:
             after_login_url = requested_url
+
+        # KEEP ONLY PATH FROM URL
+        after_login_url = urlparse(after_login_url).path
+
+        # Annonymous user goes to requested page
+        self.browser.get(requested_url)
+
         # He is redirect to login page.
         self.assertEqual(
             self.browser.current_url,
