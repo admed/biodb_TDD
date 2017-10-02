@@ -75,7 +75,7 @@ class TagListViewTestCase(FunctionalTest):
         response1 = self.client.get(f"/projects/{proj1.name}/tags/")
         self.assertIn("Project_1", response1.context["project_name"])
         response2 = self.client.get(f"/projects/{proj2.name}/tags/")
-        self.assertIn("Project_2", response2.context["project_name"])        
+        self.assertIn("Project_2", response2.context["project_name"])
 
     def test_view_filter_tag_queryset_in_context(self):
         user = self.login_default_user()
@@ -90,3 +90,29 @@ class TagListViewTestCase(FunctionalTest):
         self.assertEqual(len(response.context["object_list"]), 2)
         self.assertIn(tag1, response.context["object_list"])
         self.assertIn(tag2, response.context["object_list"])
+
+class TagUpdateViewTestCase(FunctionalTest):
+    def test_anonymous_user_is_redirected_to_login_page(self):
+        proj = Project.objects.create(name='Project_1')
+        tag1 = Tag.objects.create(name="t1", project=proj)
+        response = self.client.get(f"/projects/{proj.name}/tags/{tag1.id}/update/")
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response,
+                             f'/accounts/login/?next=/projects/{proj.name}/tags/{tag1.id}/update/')
+
+    def test_template_used(self):
+        user = self.login_default_user()
+        proj = Project.objects.create(name='Project_1')
+        tag1 = Tag.objects.create(name="t1", project=proj)
+        assign_perm("projects.can_visit_project", user, proj)
+        response = self.client.get(f"/projects/{proj.name}/tags/{tag1.id}/update/")
+        self.assertTemplateUsed(response, "projects/tag_update.html")
+
+    def test_user_without_permision_seas_permission_denied(self):
+        self.login_default_user()
+        proj = Project.objects.create(name='Project_1')
+        tag1 = Tag.objects.create(name="t1", project=proj)
+        response = self.client.get(f"/projects/{proj.name}/tags/{tag1.id}/update/")
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual("<h1>403 Forbidden</h1>",
+                         response.content.decode("utf-8"))
