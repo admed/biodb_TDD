@@ -239,6 +239,7 @@ class RobjectSamplesList(SampleListView):
         qs = qs.filter(robject__pk=robject_id)
         return qs
 
+
 class RobjectDeleteView(DeleteView):
     model = Robject
     context_object_name = "robjects"
@@ -253,4 +254,4 @@ class RobjectDeleteView(DeleteView):
                 return HttpResponseForbidden("<h1>User doesn't have permission to delete robjects in this project.</h1>")
         else:
             redirect_url = reverse("projects:robjects:robjects_list", kwargs={
-                "project_name": self.kwargs["project_name"]
+                "project_name": self.kwargs["project_name"]})
