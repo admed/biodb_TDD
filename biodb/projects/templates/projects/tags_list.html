@@ -1,10 +1,17 @@
 {% extends "biodb/base.html" %} {% block content %}
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
 <h1>Tags:</h1>
 <ul class="tag_list">
 
     {% if tag_list %}
       {% for tag in tag_list %}
-        <li>{{ tag.name }} </li>
+        <li>{{ tag.name }}
+          <a href="/projects/{{ project_name }}/tags/{{ tag.id }}/delete/">
+            <i class="fa fa-remove"></i>
+          </a>
+        </li>
       {% endfor %}
       {% else %}
         <span class="empty_tag_msg">There are no tags attached to this project.</sapn>
