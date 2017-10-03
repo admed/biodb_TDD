@@ -31,9 +31,35 @@ class Robject(models.Model):
     def __str__(self):
         return "Robject " + str(self.id)
 
+    @staticmethod
+    def get_fields(instance, fields=[]):
+        """
+        Return dictionary with object fields: {field.verbose_name: field class, ...}
+        Attrs:
+        """
+        fields_dict = {field.verbose_name: getattr(
+            instance, field.name) for field in instance._meta.get_fields() if field.name in fields}
+        return sorted(fields_dict.items())
+
+    def get_general_fields(self):
+        '''
+            Return fields : id, create_date, create_by, modify_date, modify_by, author
+        '''
+        fields = ["id", "create_date", "create_by",
+                  "modify_date", "modify_by", "author"]
+        return self.get_fields(self, fields)
+
+    def get_detail_fields(self):
+        '''
+            Return fields: ligand, receptor, ref_seq, mod_seq,
+            description, bibliography, ref_commercial, ref_clinical, notes
+        '''
+        fields = ["ligand", "receptor", "ref_seq", "mod_seq", "description",
+                  "bibliography", "ref_commercial", "ref_clinical", "notes"]
+        return self.get_fields(self, fields)
+
     class Meta:
         unique_together = ("name", "project")
-
 
 class Name(models.Model):
     name = models.CharField(max_length=100, unique=True)

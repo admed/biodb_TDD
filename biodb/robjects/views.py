@@ -7,7 +7,7 @@ from django.db.models import TextField
 from django.db.models import Q
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render
-from django.views.generic import View, CreateView
+from django.views.generic import View, CreateView, DeleteView
 from projects.models import Project, Tag
 from robjects.models import Robject, Name
 from django import forms
@@ -18,8 +18,11 @@ from django_addanother.views import CreatePopupMixin
 from guardian.mixins import LoginRequiredMixin as GuardianLoginRequiredMixin
 from guardian.mixins import PermissionRequiredMixin
 from biodb import settings
-from django.http import HttpResponseBadRequest, HttpResponse
+from django.http import HttpResponseBadRequest, HttpResponse, HttpResponseForbidden
 from samples.views import SampleListView
+from biodb import settings
+from django.shortcuts import redirect
+from projects.mixins import ExportViewMixin
 # Create your views here.
 
 
@@ -31,9 +34,35 @@ def robjects_list_view(request, project_name):
     return render(request, "projects/robjects_list.html",
                   {"robject_list": robject_list, "project_name": project_name})
 
-class RobjectPDFeView(View):
-    pass
 
+class RobjectPDFeView(View, ExportViewMixin):
+    model = Robject
+    pdf_template_name = "robjects/robject_raport_pdf.html"
+    pdf_css_name = 'robjects/css/raport_pdf.css'
+    css_sufix = '/robjects'
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated():
+            permission_obj = self.get_permission_object()
+            if request.user.has_perm("projects.can_visit_project",
+                                     permission_obj):
+                return super().dispatch(request, *args, **kwargs)
+            else:
+                raise PermissionDenied
+        else:
+            return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
+
+    def get_permission_object(self):
+        project = Project.objects.get(name=self.kwargs['project_name'])
+        return project
+
+    def get(self, request, project_name, *args, **kwargs):
+        self.object_list = self.get_queryset(project_name)
+        if not self.object_list:
+            raise Http404(_("Empty list and '%(class_name)s.allow_empty' is False.") % {
+                'class_name': self.__class__.__name__,
+            })
+        return self.export_to_pdf(self.object_list)
 
 
 # TODO: Add multipleObjectMixin to inherit by this class??
@@ -242,3 +271,34 @@ class RobjectSamplesList(SampleListView):
 
         qs = qs.filter(robject__pk=robject_id)
         return qs
+
+
+class RobjectDeleteView(DeleteView):
+    model = Robject
+    context_object_name = "robjects"
+
+    def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated():
+            permission_obj = Project.objects.get(
+                name=self.kwargs["project_name"])
+            has_visit_permission = request.user.has_perm(
+                "projects.can_visit_project", permission_obj)
+            has_robject_delete_permission = request.user.has_perm(
+                "projects.can_delete_robjects", permission_obj)
+            if has_visit_permission and has_robject_delete_permission:
+                return super().get(request, *args, **kwargs)
+            else:
+                return HttpResponseForbidden("<h1>User doesn't have permission to access this page.</h1>")
+        else:
+            redirect_url = reverse("projects:robjects:robjects_list", kwargs={
+                "project_name": self.kwargs["project_name"]
+            })
+            return redirect(reverse("login") + f"?next={redirect_url}")
+
+    def get_object(self):
+        ids = self.request.GET.values()
+        qs = self.model.objects.filter(pk__in=ids)
+        return qs
+
+    def get_success_url(self):
+        return reverse("projects:robjects:robjects_list", kwargs=self.kwargs)
