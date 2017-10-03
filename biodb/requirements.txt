@@ -3,3 +3,4 @@ easy_thumbnails
 django-guardian
 django-ckeditor
 django-tables2
+django-addanother

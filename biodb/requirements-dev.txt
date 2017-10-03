@@ -4,3 +4,4 @@ selenium
 ipython
 jupyter
 django-debug-toolbar
+coverage
