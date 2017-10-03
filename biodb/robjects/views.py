@@ -248,10 +248,14 @@ class RobjectDeleteView(DeleteView):
         if request.user.is_authenticated():
             permission_obj = Project.objects.get(
                 name=self.kwargs["project_name"])
-            if request.user.has_perm("projects.can_delete_robjects", permission_obj):
+            has_visit_permission = request.user.has_perm(
+                "projects.can_visit_project", permission_obj)
+            has_robject_delete_permission = request.user.has_perm(
+                "projects.can_delete_robjects", permission_obj)
+            if has_visit_permission and has_robject_delete_permission:
                 return super().get(request, *args, **kwargs)
             else:
-                return HttpResponseForbidden("<h1>User doesn't have permission to delete robjects in this project.</h1>")
+                return HttpResponseForbidden("<h1>User doesn't have permission to access this page.</h1>")
         else:
             redirect_url = reverse("projects:robjects:robjects_list", kwargs={
                 "project_name": self.kwargs["project_name"]

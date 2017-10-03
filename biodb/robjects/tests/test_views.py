@@ -12,6 +12,7 @@ from robjects.views import NameCreateView, TagCreateView
 from biodb import settings
 from guardian.shortcuts import assign_perm
 
+
 class RobjectSamplesListTest(FunctionalTest):
     def test_anonymous_user_gets_samples_page(self):
         proj = Project.objects.create(name="PROJECT_1")
@@ -500,11 +501,27 @@ class RobjectDeleteTestCase(FunctionalTest):
         self.annonymous_testing_helper(
             self.ROBJECT_DELETE_URL, self.ROBJECT_LIST_URL)
 
-    def test_view_refuse_access_to_users_without_project_permission(self):
+    def test_view_refuse_access_to_users_without_both_permissions(self):
+        user = self.default_set_up_for_projects_pages()
+        proj = Project.objects.create(name="project_1")
+        response = self.client.get(self.ROBJECT_DELETE_URL)
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(f"<h1>User doesn't have permission to access this page.</h1>",
+                         response.content.decode("utf-8"))
+
+    def test_view_refuse_access_to_users_without_robject_delete_permission(self):
         self.other_permission_testing_helper(
-            url=self.ROBJECT_DELETE_URL,
-            error_message="User doesn't have permission to delete robjects in this project."
-        )
+            self.ROBJECT_DELETE_URL,
+            "User doesn't have permission to access this page.")
+
+    def test_view_refuse_access_to_users_without_project_visit_permission(self):
+        user = self.default_set_up_for_projects_pages()
+        proj = Project.objects.create(name="project_1")
+        assign_perm("projects.can_delete_robjects", user, proj)
+        response = self.client.get(self.ROBJECT_DELETE_URL)
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(f"<h1>User doesn't have permission to access this page.</h1>",
+                         response.content.decode("utf-8"))
 
     def test_view_renders_delete_confirmattion_template(self):
         self.default_set_up_for_robject_delete()

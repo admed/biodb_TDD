@@ -35,7 +35,7 @@ class RobjectDeleteTestCase(FunctionalTest):
         self.annonymous_testing_helper(
             self.ROBJECT_DELETE_URL, self.ROBJECT_LIST_URL)
 
-    def test_user_without_delete_permission_goes_to_confirmation_page(self):
+    def test_user_without_both_permissions_goes_to_confirmation_page(self):
         # SET UP
         proj, user = self.set_up_robject_list()
         robj = Robject.objects.create(project=proj, name="sample_robj")
@@ -47,7 +47,37 @@ class RobjectDeleteTestCase(FunctionalTest):
         # He gets permission denied message.
         error = self.browser.find_element_by_css_selector("h1")
         self.assertEqual(
-            error.text, "User doesn't have permission to delete robjects in this project.")
+            error.text, "User doesn't have permission to access this page.")
+
+    def test_user_with_visit_permission_only_goes_to_confirmation_page(self):
+        # SET UP
+        proj, user = self.set_up_robject_list(assign_visit_perm=True)
+        assign_perm("projects.can_visit_project", user, proj)
+        robj = Robject.objects.create(project=proj, name="sample_robj")
+
+        # User goes to 'sample_robj' delete confirmation page.
+        self.browser.get(self.live_server_url +
+                         f"/projects/{proj.name}/robjects/delete/?{robj.name}={robj.id}")
+
+        # He gets permission denied message.
+        error = self.browser.find_element_by_css_selector("h1")
+        self.assertEqual(
+            error.text, "User doesn't have permission to access this page.")
+
+    def test_user_with_delete_permission_only_goes_to_confirmation_page(self):
+        # SET UP
+        proj, user = self.set_up_robject_list(assign_visit_perm=False)
+        assign_perm("projects.can_delete_robjects", user, proj)
+        robj = Robject.objects.create(project=proj, name="sample_robj")
+
+        # User goes to 'sample_robj' delete confirmation page.
+        self.browser.get(self.live_server_url +
+                         f"/projects/{proj.name}/robjects/delete/?{robj.name}={robj.id}")
+
+        # He gets permission denied message.
+        error = self.browser.find_element_by_css_selector("h1")
+        self.assertEqual(
+            error.text, "User doesn't have permission to access this page.")
 
     def test_user_can_delete_single_robject(self):
         # SET UP
