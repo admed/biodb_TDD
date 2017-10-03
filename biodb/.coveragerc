@@ -1,0 +1,17 @@
+[run]
+omit = 
+       *__init__*
+       functional_tests/*.py
+       unit_tests/*.py
+       projects/tests/*.py
+       robjects/tests/*.py
+       sample/tests/*.py
+       manage.py
+       biodb/wsgi.py
+       robjects/apps.py
+       *BACKUP*
+       *LOCAL*
+       *REMOTE*
+       *BASE*
+
+source = .
