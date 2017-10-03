@@ -1,0 +1,9 @@
+{% extends "biodb/base.html" %} {% block content %}
+
+
+<form action="" method="post">{% csrf_token %}
+    <p>Are you sure you want to delete {{ object }}?</p>
+    <input type="submit" value="Confirm" />
+</form>
+
+<a class='link_back' href="/projects/{{ object.project.name }}/tags/">Return back to project tag page</a> {% endblock %}

@@ -10,9 +10,11 @@ from django.views.generic import View
 from django.views.generic import TemplateView
 from django.views.generic import ListView
 from django.views.generic import CreateView
+from django.views.generic.edit import DeleteView
 from projects.models import Tag
 from django.shortcuts import redirect
 from biodb import settings
+from django.core.urlresolvers import reverse
 
 # Create your views here.
 
@@ -55,3 +57,27 @@ class TagsListView(ListView):
         project = self.kwargs['project_name']
         context['project_name'] = project
         return context
+
+
+class TagDeleteView(DeleteView):
+    model = Tag
+    pk_url_kwarg = 'tag_id'
+    template_name = 'projects/tag_delete.html'
+
+    def get_success_url(self):
+        return reverse("projects:tag_list", kwargs={"project_name": self.kwargs['project_name']})
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated():
+            permission_obj = self.get_permission_object()
+            if request.user.has_perm("projects.can_visit_project",
+                                     permission_obj):
+                return super().dispatch(request, *args, **kwargs)
+            else:
+                raise PermissionDenied
+        else:
+            return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
+
+    def get_permission_object(self):
+        project = Project.objects.get(name=self.kwargs['project_name'])
+        return project
