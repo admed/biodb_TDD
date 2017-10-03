@@ -21,7 +21,7 @@ class RobjectSamplesListTest(FunctionalTest):
         self.assertIn('/accounts/login/?next=', response.url)
 
     def test_render_template_on_get(self):
-        user, proj = self.default_set_up_for_robjects_page()
+        user, proj = self.default_set_up_for_robjects_pages()
         robj = Robject.objects.create(name="rob")
         assign_perm("projects.can_visit_project", user, proj)
         samp = Sample(code='1a2b3c')
@@ -29,7 +29,7 @@ class RobjectSamplesListTest(FunctionalTest):
         self.assertTemplateUsed(response, "samples/samples_list.html")
 
     def test_view_get_list_of_samples_and_pass_it_to_context(self):
-        user, proj = self.default_set_up_for_robjects_page()
+        user, proj = self.default_set_up_for_robjects_pages()
         assign_perm("projects.can_visit_project", user, proj)
 
         robj = Robject.objects.create(name='robject', project=proj)
@@ -44,7 +44,7 @@ class RobjectSamplesListTest(FunctionalTest):
         self.assertIn(samp3, response.context["sample_list"])
 
     def test_context_data(self):
-        user, proj = self.default_set_up_for_robjects_page()
+        user, proj = self.default_set_up_for_robjects_pages()
         assign_perm("projects.can_visit_project", user, proj)
 
         robj = Robject.objects.create(name='robject', project=proj)

@@ -66,6 +66,7 @@ class UserVisitRobjectsPage(FunctionalTest):
         # capture all rows
         robject_rows = self.browser.find_elements_by_css_selector(
             ".row")
+        time.sleep(20)
         self.assertEqual(len(robject_rows), 3)
 
         for robject in [robj1, robj2, robj3]:

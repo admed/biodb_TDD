@@ -85,14 +85,27 @@ class FunctionalTest(StaticLiveServerTestCase):
         return u
 
     def project_set_up_and_get_robject_page(self, username="USERNAME",
-                                            password="PASSWORD", project_name="proj_1"):
+                                            password="PASSWORD", project_name="project_1"):
         """ Helper method for all robject page related tests.
             Method include logged user with default creadentials and project
             with default name.
         """
         user = self.login_user(username, password)
 
-        proj = Project.objects.create(project_name)
+        proj = Project.objects.create(name=project_name)
+
+        self.browser.get(self.live_server_url + f"/projects/{proj}/robjects/")
+
+        return user, proj
+
+    def project_set_up_using_default_data(self):
+        """ Helper method for all robject page related tests.
+            Method include logged user with default creadentials and project
+            with default name.
+        """
+        user = self.login_user("USERNAME", "PASSWORD")
+
+        proj = Project.objects.create(name="project_1")
 
         self.browser.get(self.live_server_url + f"/projects/{proj}/robjects/")
 
