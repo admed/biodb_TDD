@@ -31,6 +31,10 @@ def robjects_list_view(request, project_name):
     return render(request, "projects/robjects_list.html",
                   {"robject_list": robject_list, "project_name": project_name})
 
+class RobjectPDFeView(View):
+    pass
+
+
 
 # TODO: Add multipleObjectMixin to inherit by this class??
 class SearchRobjectsView(LoginRequiredMixin, View):
