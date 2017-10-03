@@ -254,7 +254,9 @@ class RobjectDeleteView(DeleteView):
                 return HttpResponseForbidden("<h1>User doesn't have permission to delete robjects in this project.</h1>")
         else:
             redirect_url = reverse("projects:robjects:robjects_list", kwargs={
-                "project_name": self.kwargs["project_name"]})
+                "project_name": self.kwargs["project_name"]
+            })
+            return redirect(reverse("login") + f"?next={redirect_url}")
 
     def get_object(self):
         ids = self.request.GET.values()

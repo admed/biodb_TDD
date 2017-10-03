@@ -1,5 +1,9 @@
 {% extends "biodb/base.html" %} {% load static %} {% block extra_head %}
-<link rel="stylesheet" href="{% static 'projects/robject_list.css' %}"> {% endblock %} {% block content %}
+<link rel="stylesheet" href="{% static 'projects/robject_list.css' %}">
+<script src="{% static 'projects/select_all.js' %}">
+
+</script>
+{% endblock %} {% block content %}
 <form id="search_form" action="/projects/{{ project_name }}/robjects/search/">
   <input type="text" name="query" id="search_input">
   <button id="search_button">Search</button>
@@ -38,7 +42,7 @@
   </tr>
   {% for robject in robject_list %}
   <tr class="row {{ robject.name }}">
-    <td><input type="checkbox" class="checkbox" name="{{ robject.name }}"
+    <td><input type="checkbox" class="robject checkbox" name="{{ robject.name }}"
       value="{{ robject.id }}" form="delete-form"></td>
     <td>{{ robject.id }}</td>
     <td>{{ robject.name }}</td>
