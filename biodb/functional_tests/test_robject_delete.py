@@ -209,3 +209,16 @@ class RobjectDeleteTestCase(FunctionalTest):
         self.browser.find_element_by_css_selector(".select-all").click()
         self.assertEqual(
             len(self.browser.find_elements_by_css_selector(".checkbox:checked")), 0)
+
+    def test_user_wants_to_delete_robjects_but_resign_before_confirm(self):
+        # SET UP
+        proj, user = self.set_up_robject_list()
+        assign_perm("can_delete_robjects", user, proj)
+        robj_1 = Robject.objects.create(project=proj, name="robj_1")
+
+        # User gets to robj_1 delete confirmation page.
+        self.browser.get(self.ROBJECT_DELETE_URL + "?robj_1=1")
+        # Instead of confirm deletion he decides to click 'get back link'.
+        self.browser.find_element_by_css_selector(".get-back-link").click()
+        # He was redirect to robject list page.
+        self.assertEqual(self.browser.current_url, self.ROBJECT_LIST_URL)
