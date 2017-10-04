@@ -5,10 +5,12 @@ from django.db.models import CharField
 from django.db.models import ForeignKey
 from django.db.models import TextField
 from django.db.models import Q
+from django.http import Http404
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render
 from django.views.generic import View, CreateView, DeleteView
 from projects.models import Project, Tag
+from projects.mixins import ExportViewMixin
 from robjects.models import Robject, Name
 from django import forms
 from django_addanother.widgets import AddAnotherWidgetWrapper
@@ -35,6 +37,21 @@ def robjects_list_view(request, project_name):
 class ExportExcelView(ExportViewMixin, View):
     model = Robject
     queryset = None
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated():
+            permission_obj = self.get_permission_object()
+            if request.user.has_perm("projects.can_modify_project", permission_obj):
+                return super().dispatch(request, *args, **kwargs)
+            else:
+                raise PermissionDenied
+        else:
+            return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
+
+    def get_permission_object(self):
+        project = Project.objects.get(name=self.kwargs['project_name'])
+        return project
+
 
     def get_queryset(self, project_name):
         """
@@ -73,6 +90,8 @@ class ExportExcelView(ExportViewMixin, View):
         return self.export_to_excel(self.object_list)
 
 # TODO: Add multipleObjectMixin to inherit by this class??
+
+
 class SearchRobjectsView(LoginRequiredMixin, View):
     """View to show filtered list of objects."""
     model = Robject

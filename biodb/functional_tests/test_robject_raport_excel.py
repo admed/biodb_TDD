@@ -24,6 +24,16 @@ class UserGeneratesExcel(FunctionalTest):
             f"/projects/{proj.name}/robjects/excel-raport/")
         # He seas Biodb login page.
         current_url = self.browser.current_url
-        time.sleep(10)
-        expected_url = self.live_server_url + f"/accounts/login/?next=/projects/{proj.name}/robjects/excel-raport/"
+        expected_url = self.live_server_url + \
+            f"/accounts/login/?next=/projects/{proj.name}/robjects/excel-raport/"
         self.assertEqual(current_url, expected_url)
+
+    def test_user_without_project_visit_permission_tries_to_get_robject_PDF_raport(self):
+        # CREATE SAMPLE PROJECT AND USER
+        usr, proj = self.project_set_up_using_default_data()
+        # CREATE SAMPLE ROBJECT.
+        robj = Robject.objects.create(name='robject', project=proj)
+        self.browser.get(self.live_server_url +
+                         f"/projects/{proj.name}/robjects/excel-raport/")
+        error = self.browser.find_element_by_css_selector("h1")
+        self.assertEqual(error.text, "403 Forbidden")
