@@ -9,6 +9,7 @@ from robjects.models import Robject
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from guardian.shortcuts import assign_perm
+from selenium.webdriver.support.ui import WebDriverWait
 
 
 class UserGeneratePDFRaport(FunctionalTest):
@@ -31,10 +32,8 @@ class UserGeneratePDFRaport(FunctionalTest):
         robj = Robject.objects.create(name='robject', project=proj)
         self.browser.get(self.live_server_url +
                          f"/projects/{proj.name}/robjects/PDF-raport/")
-        current_url = self.browser.current_url
-        expected_url = self.live_server_url + \
-            f"/accounts/login/?next=/projects/{proj.name}/robjects/PDF-raport/"
-        self.assertEqual(current_url, expected_url)
+        error = self.browser.find_element_by_css_selector("h1")
+        self.assertEqual(error.text, "403 Forbidden")
 
     def test_logged_user_checks_robject_name(self):
         # CREATE SAMPLE PROJECT AND USER
@@ -45,13 +44,17 @@ class UserGeneratePDFRaport(FunctionalTest):
         assign_perm("projects.can_visit_project", usr, proj)
         self.browser.get(self.live_server_url +
                          f"/projects/{proj.name}/robjects/PDF-raport/")
-        current_url = self.browser.current_url
         # User vaits for raport to load
         time.sleep(10)
-        content = self.wait_for(
-            lambda: self.browser.find_element_by_css_selector(".textLayer"))
-        self.assertIn('robject_1', content.text)
-    
+        self.browser.switch_to_window(self.browser.window_handles[0])
+        # frame = self.browser.find_element_by_xpath('//frame[@name="main"]')
+        # self.broswer.switch_to.frame(frame)
+        self.browser.switchTo().frame()
+        self.browser.find_element_by_css_selector(".textLayer")
+        # content = self.wait_for(
+        #     lambda: self.browser.find_element_by_css_selector(".textLayer"))
+        # self.assertIn('robject', content.text)
+    #
     # def test_logged_user_export_all_robjects_not_checking_any_box(self):
     #     # Create sample project and robject
     #     usr, proj = self.project_set_up_using_default_data()
