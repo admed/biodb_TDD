@@ -34,7 +34,7 @@ class Project(models.Model):
 
 class Tag(models.Model):
     name = models.CharField(max_length=100, unique=True)
-    project = models.ForeignKey(to=Project, related_name="tags")
+    project = models.ForeignKey(to=Project, related_name="tags", null=True)
 
     def __str__(self):
         return self.name
