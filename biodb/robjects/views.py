@@ -41,7 +41,7 @@ class ExportExcelView(ExportViewMixin, View):
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated():
             permission_obj = self.get_permission_object()
-            if request.user.has_perm("projects.can_modify_project", permission_obj):
+            if request.user.has_perm("projects.can_visit_project", permission_obj):
                 return super().dispatch(request, *args, **kwargs)
             else:
                 raise PermissionDenied
@@ -51,7 +51,6 @@ class ExportExcelView(ExportViewMixin, View):
     def get_permission_object(self):
         project = Project.objects.get(name=self.kwargs['project_name'])
         return project
-
 
     def get_queryset(self, project_name):
         """
@@ -81,17 +80,18 @@ class ExportExcelView(ExportViewMixin, View):
         return queryset
 
     def get(self, request, project_name, *args, **kwargs):
-
+        print('project_name', project_name)
         self.object_list = self.get_queryset(project_name)
         if not self.object_list:
             raise Http404(_("Empty list and '%(class_name)s.allow_empty' is False.") % {
                 'class_name': self.__class__.__name__,
             })
-        return self.export_to_excel(self.object_list)
+        return self.export_to_excel(self.object_list, is_relation=True,
+                                    one_to_one=True, many_to_one=True,
+                                    exclude_fields=['sample'])
+
 
 # TODO: Add multipleObjectMixin to inherit by this class??
-
-
 class SearchRobjectsView(LoginRequiredMixin, View):
     """View to show filtered list of objects."""
     model = Robject

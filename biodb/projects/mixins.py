@@ -34,15 +34,28 @@ class ExportViewMixin(object):
     pdf_css_name = None
     css_sufix = None
 
-    def get_model_fields(self):
+    def get_model_fields(self, is_relation=False, one_to_one=False, many_to_one=False, exclude_fields=None):
         """
         Return list of fields names
         Attrs:
         """
-        model_fields = [field.name for field in self.model._meta.get_fields()
-                        if not (field.is_relation
-                                or field.one_to_one
-                                or (field.many_to_one and field.related_model))]
+        if not exclude_fields:
+            exclude_fields = []
+        model_fields = []
+        for field in self.model._meta.get_fields():
+            if field.name not in exclude_fields:
+                if field.one_to_one:
+                    if one_to_one:
+                        model_fields.append(field.name)
+                elif (field.many_to_one and field.related_model):
+                    if many_to_one:
+                        model_fields.append(field.name)
+                elif field.is_relation:
+                    if is_relation:
+                        model_fields.append(field.name)
+                else:
+                    model_fields.append(field.name)
+
         return model_fields
 
     def get_queryset(self, project_name):
@@ -85,7 +98,7 @@ class ExportViewMixin(object):
             else:
                 return field
 
-    def export_to_excel(self, queryset):
+    def export_to_excel(self, queryset, is_relation=False, one_to_one=False, many_to_one=False, exclude_fields=None):
         """ Function handle export to excel view"""
 
         # create workbook
@@ -93,7 +106,9 @@ class ExportViewMixin(object):
         # capture active worksheet
         ws = wb.active
         # filling first row by fields names
-        fields_names = self.get_model_fields()
+        fields_names = self.get_model_fields(
+            is_relation, one_to_one, many_to_one, exclude_fields)
+        print('fields', fields_names)
         ws.append(fields_names)
         for query_object in queryset:
             temp = list()
@@ -127,7 +142,7 @@ class ExportViewMixin(object):
         # get single element list robjects
 
         rendered_html = html_template.render(
-        {'robjects': queryset}).encode(encoding="UTF-8")
+            {'robjects': queryset}).encode(encoding="UTF-8")
         # generate pdf from rendered html
         pdf_file = HTML(string=rendered_html).write_pdf(
             stylesheets=[CSS(settings.BASE_DIR + self.css_sufix +
