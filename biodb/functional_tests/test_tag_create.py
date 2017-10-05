@@ -70,4 +70,16 @@ class TagCreateTestCase(FunctionalTest):
         self.browser.find_element_by_css_selector("input[type='submit']").click()
         # He seas tag created in tag list.
         tags_list = self.browser.find_elements_by_css_selector("li")
-        self.assertEquals(len(tags_list), 1)        
+        self.assertEquals(len(tags_list), 1)
+
+    def test_user_wants_to_create_tag_for_not_existing_project(self):
+        # CREATE SAMPLE PROJECT AND USER
+        usr, proj = self.project_set_up_using_default_data()
+        # ASSIGN PERMISION FOR USR TO PROJECT.
+        assign_perm("projects.can_visit_project", usr, proj)
+        # User gets undefined projects create tag page.
+        self.browser.get(self.live_server_url +
+                         f"/projects/random_project/tags/create/")
+        # He seas does not exist error.
+        error = self.browser.find_element_by_css_selector('h1')
+        self.assertIn('DoesNotExist', error.text)
