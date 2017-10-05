@@ -22,14 +22,14 @@ class SampleListViewTest(FunctionalTest):
         self.assertIn('/accounts/login/?next=', response.url)
 
     def test_render_template_on_get(self):
-        user, proj = self.default_set_up_for_robjects_page()
+        user, proj = self.default_set_up_for_robjects_pages()
         assign_perm("projects.can_visit_project", user, proj)
         samp = Sample(code='1a2b3c')
         response = self.client.get(f"/projects/{proj.name}/samples/")
         self.assertTemplateUsed(response, "samples/samples_list.html")
 
     def test_view_get_list_of_samples_and_pass_it_to_context(self):
-        user, proj = self.default_set_up_for_robjects_page()
+        user, proj = self.default_set_up_for_robjects_pages()
         assign_perm("projects.can_visit_project", user, proj)
 
         robj = Robject.objects.create(name='robject', project=proj)
@@ -44,7 +44,7 @@ class SampleListViewTest(FunctionalTest):
         self.assertIn(samp3, response.context["sample_list"])
 
     def test_function_used(self):
-        user, proj = self.default_set_up_for_robjects_page()
+        user, proj = self.default_set_up_for_robjects_pages()
         assign_perm("projects.can_visit_project", user, proj)
 
         robj = Robject.objects.create(name='robject', project=proj)
@@ -56,7 +56,7 @@ class SampleListViewTest(FunctionalTest):
                          SampleListView.as_view().__name__)
 
     def test_context_data(self):
-        user, proj = self.default_set_up_for_robjects_page()
+        user, proj = self.default_set_up_for_robjects_pages()
         assign_perm("projects.can_visit_project", user, proj)
 
         robj = Robject.objects.create(name='robject', project=proj)
@@ -68,7 +68,8 @@ class SampleListViewTest(FunctionalTest):
 
 class SampleDetailViewTest(FunctionalTest):
     def create_sample_data(self):
-        user, proj = self.default_set_up_for_robjects_page()
+        user = self.default_set_up_for_projects_pages()
+        proj = Project.objects.create(name="project_1")
         robj = Robject.objects.create(name='Robject', project=proj)
         samp = Sample.objects.create(code='code', robject=robj)
         return(user, proj, robj, samp)
@@ -82,7 +83,7 @@ class SampleDetailViewTest(FunctionalTest):
         self.assertRedirects(response,
                              f'/accounts/login/?next=/projects/{proj.name}/samples/{samp.id}/')
 
-    def test_user_without_permision_seas_permission_denied(self):
+    def test_user_without_permision_sees_permission_denied(self):
         user, proj, robj, samp = self.create_sample_data()
         response = self.client.get(f"/projects/{proj.name}/samples/{samp.id}/")
         self.assertEqual(response.status_code, 403)
@@ -102,7 +103,7 @@ class SampleDetailViewTest(FunctionalTest):
         self.assertEqual(samp, response.context["sample"])
 
     def test_view_filter_sample_get_in_context(self):
-        user = self.login_default_user()
+        user = self.default_set_up_for_projects_pages()
         proj1 = Project.objects.create(name='Project_1')
         proj2 = Project.objects.create(name='Project_2')
         assign_perm("projects.can_visit_project", user, proj1)

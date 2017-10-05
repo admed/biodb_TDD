@@ -7,7 +7,7 @@ from django.db.models import TextField
 from django.db.models import Q
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render
-from django.views.generic import View, CreateView
+from django.views.generic import View, CreateView, DeleteView
 from projects.models import Project, Tag
 from robjects.models import Robject, Name
 from django import forms
@@ -18,7 +18,7 @@ from django_addanother.views import CreatePopupMixin
 from guardian.mixins import LoginRequiredMixin as GuardianLoginRequiredMixin
 from guardian.mixins import PermissionRequiredMixin
 from biodb import settings
-from django.http import HttpResponseBadRequest, HttpResponse
+from django.http import HttpResponseBadRequest, HttpResponse, HttpResponseForbidden
 from samples.views import SampleListView
 # Create your views here.
 
@@ -238,3 +238,34 @@ class RobjectSamplesList(SampleListView):
 
         qs = qs.filter(robject__pk=robject_id)
         return qs
+
+
+class RobjectDeleteView(DeleteView):
+    model = Robject
+    context_object_name = "robjects"
+
+    def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated():
+            permission_obj = Project.objects.get(
+                name=self.kwargs["project_name"])
+            has_visit_permission = request.user.has_perm(
+                "projects.can_visit_project", permission_obj)
+            has_robject_delete_permission = request.user.has_perm(
+                "projects.can_delete_robjects", permission_obj)
+            if has_visit_permission and has_robject_delete_permission:
+                return super().get(request, *args, **kwargs)
+            else:
+                return HttpResponseForbidden("<h1>User doesn't have permission to access this page.</h1>")
+        else:
+            redirect_url = reverse("projects:robjects:robjects_list", kwargs={
+                "project_name": self.kwargs["project_name"]
+            })
+            return redirect(reverse("login") + f"?next={redirect_url}")
+
+    def get_object(self):
+        ids = self.request.GET.values()
+        qs = self.model.objects.filter(pk__in=ids)
+        return qs
+
+    def get_success_url(self):
+        return reverse("projects:robjects:robjects_list", kwargs=self.kwargs)
