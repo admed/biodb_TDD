@@ -91,5 +91,6 @@ class TagCreateView(CreateView):
             project = Project.objects.get(name=project_name)
             form.instance.project = project
         except Project.DoesNotExist:
+            print('Bla bla')
             raise Http404
         return super(TagCreateView, self).form_valid(form)

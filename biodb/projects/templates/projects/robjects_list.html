@@ -17,6 +17,11 @@
         Sample table
       </a>
     </li>
+    <li>
+      <a href="{% url 'projects:robjects:robject_create' project_name=request.resolver_match.kwargs.project_name %}">
+        Create research object.
+      </a>
+    </li>
   </ul>
 </div>
 <div class="actions">
