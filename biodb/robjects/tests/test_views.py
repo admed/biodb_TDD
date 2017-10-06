@@ -552,21 +552,20 @@ class RobjectDeleteTestCase(FunctionalTest):
 
 
 class RobjectsPdfTestCase(FunctionalTest):
-    def test_anonymous_user_gets_samples_page(self):
+    def test_anonymous_user_gets_robject_raport_page(self):
         proj = Project.objects.create(name="PROJECT_1")
         Robject.objects.create(name="Robject_1", project=proj)
         response = self.client.get(
-            "/projects/PROJECT_1/robjects/robjects/PDF-raport/")
+            f"/projects/{proj.name}/robjects/PDF-raport/")
         self.assertEqual(response.status_code, 302)
         self.assertIn('/accounts/login/?next=', response.url)
 
     def test_render_template_on_get(self):
         user, proj = self.default_set_up_for_robjects_pages()
-        robj = Robject.objects.create(name="rob")
+        robj = Robject.objects.create(name="rob", project=proj)
         assign_perm("projects.can_visit_project", user, proj)
-        samp = Sample(code='1a2b3c')
         response = self.client.get(
-            "/projects/PROJECT_1/robjects/robjects/PDF-raport/")
+            f"/projects/{proj.name}/robjects/PDF-raport/")
         self.assertTemplateUsed(response, "robjects/robject_raport_pdf.html")
 
     def test_user_generfates_pdf(self):
