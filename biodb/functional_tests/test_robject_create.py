@@ -14,14 +14,14 @@ from django.utils import timezone
 
 @override_settings(DEBUG=True)
 class RobjectCreateTestCase(FunctionalTest):
-    def get_robject_form_url(self, proj):
-        return self.live_server_url + reverse("projects:robjects:robject_create", args=(proj.name,))
+    def get_robject_create_url(self):
+        return self.live_server_url + reverse("projects:robjects:robject_create", kwargs={"project_name": "project_1"})
 
-    def add_related(self, input_id, name):
+    def add_related_name(self, name):
         """User click in plus button, switch to popup, add related and get back.
         """
         plus_btn = self.browser.find_element_by_css_selector(
-            f".related-widget-wrapper select#{input_id} + a")
+            f".related-widget-wrapper select#id_names + a")
         plus_btn.click()
 
         self.switch_to_popup()
@@ -32,11 +32,30 @@ class RobjectCreateTestCase(FunctionalTest):
             "input[type='submit']").click()
         self.switch_to_main()
 
-    def check_for_related_in_input(self, input_id, name):
-        """ User checks in related select input if created object shows up.
+    def add_related_tag(self, name):
+        """ User click in plus button, switch to popup, add related and get back.
         """
+        plus_btn = self.browser.find_element_by_css_selector(
+            f".related-widget-wrapper select#id_tags + a")
+        plus_btn.click()
+
+        self.switch_to_popup()
+        name_input = self.browser.find_element_by_css_selector(
+            "input[name='name']")
+        name_input.send_keys(name)
+        self.browser.find_element_by_css_selector(
+            "input[type='submit']").click()
+        self.switch_to_main()
+
+    def check_for_related_name_in_input(self, name):
         option_tag = self.wait_for(lambda: self.browser.find_element_by_css_selector(
-            f".related-widget-wrapper select#{input_id} option:last-child"))
+            f".related-widget-wrapper select#id_names option:last-child"))
+
+        self.assertEqual(option_tag.text, name)
+
+    def check_for_related_tag_in_input(self, name):
+        option_tag = self.wait_for(lambda: self.browser.find_element_by_css_selector(
+            f".related-widget-wrapper select#id_tags option:last-child"))
 
         self.assertEqual(option_tag.text, name)
 
@@ -50,8 +69,8 @@ class RobjectCreateTestCase(FunctionalTest):
             "body").send_keys(text)
         self.switch_to_main()
 
-    def set_project_and_user(self, project_name="proj_1", username="username",
-                             password="password"):
+    def set_project_and_user(self, project_name="project_1", username="USERNAME",
+                             password="PASSWORD"):
         proj = Project.objects.create(name=project_name)
         user = self.login_user(username, password)
         assign_perm("can_visit_project", user, proj)
@@ -63,43 +82,44 @@ class RobjectCreateTestCase(FunctionalTest):
         r = Robject.objects.last()
         return r
 
-    def get_robject_create_page(self, proj):
-        self.browser.get(self.live_server_url + reverse("projects:robjects:robject_create",
-                                                        args=(proj.name,)))
+    def get_robject_create_page(self):
+        print()
+        self.browser.get(self.get_robject_create_url())
 
-    def submit_and_assert_valid_redirect(self, proj):
+    def submit_and_assert_valid_redirect(self):
         self.browser.find_element_by_css_selector("button").click()
-        self.assertEqual(self.browser.current_url, self.live_server_url +
-                         reverse("projects:robjects:robjects_list", args=(proj.name,)))
+        self.assertEqual(
+            self.browser.current_url,
+            self.live_server_url +
+            reverse("projects:robjects:robjects_list",
+                    kwargs={"project_name": "project_1"})
+        )
 
     def test_user_fill_full_form_with_multiple_names_tags_and_files(self):
-        proj, user = self.set_project_and_user(
-            project_name="sample", username="username", password="password")
+        proj, user = self.set_project_and_user()
 
         # User wants to create new robject. He goes to robject form page.
-        self.get_robject_create_page(proj=proj)
+        self.get_robject_create_page()
 
         # First, user create related models. He start from add two additional
         # names. User clicks in plus button next to name select input.
-        self.add_related(input_id="id_names", name="NAME1")
+        self.add_related_name("NAME1")
 
         # User gets back to main window. He noticed new name in select input.
-        self.check_for_related_in_input(input_id="id_names", name="NAME1")
+        self.check_for_related_name_in_input("NAME1")
 
         # Now, he create another name.
-        self.add_related(input_id="id_names", name="NAME2")
+        self.add_related_name("NAME2")
         self.wait_for(
-            lambda: self.check_for_related_in_input(
-                input_id="id_names", name="NAME2")
-        )
+            lambda: self.check_for_related_name_in_input("NAME2"))
 
         # User create tags.
-        self.add_related(input_id="id_tags", name="TAG1")
-        self.check_for_related_in_input(input_id="id_tags", name="TAG1")
+        self.add_related_tag("TAG1")
+        self.check_for_related_tag_in_input(name="TAG1")
 
-        self.add_related(input_id="id_tags", name="TAG2")
+        self.add_related_tag(name="TAG2")
         time.sleep(3)
-        self.check_for_related_in_input(input_id="id_tags", name="TAG2")
+        self.check_for_related_tag_in_input(name="TAG2")
 
         # Time for robject files. The same story, user add two files.
         # TODO: find a way to test adding files
@@ -138,7 +158,7 @@ class RobjectCreateTestCase(FunctionalTest):
 
         # Author
         author_option = self.browser.find_element_by_xpath(
-            "//option[contains(text(), 'username')]")
+            "//option[contains(text(), 'USERNAME')]")
         author_option.click()
 
         # Ligand
@@ -150,7 +170,7 @@ class RobjectCreateTestCase(FunctionalTest):
             "#id_receptor").send_keys("receptor")
 
         # Finally user submit his form and looks for redirection.
-        self.submit_and_assert_valid_redirect(proj=proj)
+        self.submit_and_assert_valid_redirect()
 
         # Confirm that created robject lives in db.
         r = self.get_last_robject()
@@ -177,24 +197,19 @@ class RobjectCreateTestCase(FunctionalTest):
         self.assertEqual(r.receptor, "receptor")
 
     def test_user_fill_form_without_less_likely_fields(self):
-        proj, user = self.set_project_and_user(
-            project_name="sample", username="USERNAME", password="PASSWORD")
-
-        # ASSIGN PERMISSIONS TO USER
-        assign_perm("can_visit_project", user, proj)
-        assign_perm("can_modify_project", user, proj)
+        proj, user = self.set_project_and_user()
 
         # User wants to create new robject. He goes to robject form page.
-        self.get_robject_create_page(proj=proj)
+        self.get_robject_create_page()
 
         # First he fills relational fields. He add additional name and select
         # it.
-        self.add_related(input_id="id_names", name="NAME_007")
-        self.check_for_related_in_input(input_id="id_names", name="NAME_007")
+        self.add_related_name(name="NAME_007")
+        self.check_for_related_name_in_input(name="NAME_007")
 
         # Next, he creates new tag and select it.
-        self.add_related(input_id="id_tags", name="important")
-        self.check_for_related_in_input(input_id="id_tags", name="important")
+        self.add_related_tag(name="important")
+        self.check_for_related_tag_in_input(name="important")
 
         # Now, user fills CKE fields.
 
@@ -232,7 +247,7 @@ class RobjectCreateTestCase(FunctionalTest):
             "#id_receptor").send_keys("mTOR")
 
         # User, clicks for submit and looks for redirect.
-        self.submit_and_assert_valid_redirect(proj=proj)
+        self.submit_and_assert_valid_redirect()
 
         # CONFIRMATION OF ROBJECT IN DB
         r = self.get_last_robject()
@@ -257,16 +272,15 @@ class RobjectCreateTestCase(FunctionalTest):
         self.assertEqual(r.receptor, "mTOR")
 
     def test_user_creates_new_additional_names_but_not_picks_all(self):
-        proj, user = self.set_project_and_user(
-            project_name="proj_1", username="Albert", password="Einstein")
+        proj, user = self.set_project_and_user()
 
         # User wants to create new robject. He goes to robject form page.
-        self.get_robject_create_page(proj=proj)
+        self.get_robject_create_page()
 
         # User creates three new additional names.
-        self.add_related(input_id="id_names", name="name_1")
-        self.add_related(input_id="id_names", name="name_2")
-        self.add_related(input_id="id_names", name="name_3")
+        self.add_related_name(name="name_1")
+        self.add_related_name(name="name_2")
+        self.add_related_name(name="name_3")
 
         # After that, he unselect one of them.
         self.browser.find_element_by_xpath(
@@ -283,7 +297,7 @@ class RobjectCreateTestCase(FunctionalTest):
             "#id_receptor").send_keys("USP8")
 
         # Finally, user submit form and looks for redirection.
-        self.submit_and_assert_valid_redirect(proj=proj)
+        self.submit_and_assert_valid_redirect()
 
         # CONFIRMATION OF ROBJECT IN DB
         r = self.get_last_robject()
@@ -300,17 +314,16 @@ class RobjectCreateTestCase(FunctionalTest):
         self.assertEqual(r.receptor, "USP8")
 
     def test_user_creates_new_tag_and_chooses_existing(self):
-        proj, user = self.set_project_and_user(
-            project_name="random_proj", username="Muhammad", password="Ali")
+        proj, user = self.set_project_and_user()
 
         # CREATE PREEXISTING TAG
         preexisting_tag = Tag.objects.create(name="pre_tag", project=proj)
 
         # User want to create new robject. He goes to robject form page.
-        self.get_robject_create_page(proj=proj)
+        self.get_robject_create_page()
 
         # User create new tag.
-        self.add_related("id_tags", name="new_tag")
+        self.add_related_tag(name="new_tag")
 
         # User additionally pick preexisting tag from select menu.
         self.browser.find_element_by_xpath(
@@ -321,7 +334,7 @@ class RobjectCreateTestCase(FunctionalTest):
             "#id_name").send_keys("cool_robject_name")
 
         # Finally, submits button and looks for redirection.
-        self.submit_and_assert_valid_redirect(proj=proj)
+        self.submit_and_assert_valid_redirect()
 
         # ASSERT ROBJECT IN DB
         r = self.get_last_robject()
@@ -332,10 +345,10 @@ class RobjectCreateTestCase(FunctionalTest):
         )
 
     def test_annonymous_user_try_to_get_to_robject_form(self):
-        proj = Project.objects.create(name="proj_1")
+        proj = Project.objects.create(name="project_1")
 
         # Annonymous user tries to get robject form.
-        self.browser.get(self.get_robject_form_url(proj=proj))
+        self.browser.get(self.get_robject_create_url())
 
         # He is redirect to login page.
         self.assertEqual(
@@ -345,7 +358,7 @@ class RobjectCreateTestCase(FunctionalTest):
         )
 
     def test_user_without_project_mod_permission_try_to_get_robject_form(self):
-        proj = Project.objects.create(name="proj_1")
+        proj = Project.objects.create(name="project_1")
 
         # CREATE USER WITH PROJECT VISIT PERMISSION ONLY
         user = self.login_user(username="limit_user", password="password")
@@ -353,7 +366,7 @@ class RobjectCreateTestCase(FunctionalTest):
 
         # User without project-modification permission tries to get robject
         # form.
-        self.browser.get(self.get_robject_form_url(proj=proj))
+        self.get_robject_create_page()
 
         # He gets 403 permission denied message.
         message = self.browser.find_element_by_css_selector("h1")
@@ -361,11 +374,10 @@ class RobjectCreateTestCase(FunctionalTest):
 
     def test_user_fill_form_without_name(self):
         # USER AND PROJ SETTING
-        proj, user = self.set_project_and_user(
-            project_name="whatever", username="John", password="Lennon")
+        proj, user = self.set_project_and_user()
 
         # User want to create new robject. He goes to robject form page.
-        self.get_robject_create_page(proj=proj)
+        self.get_robject_create_page()
 
         # User fill some fields but forgot to fill name.
         self.browser.find_element_by_css_selector(
@@ -378,7 +390,7 @@ class RobjectCreateTestCase(FunctionalTest):
 
         # User sees name error message.
         self.assertEqual(self.browser.current_url,
-                         self.get_robject_form_url(proj))
+                         self.get_robject_create_url())
 
         el = self.browser.find_element_by_css_selector(
             "#id_name:focus:required:invalid")
@@ -395,10 +407,9 @@ class RobjectCreateTestCase(FunctionalTest):
             "random_receptor"
         )
 
-    def test_user_uses_name_for_robj_from_already_used_in_different_proj(self):
+    def test_user_uses_name_for_robj_already_used_in_different_proj(self):
         # SET PROJECT AND USER
-        proj, user = self.set_project_and_user(
-            project_name="super_proj", username="Joko", password="Ono")
+        self.set_project_and_user()
 
         # CREATE DIFFERENT PROJ
         proj_dif = Project.objects.create(name="proj_diff")
@@ -407,25 +418,24 @@ class RobjectCreateTestCase(FunctionalTest):
         robj = Robject.objects.create(name="taken_name", project=proj_dif)
 
         # User want to create new robject. He goes to robject form page.
-        self.get_robject_create_page(proj=proj)
+        self.get_robject_create_page()
 
         # User picks name already existing but in different project.
         self.browser.find_element_by_css_selector(
             "#id_name").send_keys("taken_name")
 
         # He submits the form. Nothing happens, form process normally.
-        self.submit_and_assert_valid_redirect(proj)
+        self.submit_and_assert_valid_redirect()
 
     def test_user_pick_already_taken_name_for_robj(self):
         # SET PROJECT AND USER
-        proj, user = self.set_project_and_user(
-            project_name="super_proj", username="Paul", password="McCartney")
+        proj, user = self.set_project_and_user()
 
         # CREATE RANDOM ROBJECT
         Robject.objects.create(project=proj, name="xyz")
 
         # User want to create new robject. He goes to robject form page.
-        self.get_robject_create_page(proj=proj)
+        self.get_robject_create_page()
 
         # User picks project and name already existing in this project.
         self.browser.find_element_by_css_selector(
@@ -459,14 +469,13 @@ class RobjectCreateTestCase(FunctionalTest):
 
     def test_user_tries_add_additional_name_that_already_exists_in_project(self):
         # SET PROJECT AND USER
-        proj, user = self.set_project_and_user(
-            project_name="super_proj", username="Ringo", password="Starr")
+        self.set_project_and_user()
 
         # User want to create new robject. He goes to robject form page.
-        self.get_robject_create_page(proj=proj)
+        self.get_robject_create_page()
 
         # User adds additional name to robject.
-        self.add_related("id_names", name="pre_name")
+        self.add_related_name(name="pre_name")
 
         # Now, user wants to add new additional name, but enter the same text.
         plus_btn = self.browser.find_element_by_css_selector(
@@ -488,14 +497,13 @@ class RobjectCreateTestCase(FunctionalTest):
 
     def test_user_tries_add_tag_that_already_exists_in_project(self):
         # SET PROJECT AND USER
-        proj, user = self.set_project_and_user(
-            project_name="super_proj", username="Ringo", password="Starr")
+        proj, user = self.set_project_and_user()
 
         # CREATE SAMPLE TAG
-        n = Tag.objects.create(name="sample_tag", project=proj)
+        t = Tag.objects.create(name="sample_tag", project=proj)
 
         # User want to create new robject. He goes to robject form page.
-        self.get_robject_create_page(proj=proj)
+        self.get_robject_create_page()
 
         # User try to add additional tag to robject. He clicks plus button and
         # switch to popup form.
@@ -507,7 +515,7 @@ class RobjectCreateTestCase(FunctionalTest):
         # He tries to create name that already exists.
         name_input = self.browser.find_element_by_css_selector(
             "input[name='name']")
-        name_input.send_keys(n.name)
+        name_input.send_keys(t.name)
         self.browser.find_element_by_css_selector(
             "input[type='submit']").click()
 
@@ -518,15 +526,14 @@ class RobjectCreateTestCase(FunctionalTest):
 
     def test_user_create_addit_names_but_refresh_page_instead_submit_form(self):
         # SET UP
-        proj, user = self.set_project_and_user(
-            project_name="test_proj", username="Michael", password="Jordan")
+        self.set_project_and_user()
 
         # User visits robject page.
-        self.get_robject_create_page(proj=proj)
+        self.get_robject_create_page()
 
         # He adds two new additional names.
-        self.add_related("id_names", "name_one")
-        self.add_related("id_names", "name_two")
+        self.add_related_name("name_one")
+        self.add_related_name("name_two")
         names_in_select_tag = self.browser.find_elements_by_css_selector(
             "#id_names option")
         self.assertEqual(len(names_in_select_tag), 2)
@@ -541,22 +548,21 @@ class RobjectCreateTestCase(FunctionalTest):
 
     def test_user_come_back_to_form_after_submit_and_see_empty_names_tag(self):
         # SET UP
-        proj, user = self.set_project_and_user(
-            project_name="test_proj", username="Michael", password="Jordan")
+        self.set_project_and_user()
 
         # User visits robject page.
-        self.get_robject_create_page(proj=proj)
+        self.get_robject_create_page()
 
         # He adds two new additional names.
-        self.add_related("id_names", "name_one")
-        self.add_related("id_names", "name_two")
+        self.add_related_name("name_one")
+        self.add_related_name("name_two")
 
         # Then he adds main name.
         self.browser.find_element_by_css_selector(
             "#id_name").send_keys("whatever")
 
         # Finally, submit form.
-        self.submit_and_assert_valid_redirect(proj=proj)
+        self.submit_and_assert_valid_redirect()
 
         # Now, user comes back to form to find out that names select element is
         # empty.
@@ -566,11 +572,10 @@ class RobjectCreateTestCase(FunctionalTest):
 
     def test_some_fields_are_hidden_but_auto_assigned(self):
         # SET UP
-        proj, user = self.set_project_and_user(
-            project_name="test_proj", username="Lebron", password="James")
+        proj, user = self.set_project_and_user()
 
         # User visits robject page.
-        self.get_robject_create_page(proj=proj)
+        self.get_robject_create_page()
 
         # He specify name.
         self.browser.find_element_by_css_selector(
@@ -589,7 +594,7 @@ class RobjectCreateTestCase(FunctionalTest):
 
         # Now user submits form.
         moment_of_creation = timezone.now()
-        self.submit_and_assert_valid_redirect(proj=proj)
+        self.submit_and_assert_valid_redirect()
 
         # He realize that even though he didnt specify project, create_by,
         # create_date, modify_by or modify_date fields, and even has a chance to
@@ -609,11 +614,10 @@ class RobjectCreateTestCase(FunctionalTest):
 
     def test_Tag_form_not_contains_project_field_but_project_is_auto_assigned(self):
         # SET UP
-        proj, user = self.set_project_and_user(
-            project_name="test_proj", username="Lebron", password="James")
+        proj, user = self.set_project_and_user()
 
         # User visits robject page.
-        self.get_robject_create_page(proj=proj)
+        self.get_robject_create_page()
 
         # He clicks plus button and goes to popup form.
         plus_btn = self.browser.find_element_by_css_selector(
@@ -639,8 +643,7 @@ class RobjectCreateTestCase(FunctionalTest):
 
     def test_user_opens_Name_popup_using_url_not_plus_button(self):
         # SET UP
-        proj, user = self.set_project_and_user(
-            project_name="test_proj", username="Lebron", password="James")
+        proj, user = self.set_project_and_user()
 
         name_popup_url = self.live_server_url + \
             reverse("projects:robjects:names_create", args=(proj.name,))
@@ -658,8 +661,7 @@ class RobjectCreateTestCase(FunctionalTest):
 
     def test_user_opens_Tag_popup_using_url_not_plus_button(self):
         # SET UP
-        proj, user = self.set_project_and_user(
-            project_name="test_proj", username="Coby", password="Briant")
+        proj, user = self.set_project_and_user()
 
         tag_popup_url = self.live_server_url + \
             reverse("projects:robjects:tags_create", args=(proj.name,))
