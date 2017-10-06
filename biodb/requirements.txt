@@ -4,3 +4,4 @@ django-guardian
 django-ckeditor
 django-tables2
 django-addanother
+django-simple-history

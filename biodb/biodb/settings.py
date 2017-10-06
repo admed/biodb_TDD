@@ -50,7 +50,8 @@ INSTALLED_APPS = (
     'guardian',
     'ckeditor',
     'django_tables2',
-    'django_addanother'
+    'django_addanother',
+    'simple_history',
 )
 
 MIDDLEWARE_CLASSES = (

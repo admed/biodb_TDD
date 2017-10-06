@@ -2,6 +2,7 @@ from django.db import models
 from projects.models import Project, Tag
 from django.contrib.auth.models import User
 from ckeditor.fields import RichTextField
+from simple_history.models import HistoricalRecords
 # Create your models here.
 
 
@@ -27,6 +28,7 @@ class Robject(models.Model):
     ref_clinical = RichTextField(blank=True)
     ligand = models.CharField(max_length=100, blank=True)
     receptor = models.CharField(max_length=100, blank=True)
+    history = HistoricalRecords()
 
     def __str__(self):
         return "Robject " + str(self.id)
@@ -34,6 +36,25 @@ class Robject(models.Model):
     class Meta:
         unique_together = ("name", "project")
 
+    @property
+    def _history_user(self):
+        return self.modify_by
+
+    @_history_user.setter
+    def _history_user(self, value):
+        self.modify_by = value
+
+    def get_fields(self, exclude=None):
+        """This method return list of model fields reduced by exclude list."""
+        # create set from input list | remove duplicates the same time
+        if not exclude:
+            excludes = []
+        else:
+            excludes = set(exclude)
+        # get set from model dict keys
+        fields = set(self.__dict__.keys())
+        # return difference set
+        return fields.difference(excludes)
 
 class Name(models.Model):
     name = models.CharField(max_length=100, unique=True)

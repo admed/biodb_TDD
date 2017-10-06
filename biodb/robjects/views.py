@@ -7,7 +7,7 @@ from django.db.models import TextField
 from django.db.models import Q
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render
-from django.views.generic import View, CreateView, DeleteView
+from django.views.generic import View, CreateView, DeleteView, DetailView
 from projects.models import Project, Tag
 from robjects.models import Robject, Name
 from django import forms
@@ -20,6 +20,7 @@ from guardian.mixins import PermissionRequiredMixin
 from biodb import settings
 from django.http import HttpResponseBadRequest, HttpResponse, HttpResponseForbidden
 from samples.views import SampleListView
+from tools.history import generate_versions
 # Create your views here.
 
 
@@ -269,3 +270,27 @@ class RobjectDeleteView(DeleteView):
 
     def get_success_url(self):
         return reverse("projects:robjects:robjects_list", kwargs=self.kwargs)
+
+
+class RobjectHistory(DetailView):
+    """View to show historical records of robject.
+
+    Views show in table all changes made on object.
+    Changes are prsented in github style.
+    """
+    model = Robject
+    template_name = "robjects/robject_history.html"
+
+    def get_context_data(self, **kwargs):
+        """Add CustomHistory objects as versions to context."""
+        context = super(RobjectHistory, self).get_context_data(**kwargs)
+        # get robject
+        robject = self.get_object()
+        # get all simple history versions
+        robject_history = robject.history.all()
+        # use history_tools for built logic on top of versions (prepare for
+        # table)
+        versions = generate_versions(robject_history)
+        # create table
+        context['versions'] = versions
+        return context
