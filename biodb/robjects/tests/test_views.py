@@ -15,6 +15,7 @@ from guardian.shortcuts import assign_perm
 from io import BytesIO
 from openpyxl import load_workbook
 
+
 class RobjectSamplesListTest(FunctionalTest):
     def test_anonymous_user_gets_samples_page(self):
         proj = Project.objects.create(name="PROJECT_1")
@@ -549,7 +550,25 @@ class RobjectDeleteTestCase(FunctionalTest):
         self.assertIn(robj_1, robjects_context)
         self.assertIn(robj_2, robjects_context)
 
-class Robjects_pdf_view_test(FunctionalTest):
+
+class RobjectsPdfTestCase(FunctionalTest):
+    def test_anonymous_user_gets_samples_page(self):
+        proj = Project.objects.create(name="PROJECT_1")
+        Robject.objects.create(name="Robject_1", project=proj)
+        response = self.client.get(
+            "/projects/PROJECT_1/robjects/robjects/PDF-raport/")
+        self.assertEqual(response.status_code, 302)
+        self.assertIn('/accounts/login/?next=', response.url)
+
+    def test_render_template_on_get(self):
+        user, proj = self.default_set_up_for_robjects_pages()
+        robj = Robject.objects.create(name="rob")
+        assign_perm("projects.can_visit_project", user, proj)
+        samp = Sample(code='1a2b3c')
+        response = self.client.get(
+            "/projects/PROJECT_1/robjects/robjects/PDF-raport/")
+        self.assertTemplateUsed(response, "robjects/robject_raport_pdf.html")
+
     def test_user_generfates_pdf(self):
         # logged user goes to biodb to export a excel file
         user, proj = self.default_set_up_for_robjects_pages()
@@ -577,32 +596,35 @@ class Robjects_pdf_view_test(FunctionalTest):
         self.assertEqual(response.status_code, 200)
 
     def test_robjects_pdf_view_for_multiple_robjects(self):
-        # logged user goes to biodb to export a excel file
+        # CREATE SAMPLE PROJECT AND USER.
+        # ASSIGNE PERMISION TO PROJECT.
         user, proj = self.default_set_up_for_robjects_pages()
+        # CREATE SAMPLE ROBJECTS AND ADD IT TO PROJECT.
         robj1 = Robject.objects.create(
             author=user, project=proj, name="robject_1")
         robj2 = Robject.objects.create(
             author=user, project=proj, name="robject_2")
-        # get response for two checked robjects
+        # User enters project robjects pdf raport page.
         response = self.client.get(
             f"/projects/{proj.name}/robjects/PDF-raport/")
-        # assert attachment name as robject_raport.pdf
-        # assert attachment name as robject_raport.pdf
+        # User seas name of file.
         self.assertEqual(response.get('Content-Disposition'),
                          'filename="raport.pdf"')
-        # check if pdf_file is not empty
+        # He checks if file is not empty.
         pdf_file = BytesIO(response.content)
         self.assertIsNotNone(pdf_file)
-        # open and read pdf file
+        # He opens and reads file.
         read_pdf = PyPDF2.PdfFileReader(pdf_file)
+        # He count numbers of pages.
         number_of_pages = read_pdf.getNumPages()
-        # check are there two pages - one for robject
+        # He seas two pages, one for every robjects.
         self.assertEqual(number_of_pages, 2)
+        # He seas first page of pdf.
         page = read_pdf.getPage(0)
         page_content = page.extractText()
-        # chcek if robjects name is in page content
+        # He seas that first page is for robject_1 model.
         self.assertIn('robject_1', page_content)
-        # do teh same with second robject
+        # He checks second page for robject_2.
         page = read_pdf.getPage(1)
         page_content = page.extractText()
         self.assertIn('robject_2', page_content)
