@@ -17,6 +17,11 @@
         Sample table
       </a>
     </li>
+    <li>
+      <a href="{% url 'projects:robjects:robject_create' project_name=request.resolver_match.kwargs.project_name %}">
+        Create research object.
+      </a>
+    </li>
   </ul>
 </div>
 <div class="actions">
@@ -26,7 +31,6 @@
     <form id="delete-form"
       action="{% url 'projects:robjects:robject_delete' project_name=request.resolver_match.kwargs.project_name %}">
       <input type="submit" value="Delete" class="delete-button">
-    </form>
     </li>
   </ul>
 </div>
@@ -53,6 +57,11 @@
   </tr>
   {% endfor %}
 </table>
+
+<input type="submit" formaction="/projects/{{ project_name }}/robjects/excel-raport/" value="Excel" method='post'>
+
+</form>
+
 <style>
   .links, .actions {
     margin: 20px 0;

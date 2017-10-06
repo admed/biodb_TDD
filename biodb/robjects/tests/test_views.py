@@ -15,6 +15,7 @@ from biodb import settings
 from guardian.shortcuts import assign_perm
 
 
+<<<<<<< Updated upstream
 class Robjects_export_to_excel_view_test(FunctionalTest):
     def test_export_to_excel(self):
         # CREATE SAMPLE USER AND PROJECT
@@ -92,6 +93,165 @@ class Robjects_export_to_excel_view_test(FunctionalTest):
         self.assertEqual(response.status_code, 200)
 
 
+||||||| merged common ancestors
+=======
+<<<<<<< Updated upstream
+||||||| merged common ancestors
+class Robjects_export_to_excel_view_test(FunctionalTest):
+    def test_export_to_excel(self):
+        # logged user goes to biodb to export a excel file
+        user, proj = self.default_set_up_for_robjects_page()
+        robj = Robject.objects.create(
+            author=user, project=proj, name="robject_1")
+
+        response = self.client.get(f"/projects/{proj.name}/robjects/{robj.id}/excel-raport/")
+        # assert attachment name as report.xlsx
+        self.assertEqual(response.get('Content-Disposition'),
+                         "attachment; filename=report.xlsx")
+
+        table_heder_list = ['id', 'project', 'author', 'name', 'create_by',
+                            'create_date', 'modify_date', 'modify_by', 'notes',
+                            'ligand', 'receptor', 'ref_seq', 'mod_seq',
+                            'description', 'bibliography', 'ref_commercial',
+                            'ref_clinical', 'files']
+        # assert headers are the same as robject atrinutes names
+        with BytesIO(response.content) as f:
+            self.assertIsNotNone(f)
+            wb = load_workbook(f)
+            ws = wb.active
+            first_row_cells = []
+            for row in ws.rows:
+                for cell in row:
+                    first_row_cells.append(cell.value)
+                break
+        self.assertSequenceEqual(first_row_cells, table_heder_list)
+
+        # if status code of requeszt is 200 -
+        # The request was successfully received,
+        # understood, and accepted
+        self.assertEqual(response.status_code, 200)
+
+    def test_robjects_export_selected_to_excel_view(self):
+        # logged user goes to biodb to export a excel file
+        user, proj = self.default_set_up_for_robjects_page()
+        robj1 = Robject.objects.create(
+            author=user, project=proj, name="robject_1")
+        robj2 = Robject.objects.create(
+            author=user, project=proj, name="robject_2")
+
+        response = self.client.post(
+            f"/projects/{proj.name}/robjects/excel-raport/", {'checkbox': ['1', '2']})
+        # assert attachment name as report.xlsx
+        self.assertEqual(response.get('Content-Disposition'),
+                         "attachment; filename=report.xlsx")
+
+        table_heder_list = ['id', 'project', 'author', 'name', 'create_by',
+                            'create_date', 'modify_date', 'modify_by', 'notes',
+                            'ligand', 'receptor', 'ref_seq', 'mod_seq',
+                            'description', 'bibliography', 'ref_commercial',
+                            'ref_clinical']
+        # assert headers are the same as robject atrinutes names
+        with BytesIO(response.content) as f:
+            self.assertIsNotNone(f)
+            wb = load_workbook(f)
+            ws = wb.active
+            first_row_cells = []
+            for row in ws.rows:
+                for cell in row:
+                    first_row_cells.append(cell.value)
+                break
+        # check if heaer are the same as first row
+        self.assertListEqual(first_row_cells, table_heder_list)
+
+        # check if every robject in different row
+        # add +1 because of headers
+        self.assertEqual(ws.max_row, Robject.objects.count() + 1)
+
+        # if status code of requeszt is 200 -
+        # The request was successfully received,
+        # understood, and accepted
+        self.assertEqual(response.status_code, 200)
+
+
+=======
+class Robjects_export_to_excel_view_test(FunctionalTest):
+    def test_export_to_excel(self):
+        # CREATE SAMPLE USER AND PROJECT
+        user, proj = self.default_set_up_for_robjects_page()
+        robj = Robject.objects.create(
+            author=user, project=proj, name="robject_1")
+        # He enters robject raport excel page.
+        response = self.client.get(f"/projects/{proj.name}/robjects/{robj.id}/excel-raport/")
+        # assert attachment name as report.xlsx
+        self.assertEqual(response.get('Content-Disposition'),
+                         "attachment; filename=report.xlsx")
+
+        table_heder_list = ['id', 'project', 'author', 'name', 'create_by',
+                            'create_date', 'modify_date', 'modify_by', 'notes',
+                            'ligand', 'receptor', 'ref_seq', 'mod_seq',
+                            'description', 'bibliography', 'ref_commercial',
+                            'ref_clinical', 'files']
+        # assert headers are the same as robject atrinutes names
+        with BytesIO(response.content) as f:
+            self.assertIsNotNone(f)
+            wb = load_workbook(f)
+            ws = wb.active
+            first_row_cells = []
+            for row in ws.rows:
+                for cell in row:
+                    first_row_cells.append(cell.value)
+                break
+        self.assertSequenceEqual(first_row_cells, table_heder_list)
+
+        # if status code of requeszt is 200 -
+        # The request was successfully received,
+        # understood, and accepted
+        self.assertEqual(response.status_code, 200)
+
+    def test_robjects_export_selected_to_excel_view(self):
+        # logged user goes to biodb to export a excel file
+        user, proj = self.default_set_up_for_robjects_page()
+        robj1 = Robject.objects.create(
+            author=user, project=proj, name="robject_1")
+        robj2 = Robject.objects.create(
+            author=user, project=proj, name="robject_2")
+
+        response = self.client.post(
+            f"/projects/{proj.name}/robjects/excel-raport/", {'checkbox': ['1', '2']})
+        # assert attachment name as report.xlsx
+        self.assertEqual(response.get('Content-Disposition'),
+                         "attachment; filename=report.xlsx")
+
+        table_heder_list = ['id', 'project', 'author', 'name', 'create_by',
+                            'create_date', 'modify_date', 'modify_by', 'notes',
+                            'ligand', 'receptor', 'ref_seq', 'mod_seq',
+                            'description', 'bibliography', 'ref_commercial',
+                            'ref_clinical']
+        # assert headers are the same as robject atrinutes names
+        with BytesIO(response.content) as f:
+            self.assertIsNotNone(f)
+            wb = load_workbook(f)
+            ws = wb.active
+            first_row_cells = []
+            for row in ws.rows:
+                for cell in row:
+                    first_row_cells.append(cell.value)
+                break
+        # check if heaer are the same as first row
+        self.assertListEqual(first_row_cells, table_heder_list)
+
+        # check if every robject in different row
+        # add +1 because of headers
+        self.assertEqual(ws.max_row, Robject.objects.count() + 1)
+
+        # if status code of requeszt is 200 -
+        # The request was successfully received,
+        # understood, and accepted
+        self.assertEqual(response.status_code, 200)
+
+
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 class RobjectSamplesListTest(FunctionalTest):
     def test_anonymous_user_gets_samples_page(self):
         proj = Project.objects.create(name="PROJECT_1")
