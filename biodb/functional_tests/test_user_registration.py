@@ -2,7 +2,6 @@ from django.contrib.auth.models import User
 from django.test import tag
 from functional_tests.base import FunctionalTest
 from selenium.common.exceptions import NoSuchElementException
-# from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
 
