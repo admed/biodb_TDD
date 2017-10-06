@@ -35,7 +35,8 @@ class TestUserVisitsSampleDetails(FunctionalTest):
                          f"/projects/{proj.name}/samples/{samp.id}/")
         current_url = self.browser.current_url
         # Annonymus user is redirected to login page.
-        expected_url = self.live_server_url + f"/accounts/login/?next=/projects/{proj.name}/samples/{samp.id}/"
+        expected_url = self.live_server_url + \
+            f"/accounts/login/?next=/projects/{proj.name}/samples/{samp.id}/"
         self.assertEqual(current_url, expected_url)
 
     def test_user_without_project_permission_wants_to_vist_sample_detail_page(self):

@@ -52,15 +52,14 @@ class UserGeneratePDFRaport(FunctionalTest):
         self.browser.switchTo().frame()
         self.browser.find_element_by_css_selector(".textLayer")
 
-        # TODO: THIS IS NOT WORKING. SELENIUM CAN NOT FIND OBJECT. BUT IT IS PRESSENT WHEN I SPY page element
-
+        # TODO: THIS IS NOT WORKING. SELENIUM CAN NOT FIND OBJECT.
+        # BUT IT IS PRESSENT WHEN I SPY page element
 
         # content = self.wait_for(
         #     lambda: self.browser.find_element_by_css_selector(".textLayer"))
         # self.assertIn('robject', content.text)
 
     # TODO: it will work after passing checbox content to query.
-
 
     # def test_logged_user_export_all_robjects_not_checking_any_box(self):
     #     # Create sample project and robject

@@ -25,7 +25,8 @@ class TagListTestCase(FunctionalTest):
         # He can not enter requested url.
         # He is still on home page of biodb.
         current_url = self.browser.current_url
-        expected_url = self.live_server_url + f"/accounts/login/?next=/projects/{proj.name}/tags/"
+        expected_url = self.live_server_url + \
+            f"/accounts/login/?next=/projects/{proj.name}/tags/"
         self.assertEqual(current_url, expected_url)
 
     def test_user_without_project_visit_permission_tries_to_get_tag_list(self):

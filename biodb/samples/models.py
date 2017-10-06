@@ -1,11 +1,7 @@
 from ckeditor.fields import RichTextField
 from django.contrib.auth.models import User
-from django.core.exceptions import ValidationError
 from django.db import models
-#from simple_history.models import HistoricalRecords
-from django.forms.models import model_to_dict
 from robjects.models import Robject
-from django.core.urlresolvers import reverse
 # Create your models here.
 
 

@@ -15,7 +15,8 @@ from django.utils import timezone
 @override_settings(DEBUG=True)
 class RobjectCreateTestCase(FunctionalTest):
     def get_robject_form_url(self, proj):
-        return self.live_server_url + reverse("projects:robjects:robject_create", args=(proj.name,))
+        return self.live_server_url + \
+            reverse("projects:robjects:robject_create", args=(proj.name,))
 
     def add_related(self, input_id, name):
         """User click in plus button, switch to popup, add related and get back.
@@ -50,7 +51,8 @@ class RobjectCreateTestCase(FunctionalTest):
             "body").send_keys(text)
         self.switch_to_main()
 
-    def set_project_and_user(self, project_name="proj_1", username="username",
+    def set_project_and_user(self, project_name="proj_1",
+                             username="username",
                              password="password"):
         proj = Project.objects.create(name=project_name)
         user = self.login_user(username, password)
@@ -64,13 +66,15 @@ class RobjectCreateTestCase(FunctionalTest):
         return r
 
     def get_robject_create_page(self, proj):
-        self.browser.get(self.live_server_url + reverse("projects:robjects:robject_create",
-                                                        args=(proj.name,)))
+        self.browser.get(self.live_server_url +
+                         reverse("projects:robjects:robject_create",
+                                 args=(proj.name,)))
 
     def submit_and_assert_valid_redirect(self, proj):
         self.browser.find_element_by_css_selector("button").click()
         self.assertEqual(self.browser.current_url, self.live_server_url +
-                         reverse("projects:robjects:robjects_list", args=(proj.name,)))
+                         reverse("projects:robjects:robjects_list",
+                                 args=(proj.name,)))
 
     def test_user_fill_full_form_with_multiple_names_tags_and_files(self):
         proj, user = self.set_project_and_user(
@@ -84,7 +88,8 @@ class RobjectCreateTestCase(FunctionalTest):
         self.add_related(input_id="id_names", name="NAME1")
 
         # User gets back to main window. He noticed new name in select input.
-        self.check_for_related_in_input(input_id="id_names", name="NAME1")
+        self.check_for_related_in_input(input_id="id_names",
+                                        name="NAME1")
 
         # Now, he create another name.
         self.add_related(input_id="id_names", name="NAME2")

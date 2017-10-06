@@ -1,27 +1,10 @@
 import re
-from django.contrib.auth.decorators import login_required
 from bs4 import BeautifulSoup
 from datetime import datetime
-from django.core.exceptions import PermissionDenied
-from django.db.models import CharField
-from biodb.mixins import LoginRequiredMixin
 from django.conf import settings
-from django.contrib.auth.decorators import login_required
-from django.db.models import ForeignKey
-from django.db.models import TextField
-from django.db.models import Q
-from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse
-from django.shortcuts import render
 from django.template.loader import get_template
-from django.utils.decorators import method_decorator
-from django.views.generic import DetailView
-from django.views.generic import ListView
-from django.views.generic import View
 from openpyxl import Workbook
-from projects.models import Project
-from robjects.models import Robject
-from robjects.models import Tag
 from weasyprint import CSS
 from weasyprint import HTML
 

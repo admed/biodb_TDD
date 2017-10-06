@@ -1,6 +1,5 @@
 from django.conf.urls import url
 from robjects.views import robjects_list_view, SearchRobjectsView
-from django.http import HttpResponse
 from robjects.views import RobjectCreateView, NameCreateView, TagCreateView, RobjectDeleteView
 from robjects.views import RobjectSamplesList
 from robjects.views import RobjectPDFeView
