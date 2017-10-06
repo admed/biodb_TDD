@@ -75,7 +75,7 @@ class TagListViewTestCase(FunctionalTest):
         response1 = self.client.get(f"/projects/{proj1.name}/tags/")
         self.assertIn("Project_1", response1.context["project_name"])
         response2 = self.client.get(f"/projects/{proj2.name}/tags/")
-        self.assertIn("Project_2", response2.context["project_name"])        
+        self.assertIn("Project_2", response2.context["project_name"])
 
     def test_view_filter_tag_queryset_in_context(self):
         user = self.default_set_up_for_projects_pages()
