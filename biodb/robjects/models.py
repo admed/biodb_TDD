@@ -44,7 +44,7 @@ class Robject(models.Model):
     def _history_user(self, value):
         self.modify_by = value
 
-    def get_fields(self, exclude=None):
+    def get_fields_names(self, exclude=None):
         """This method return list of model fields reduced by exclude list."""
         # create set from input list | remove duplicates the same time
         if not exclude:
@@ -52,9 +52,12 @@ class Robject(models.Model):
         else:
             excludes = set(exclude)
         # get set from model dict keys
-        fields = set(self.__dict__.keys())
+        fields = set(f.name for f in self._meta.get_fields()
+                     if not (f.is_relation or f.one_to_one or
+                             (f.many_to_one and f.related_model)))
         # return difference set
         return fields.difference(excludes)
+
 
 class Name(models.Model):
     name = models.CharField(max_length=100, unique=True)

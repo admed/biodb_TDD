@@ -58,7 +58,7 @@ class CustomHistory():
         if not pr_ver:
             return diff_fields
         # get all field names in set
-        fields = self.curr_ver.instance.get_fields(self.exclude)
+        fields = self.curr_ver.instance.get_fields_names(exclude=self.exclude)
         # search for differ fields
         for field in fields:
             # if field differ from curren version add it to list
@@ -108,5 +108,5 @@ def generate_versions(history_objects, exclude=None):
 
         Pass version_id number to CustomHistory constructor."""
 
-    return [CustomHistory(version, version_id=idx)
+    return [CustomHistory(version, version_id=idx, exclude=exclude)
             for idx, version in enumerate(reversed(history_objects), 1)]
