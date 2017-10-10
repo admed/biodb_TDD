@@ -2,7 +2,7 @@ from django.conf.urls import url
 from robjects.views import robjects_list_view, SearchRobjectsView
 from django.http import HttpResponse
 from robjects.views import RobjectCreateView, NameCreateView, TagCreateView, RobjectDeleteView
-from robjects.views import RobjectSamplesList, RobjectHistory
+from robjects.views import RobjectSamplesList, RobjectHistoryView
 
 app_name = 'robjects'
 urlpatterns = [
@@ -15,6 +15,6 @@ urlpatterns = [
     url(r"^tags-create/$", TagCreateView.as_view(), name="tags_create"),
     url(r'^(?P<robject_id>[0-9]+)/samples/$',
         RobjectSamplesList.as_view(), name='robject_samples'),
-    url(r"^(?P<pk>\d+)/history/$", RobjectHistory.as_view(),
+    url(r"^(?P<pk>\d+)/history/$", RobjectHistoryView.as_view(),
         name="robject_history"),
 ]

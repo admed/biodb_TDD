@@ -272,7 +272,7 @@ class RobjectDeleteView(DeleteView):
         return reverse("projects:robjects:robjects_list", kwargs=self.kwargs)
 
 
-class RobjectHistory(DetailView):
+class RobjectHistoryView(DetailView):
     """View to show historical records of robject.
 
     Views show in table all changes made on object.
@@ -283,14 +283,16 @@ class RobjectHistory(DetailView):
 
     def get_context_data(self, **kwargs):
         """Add CustomHistory objects as versions to context."""
-        context = super(RobjectHistory, self).get_context_data(**kwargs)
+        context = super(RobjectHistoryView, self).get_context_data(**kwargs)
         # get robject
         robject = self.get_object()
         # get all simple history versions
         robject_history = robject.history.all()
         # use history_tools for built logic on top of versions (prepare for
         # table)
-        versions = generate_versions(robject_history)
+        exclude_fields = ["_state", "create_date", "modify_date", "created_by",
+                          "modify_by", "modify_by_id"]
+        versions = generate_versions(robject_history, exclude=exclude_fields)
         # create table
         context['versions'] = versions
         return context
