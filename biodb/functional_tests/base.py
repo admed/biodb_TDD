@@ -71,6 +71,7 @@ class FunctionalTest(StaticLiveServerTestCase):
         user, created = User.objects.get_or_create(username=username)
         if created:
             user.set_password(password)
+            user.save()
 
         self.browser.get(self.live_server_url)
         username_input = self.browser.find_element_by_css_selector(
