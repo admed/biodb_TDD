@@ -290,8 +290,7 @@ class RobjectHistoryView(DetailView):
         robject_history = robject.history.all()
         # use history_tools for built logic on top of versions (prepare for
         # table)
-        exclude_fields = ["_state", "create_date", "modify_date", "created_by",
-                          "modify_by", "modify_by_id"]
+        exclude_fields = ["create_date", "modify_date"]
         versions = generate_versions(robject_history, exclude=exclude_fields)
         # create table
         context['versions'] = versions
