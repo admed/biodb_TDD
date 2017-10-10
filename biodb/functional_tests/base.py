@@ -63,12 +63,15 @@ class FunctionalTest(StaticLiveServerTestCase):
         self.browser.switch_to.window(self.main_window)
 
     def login_user(self, username, password):
-        """ Helper method for log user in.
-        """
-        try:
-            u = User.objects.create_user(username=username, password=password)
-        except IntegrityError:
-            u = User.objects.get(username=username)
+        """ Helper method for log user in."""
+
+        # It is better not to catch IntegrityError as it can happen
+        # for other reasons.
+
+        user, created = User.objects.get_or_create(username=username)
+        if created:
+            user.set_password(password)
+
         self.browser.get(self.live_server_url)
         username_input = self.browser.find_element_by_css_selector(
             "#username_input")
@@ -82,7 +85,7 @@ class FunctionalTest(StaticLiveServerTestCase):
         expected_url = self.live_server_url + "/projects/"
         assert self.browser.current_url == expected_url, f"User login failed!"
 
-        return u
+        return user
 
     def project_set_up_and_get_robject_page(self, username="USERNAME",
                                             password="PASSWORD", project_name="project_1"):
@@ -98,7 +101,8 @@ class FunctionalTest(StaticLiveServerTestCase):
 
         return user, proj
 
-    def project_set_up_using_default_data(self):
+    def project_set_up_using_default_data(self, permission_visit=False,
+                                          permission_modify=False):
         """ Helper method for all robject page related tests.
             Method include logged user with default creadentials and project
             with default name.
@@ -106,6 +110,11 @@ class FunctionalTest(StaticLiveServerTestCase):
         user = self.login_user("USERNAME", "PASSWORD")
 
         proj = Project.objects.create(name="project_1")
+
+        if permission_visit:
+            assign_perm("can_visit_project", user, proj)
+        if permission_modify:
+            assign_perm("can_modify_project", user, proj)
 
         self.browser.get(self.live_server_url + f"/projects/{proj}/robjects/")
 
