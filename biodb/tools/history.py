@@ -5,11 +5,15 @@ from collections import namedtuple
 class CustomHistory():
     """Contains tools for display object history data in table.
 
-    Object wrapper for each SimpleHistory instance containing additional attrs
-    and methods allowing to compare different versions and compare changes.
+    Wrapper for DjangoSimpleHistory - Application that track changes to
+    instances of models and maintain a log of the changes.
+
+    This class provides the wrapper for each SimpleHistory instance containing
+    additional attrs and methods allowing to compare different versions
+    and changes in github like style.
     """
 
-    def __init__(self, SimpleHistObj, version_id):
+    def __init__(self, SimpleHistObj, version_id, exclude=None):
 
         # get extra attr with version number
         self.version_id = version_id
@@ -23,9 +27,11 @@ class CustomHistory():
 
         # store SimpleHistObj as current version
         self.curr_ver = SimpleHistObj
-
-        self.exclude = ["_state", "create_date", "modify_date",
-                        "created_by", "modify_by", "modify_by_id"]
+        # set self exclude as input kwarg or empty list if None
+        if not exclude:
+            self.exclude = []
+        else:
+            self.exclude = exclude
 
     def return_previous_version(self):
         """Return previous version of object or None"""
@@ -97,7 +103,7 @@ class CustomHistory():
         return diff_objects
 
 
-def generate_versions(history_objects):
+def generate_versions(history_objects, exclude=None):
     """Transform model.history.all() into CustomHistory instances list.
 
         Pass version_id number to CustomHistory constructor."""
