@@ -6,8 +6,9 @@ from functional_tests.base import FunctionalTest
 class RobjectHistoryTestCase(FunctionalTest):
     def get_robject_history_url(self, proj, robj):
         """Method returning History url of robject"""
-            self.browser.get(self.live_server_url +
-                             f"/projects/{proj.name}/{robj.pk}/history/")
+        self.browser.get(self.live_server_url +
+                         f"/projects/{proj.name}/{robj.pk}/history/")
+
     def test_annonymous_user_visit_history_page(self):
         pass
 
