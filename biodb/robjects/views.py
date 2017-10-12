@@ -7,7 +7,7 @@ from django.db.models import TextField
 from django.db.models import Q
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render
-from django.views.generic import View, CreateView, DeleteView
+from django.views.generic import View, CreateView, DeleteView, UpdateView
 from projects.models import Project, Tag
 from robjects.models import Robject, Name
 from django import forms
@@ -267,5 +267,5 @@ class RobjectDeleteView(DeleteView):
         return reverse("projects:robjects:robjects_list", kwargs=self.kwargs)
 
 
-class RobjectEditView(RobjectCreateView):
-    pass
+class RobjectEditView(RobjectCreateView, UpdateView):
+    pk_url_kwarg = "robject_id"

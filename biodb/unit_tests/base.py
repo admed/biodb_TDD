@@ -12,6 +12,10 @@ class FunctionalTest(TestCase):
                                "project_name": "project_1"})
     ROBJECT_DELETE_URL = reverse("projects:robjects:robject_delete", kwargs={
                                  "project_name": "project_1"})
+    ROBJECT_EDIT_URL = reverse("projects:robjects:robject_edit", kwargs={
+        "project_name": "project_1",
+        "robject_id": 1
+    })
 
     def default_set_up_for_projects_pages(self):
         user = User.objects.create_user(

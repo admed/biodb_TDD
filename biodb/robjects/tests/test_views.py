@@ -546,3 +546,14 @@ class RobjectDeleteTestCase(FunctionalTest):
         self.assertEqual(len(robjects_context), 2)
         self.assertIn(robj_1, robjects_context)
         self.assertIn(robj_2, robjects_context)
+
+
+class RobjectEditView(FunctionalTest):
+    def test_view_render_bounded_form(self):
+        user, proj = self.default_set_up_for_robjects_pages()
+        assign_perm("can_modify_project", user, proj)
+        r = Robject.objects.create(project=proj, name="ROBJECT_NAME")
+        response = self.client.get(self.ROBJECT_EDIT_URL)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.context["form"].initial["name"], 'ROBJECT_NAME')
