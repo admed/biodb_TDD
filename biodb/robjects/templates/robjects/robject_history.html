@@ -6,36 +6,39 @@
 
 {% block content %}
 <table>
+  <thead>
     <tr>
-        <th>Version</th>
-        <th>Type</th>
-        <th>Changed by</th>
-        <th>Modyfication date</th>
-        <th>Changes</th>
+      <th>Version</th>
+      <th>Type</th>
+      <th>Changed by</th>
+      <th>Modyfication date</th>
+      <th>Changes</th>
     </tr>
+  </thead>
+  <tbody>
     {% for version in versions %}
-        <tr>
-            <td>{{ version.version_id }}</td>
-            <td>{{ version.modify_type }}</td>
-            <td>{{ version.modify_by }}</td>
-            <td>{{ version.modify_date }}</td>
-            <td>
-                {% with diffobjects=version.get_diff_objects %}
-                    {% if  diffobjects %}
-                        {% for difffield in diffobjects %}
-                        <div class="field-diff">
-                          {{ difffield.field }}
-                          <div class="new">{{ difffield.new_value }}</div>
-                          <div class="old">{{ difffield.old_value }}</div>
-                        </div>
-                        {% endfor %}
-                    {% else %}
-                        <div class="field-diff">&mdash;</div>
-                    {% endif %}
-                {% endwith %}
-            </td>
-        </tr>
+      <tr>
+        <td>{{ version.version_id }}</td>
+        <td>{{ version.modify_type }}</td>
+        <td>{{ version.modify_by }}</td>
+        <td>{{ version.modify_date }}</td>
+        <td>
+          {% with diffobjects=version.get_diff_objects %}
+            {% if  diffobjects %}
+              {% for difffield in diffobjects %}
+                <div class="field-diff">
+                  {{ difffield.field }}
+                  <div class="new">{{ difffield.new_value }}</div>
+                  <div class="old">{{ difffield.old_value }}</div>
+                </div>
+              {% endfor %}
+            {% else %}
+              <div class="field-diff">&mdash;</div>
+            {% endif %}
+          {% endwith %}
+        </td>
+      </tr>
     {% endfor %}
-
+  </tbody>
 </table>
 {% endblock %}
