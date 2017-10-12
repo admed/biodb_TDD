@@ -269,3 +269,9 @@ class RobjectDeleteView(DeleteView):
 
 class RobjectEditView(RobjectCreateView, UpdateView):
     pk_url_kwarg = "robject_id"
+
+    def form_valid(self, form):
+        robject = form.save()
+        robject.modify_by = self.request.user
+        robject.save()
+        return redirect(self.get_success_url())

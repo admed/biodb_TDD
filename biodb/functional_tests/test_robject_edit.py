@@ -202,3 +202,25 @@ class RobjectEditView(FunctionalTest):
         }
         self.confirm_robject_fields(data, names=[
                                     "new_name"], tags=["new_tag"])
+
+    def test_different_user_edit_robject(self):
+        self.set_up_robject_edit()
+        u = self.login_user("NEW_USERNAME", "NEW_PASSWORD")
+        assign_perm("can_visit_project", u, self.DEFAULT_PROJECT)
+        assign_perm("can_modify_project", u, self.DEFAULT_PROJECT)
+        self.get_page()
+        self.fill_text_field("name", "new_name")
+        self.submit_form()
+        r = Robject.objects.last()
+        self.assertEqual(r.modify_by.username, "NEW_USERNAME")
+
+    def test_user_is_redirect_to_robject_list(self):
+        self.set_up_robject_edit()
+        self.get_page()
+        self.fill_text_field("name", "new_name")
+        self.submit_form()
+        self.assertEqual(
+            self.browser.current_url,
+            self.live_server_url + reverse("projects:robjects:robjects_list",
+                                           kwargs={"project_name": self.DEFAULT_PROJECT.name})
+        )

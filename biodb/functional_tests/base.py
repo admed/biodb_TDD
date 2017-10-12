@@ -69,7 +69,7 @@ class FunctionalTest(StaticLiveServerTestCase):
             u = User.objects.create_user(username=username, password=password)
         except IntegrityError:
             u = User.objects.get(username=username)
-        self.browser.get(self.live_server_url)
+        self.browser.get(self.live_server_url + "/accounts/login/")
         username_input = self.browser.find_element_by_css_selector(
             "#username_input")
         password_input = self.browser.find_element_by_css_selector(

@@ -557,3 +557,28 @@ class RobjectEditView(FunctionalTest):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             response.context["form"].initial["name"], 'ROBJECT_NAME')
+
+    def test_view_updates_modify_by(self):
+        user, proj = self.default_set_up_for_robjects_pages()
+        r = Robject.objects.create(
+            project=proj, name="ROBJECT_NAME", create_by=user, modify_by=user)
+        new_user = User.objects.create_user(
+            username="new_user", password="new_password")
+        assign_perm("can_visit_project", new_user, proj)
+        assign_perm("can_modify_project", new_user, proj)
+        self.client.login(username="new_user", password="new_password")
+        response = self.client.post(
+            self.ROBJECT_EDIT_URL, {"name": "new_name"})
+        self.assertEqual(Robject.objects.last().create_by.username, "USERNAME")
+        self.assertEqual(Robject.objects.last().modify_by.username, "new_user")
+
+    def test_view_redirects_on_post(self):
+        user, proj = self.default_set_up_for_robjects_pages()
+        assign_perm("can_modify_project", user, proj)
+        r = Robject.objects.create(
+            project=proj, name="ROBJECT_NAME", create_by=user, modify_by=user)
+        response = self.client.post(
+            self.ROBJECT_EDIT_URL, {"name": "new_name"})
+
+        self.assertRedirects(response, reverse(
+            "projects:robjects:robjects_list", kwargs={"project_name": proj.name}))
