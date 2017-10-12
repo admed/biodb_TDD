@@ -12,7 +12,7 @@ from projects.models import Project, Tag
 from robjects.models import Robject, Name
 from django import forms
 from django_addanother.widgets import AddAnotherWidgetWrapper
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, resolve
 from django.shortcuts import redirect
 from django_addanother.views import CreatePopupMixin
 from guardian.mixins import LoginRequiredMixin as GuardianLoginRequiredMixin
@@ -190,10 +190,8 @@ class NameCreateView(CreatePopupMixin, CreateView):
         from urllib.parse import urlparse
         previously_visited_path = urlparse(
             request.META.get("HTTP_REFERER", None)).path
-        robject_create_path = reverse(
-            "projects:robjects:robject_create", kwargs=kwargs)
-
-        if previously_visited_path == robject_create_path:
+        url_name = resolve(previously_visited_path).url_name
+        if url_name == "robject_create" or url_name == "robject_edit":
             return super().get(request, *args, **kwargs)
         else:
             return HttpResponseBadRequest(
@@ -210,10 +208,8 @@ class TagCreateView(CreatePopupMixin, CreateView):
         from urllib.parse import urlparse
         previously_visited_path = urlparse(
             request.META.get("HTTP_REFERER", None)).path
-        robject_create_path = reverse(
-            "projects:robjects:robject_create", kwargs=kwargs)
-
-        if previously_visited_path == robject_create_path:
+        url_name = resolve(previously_visited_path).url_name
+        if url_name == "robject_create" or url_name == "robject_edit":
             return super().get(request, *args, **kwargs)
         else:
             return HttpResponseBadRequest(
