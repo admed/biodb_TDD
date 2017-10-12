@@ -147,19 +147,19 @@ class RobjectCreateView(CreateView):
                 "names": AddAnotherWidgetWrapper(
                     widget=forms.SelectMultiple,
                     add_related_url=reverse(
-                        "projects:robjects:names_create", kwargs=self.kwargs)
+                        "projects:robjects:names_create", kwargs={"project_name": self.kwargs["project_name"]})
                 ),
                 "tags":  AddAnotherWidgetWrapper(
                     widget=forms.SelectMultiple,
                     add_related_url=reverse(
-                        "projects:robjects:tags_create", kwargs=self.kwargs)
+                        "projects:robjects:tags_create", kwargs={"project_name": self.kwargs["project_name"]})
                 ),
                 'project': forms.HiddenInput()
             })
         return form
 
     def get_success_url(self):
-        return reverse("projects:robjects:robjects_list", kwargs=self.kwargs)
+        return reverse("projects:robjects:robjects_list", kwargs={"project_name": self.kwargs["project_name"]})
 
     def get_permission_object(self):
         project = Project.objects.get(name=self.kwargs["project_name"])
@@ -269,3 +269,7 @@ class RobjectDeleteView(DeleteView):
 
     def get_success_url(self):
         return reverse("projects:robjects:robjects_list", kwargs=self.kwargs)
+
+
+class RobjectEditView(RobjectCreateView):
+    pass

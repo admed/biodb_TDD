@@ -3,6 +3,7 @@ from robjects.views import robjects_list_view, SearchRobjectsView
 from django.http import HttpResponse
 from robjects.views import RobjectCreateView, NameCreateView, TagCreateView, RobjectDeleteView
 from robjects.views import RobjectSamplesList
+from robjects.views import RobjectEditView
 
 app_name = 'robjects'
 urlpatterns = [
@@ -15,4 +16,6 @@ urlpatterns = [
     url(r"^tags-create/$", TagCreateView.as_view(), name="tags_create"),
     url(r'^(?P<robject_id>[0-9]+)/samples/$',
         RobjectSamplesList.as_view(), name='robject_samples'),
+    url(r'^(?P<robject_id>[0-9]+)/edit/$',
+        RobjectEditView.as_view(), name="robject_edit")
 ]
