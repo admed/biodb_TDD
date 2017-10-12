@@ -33,8 +33,6 @@ class RobjectEditView(FunctionalTest):
             ref_clinical="DEFAULT_REF_CLINICAL",
             ligand="DEFAULT_LIGAND",
             receptor="DEFAULT_RECEPTOR",
-            create_date=datetime.today(),
-            modify_date=datetime.today()
         )
         self.DEFAULT_ROBJECT.names.add(self.DEFAULT_NAME)
         self.DEFAULT_ROBJECT.tags.add(self.DEFAULT_TAG)
@@ -144,12 +142,11 @@ class RobjectEditView(FunctionalTest):
             f"//option[contains(text(), '{username}')]")
         author_option.click()
 
-    def confirm_robject_fields(self, data,  modify_date, names=[], tags=[]):
+    def confirm_robject_fields(self, data, names=[], tags=[]):
         r = Robject.objects.last()
         for key, value in data.items():
             self.assertEqual(getattr(r, key), value)
-        self.assertAlmostEqual(r.modify_date, modify_date,
-                               delta=timedelta(seconds=1))
+
         robject_names = [name.name for name in r.names.all()]
         for name in names:
             self.assertIn(name, robject_names)
@@ -157,9 +154,6 @@ class RobjectEditView(FunctionalTest):
         robject_tags = [tag.name for tag in r.tags.all()]
         for tag in tags:
             self.assertIn(tag, robject_tags)
-
-        self.assertNotAlmostEqual(
-            r.create_date, modify_date, delta=timedelta(seconds=1))
 
     def test_user_sees_filled_fields_inside_form(self):
         self.set_up_robject_edit()
@@ -193,7 +187,6 @@ class RobjectEditView(FunctionalTest):
         self.fill_CKE_field("ref_clinical", "new_ref_clinical")
         self.add_related_name("new_name")
         self.add_related_tag("new_tag")
-        time_submit = timezone.now()
         self.submit_form()
         data = {
             "name": "new_name",
@@ -207,5 +200,5 @@ class RobjectEditView(FunctionalTest):
             "ref_commercial": "<p>new_ref_commercial</p>",
             "ref_clinical": "<p>new_ref_clinical</p>"
         }
-        self.confirm_robject_fields(data, time_submit, names=[
+        self.confirm_robject_fields(data, names=[
                                     "new_name"], tags=["new_tag"])
