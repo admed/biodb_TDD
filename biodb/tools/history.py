@@ -32,19 +32,20 @@ class CustomHistory():
             self.exclude = []
         else:
             self.exclude = exclude
+        # by default exclude ID (some history can have problems with changed ID)
+        self.exclude.append("id")
 
     def return_previous_version(self):
         """Return previous version of object or None"""
         # get previous version
         try:
             pr_ver = self.curr_ver.get_previous_by_history_date()
-
         # if DoesNotExist exception or different create_date
         # there is no previous version
         except self.curr_ver.DoesNotExist:
             return None
-        if pr_ver.create_date != self.curr_ver.create_date:
-            return None
+        # if pr_ver.create_date != self.curr_ver.create_date:
+        #     return None
         # return previous version
         return pr_ver
 
