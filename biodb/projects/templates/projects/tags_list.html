@@ -4,7 +4,9 @@
 
     {% if tag_list %}
       {% for tag in tag_list %}
+      <a href="/projects/{{ project_name }}/tags/{{ tag.id }}/update/">
         <li>{{ tag.name }} </li>
+      </a>
       {% endfor %}
       {% else %}
         <span class="empty_tag_msg">There are no tags attached to this project.</sapn>

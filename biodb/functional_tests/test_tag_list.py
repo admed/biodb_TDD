@@ -1,5 +1,3 @@
-# import time
-# from datetime import datetime
 import time
 from datetime import datetime
 from django.contrib.auth.models import User
@@ -114,3 +112,18 @@ class TagListTestCase(FunctionalTest):
         list_of_tags = self.browser.find_elements_by_css_selector('li')
         # He seas that list has two tags in it.
         self.assertEqual(len(list_of_tags), 2)
+
+    def test_user_clicks_tag_name_link_for_updating(self):
+        # CREATE SAMPLE PROJECT AND USER
+        usr, proj1 = self.project_set_up_using_default_data()
+        # ASSIGN PERMISSION TO PROJECT
+        assign_perm("projects.can_visit_project", usr, proj1)
+        # CREATE TAG TO PROJECT
+        tag1 = Tag.objects.create(name='t_1', project=proj1)
+        # User gets tag list page.
+        self.get_tag_list(proj1)
+        # User seas list of tags.
+        tag = self.browser.find_element_by_css_selector('li')
+        tag.click()
+        self.assertEqual(self.browser.current_url,
+                         self.live_server_url + f"/projects/{proj1.name}/tags/{tag1.id}/update/")
