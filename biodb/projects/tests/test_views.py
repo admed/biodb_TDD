@@ -164,7 +164,7 @@ class TagDeleteViewTestCase(FunctionalTest):
                              f'/accounts/login/?next=/projects/{proj.name}/tags/{tag1.id}/delete/')
 
     def test_template_used(self):
-        user = self.login_default_user()
+        user = self.default_set_up_for_projects_pages()
         proj = Project.objects.create(name='Project_1')
         tag1 = Tag.objects.create(name="t1", project=proj)
         assign_perm("projects.can_visit_project", user, proj)
@@ -172,7 +172,7 @@ class TagDeleteViewTestCase(FunctionalTest):
         self.assertTemplateUsed(response, "projects/tag_delete.html")
 
     def test_user_without_permision_seas_permission_denied(self):
-        self.login_default_user()
+        self.default_set_up_for_projects_pages()
         proj = Project.objects.create(name='Project_1')
         tag1 = Tag.objects.create(name="t1", project=proj)
         response = self.client.get(f"/projects/{proj.name}/tags/{tag1.id}/delete/")
@@ -181,7 +181,7 @@ class TagDeleteViewTestCase(FunctionalTest):
                          response.content.decode("utf-8"))
 
     def test_succes_url(self):
-        self.login_default_user()
+        self.default_set_up_for_projects_pages()
         proj = Project.objects.create(name='Project_1')
         tag1 = Tag.objects.create(name="t1", project=proj)
         response = self.client.get(f"/projects/{proj.name}/tags/{tag1.id}/delete/")

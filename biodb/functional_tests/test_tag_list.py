@@ -123,7 +123,7 @@ class TagListTestCase(FunctionalTest):
         # User gets tag list page.
         self.get_tag_list(proj1)
         # User seas list of tags.
-        tag = self.browser.find_element_by_css_selector('li')
+        tag = self.browser.find_element_by_css_selector('.t_1-update')
         tag.click()
         self.assertEqual(self.browser.current_url,
                          self.live_server_url + f"/projects/{proj1.name}/tags/{tag1.id}/update/")
