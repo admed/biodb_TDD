@@ -87,12 +87,16 @@ class TestUserVisitsSampleDetails(FunctionalTest):
                          f"/projects/{proj.name}/samples/{samp.id}/")
 
         # User seas list of details.
-        detail_list = self.browser.find_elements_by_css_selector('li')
-        self.assertIn("robject_1", detail_list[0].text)
-        self.assertIn("Some Sample Notes", detail_list[1].text)
-        self.assertIn("solid, 1px", detail_list[2].text)
-        self.assertIn("SourceCode", detail_list[3].text)
-        self.assertIn("Production", detail_list[4].text)
+        self.assertIn(
+            "robject_1", self.browser.find_element_by_css_selector(".name").text)
+        self.assertIn("Some Sample Notes",
+                      self.browser.find_element_by_css_selector(".notes").text)
+        self.assertIn("solid, 1px",
+                      self.browser.find_element_by_css_selector(".form").text)
+        self.assertIn("SourceCode",
+                      self.browser.find_element_by_css_selector(".source").text)
+        self.assertIn("Production",
+                      self.browser.find_element_by_css_selector(".status").text)
 
     def test_user_creates_several_samples_for_projects_and_checks_one_sample_details(self):
         # CREATE SAMPLE USER AND PROJECT.
@@ -123,9 +127,13 @@ class TestUserVisitsSampleDetails(FunctionalTest):
         self.browser.get(self.live_server_url +
                          f"/projects/{proj.name}/samples/{samp2.id}/")
         # User seas list of details for second sample.
-        detail_list = self.browser.find_elements_by_css_selector('li')
-        self.assertIn("robject_1", detail_list[0].text)
-        self.assertIn("Some Other Sample Notes", detail_list[1].text)
-        self.assertIn("2px solid #ccc", detail_list[2].text)
-        self.assertIn("source .bashrc", detail_list[3].text)
-        self.assertIn("Quality COntrol", detail_list[4].text)
+        self.assertIn(
+            "robject_1", self.browser.find_element_by_css_selector(".name").text)
+        self.assertIn("Some Other Sample Notes",
+                      self.browser.find_element_by_css_selector(".notes").text)
+        self.assertIn("2px solid #ccc",
+                      self.browser.find_element_by_css_selector(".form").text)
+        self.assertIn("source .bashrc",
+                      self.browser.find_element_by_css_selector(".source").text)
+        self.assertIn("Quality COntrol",
+                      self.browser.find_element_by_css_selector(".status").text)
