@@ -44,17 +44,31 @@ class Robject(models.Model):
     def _history_user(self, value):
         self.modify_by = value
 
-    def get_fields_names(self, exclude=None):
-        """This method return list of model fields reduced by exclude list."""
+    def get_fields_names(self, exclude=None, relation=False):
+        """This method return set of model fields.
+
+        All fields are received automatically from model.
+        By default relational fields are not included.
+
+        Args:
+            exclude (:obj:`list` or `set`): list of names of fields to exclude.
+            relation (bool): True include relational fields. Defaults: False.
+
+        Returns:
+            :obj:`set`: Set containing model fields names.
+        """
         # create set from input list | remove duplicates the same time
         if not exclude:
-            excludes = []
+            excludes = set()
         else:
             excludes = set(exclude)
         # get set from model dict keys
-        fields = set(f.name for f in self._meta.get_fields()
-                     if not (f.is_relation or f.one_to_one or
-                             (f.many_to_one and f.related_model)))
+        if relation:
+            fields = set(f.name for f in self._meta.get_fields())
+        else:
+            fields = set(f.name for f in self._meta.get_fields()
+                         if not (f.is_relation or f.one_to_one or
+                                 (f.many_to_one and f.related_model)))
         # return difference set
         return fields.difference(excludes)
 
