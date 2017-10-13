@@ -31,7 +31,6 @@
     <form id="delete-form"
       action="{% url 'projects:robjects:robject_delete' project_name=request.resolver_match.kwargs.project_name %}">
       <input type="submit" value="Delete" class="delete-button">
-    </form>
     </li>
   </ul>
 </div>
@@ -58,6 +57,17 @@
   </tr>
   {% endfor %}
 </table>
+
+
+<input type="submit" formaction="/projects/{{ project_name }}/robjects/excel-raport/" value=Excel method='post'>
+
+<button type="submit" class="btn btn-default">
+                    <i class="fa fa-excel-o"></i>
+                </button>
+
+
+</form>
+
 <style>
   .links, .actions {
     margin: 20px 0;

@@ -5,10 +5,12 @@ from django.db.models import CharField
 from django.db.models import ForeignKey
 from django.db.models import TextField
 from django.db.models import Q
+from django.http import Http404
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render
 from django.views.generic import View, CreateView, DeleteView, UpdateView
 from projects.models import Project, Tag
+from projects.mixins import ExportViewMixin
 from robjects.models import Robject, Name
 from django import forms
 from django_addanother.widgets import AddAnotherWidgetWrapper
@@ -31,6 +33,63 @@ def robjects_list_view(request, project_name):
     robject_list = Robject.objects.filter(project=project)
     return render(request, "projects/robjects_list.html",
                   {"robject_list": robject_list, "project_name": project_name})
+
+
+class ExportExcelView(ExportViewMixin, View):
+    model = Robject
+    queryset = None
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated():
+            permission_obj = self.get_permission_object()
+            if request.user.has_perm("projects.can_visit_project", permission_obj):
+                return super().dispatch(request, *args, **kwargs)
+            else:
+                raise PermissionDenied
+        else:
+            return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
+
+    def get_permission_object(self):
+        project = Project.objects.get(name=self.kwargs['project_name'])
+        return project
+
+    def get_queryset(self, project_name):
+        """
+        Return the list of items for this view.
+        The return value must be an iterable and may be an instance of
+        `QuerySet` in which case `QuerySet` specific behavior will be enabled.
+        """
+        if self.queryset is not None:
+            queryset = self.queryset
+            if isinstance(queryset, QuerySet):
+                queryset = queryset.filter(project__name=project_name).all()
+        elif self.model is not None:
+            queryset = self.model._default_manager.filter(
+                project__name=project_name).all()  # ???
+        else:
+            raise ImproperlyConfigured(
+                "%(cls)s is missing a QuerySet. Define "
+                "%(cls)s.model, %(cls)s.queryset, or override "
+                "%(cls)s.get_queryset()." % {
+                    'cls': self.__class__.__name__
+                }
+            )
+        if self.request.GET and self.request.GET.getlist('checkbox'):
+            queryset = queryset.filter(
+                pk__in=self.request.GET.getlist('checkbox'))
+
+        return queryset
+
+    def get(self, request, project_name, *args, **kwargs):
+        print('project_name', project_name)
+        self.object_list = self.get_queryset(project_name)
+        if not self.object_list:
+            raise Http404(_("Empty list and '%(class_name)s.allow_empty' is False.") % {
+                'class_name': self.__class__.__name__,
+            })
+        return self.export_to_excel(self.object_list, is_relation=True,
+                                    one_to_one=True, many_to_one=True,
+                                    exclude_fields=['sample'])
 
 
 # TODO: Add multipleObjectMixin to inherit by this class??

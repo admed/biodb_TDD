@@ -26,7 +26,7 @@ class FunctionalTest(TestCase):
     def default_set_up_for_robjects_pages(self):
         user = self.default_set_up_for_projects_pages()
         proj = Project.objects.create(name="project_1")
-        assign_perm("can_visit_project", user, proj)
+        assign_perm("projects.can_visit_project", user, proj)
 
         return user, proj
 
