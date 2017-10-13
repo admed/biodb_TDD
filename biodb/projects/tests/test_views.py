@@ -152,3 +152,36 @@ class TagUpdateViewTestCase(FunctionalTest):
         self.assertEqual(response.status_code, 403)
         self.assertEqual("<h1>403 Forbidden</h1>",
                          response.content.decode("utf-8"))
+
+
+class TagDeleteViewTestCase(FunctionalTest):
+    def test_anonymous_user_is_redirected_to_login_page(self):
+        proj = Project.objects.create(name='Project_1')
+        tag1 = Tag.objects.create(name="t1", project=proj)
+        response = self.client.get(f"/projects/{proj.name}/tags/{tag1.id}/delete/")
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response,
+                             f'/accounts/login/?next=/projects/{proj.name}/tags/{tag1.id}/delete/')
+
+    def test_template_used(self):
+        user = self.login_default_user()
+        proj = Project.objects.create(name='Project_1')
+        tag1 = Tag.objects.create(name="t1", project=proj)
+        assign_perm("projects.can_visit_project", user, proj)
+        response = self.client.get(f"/projects/{proj.name}/tags/{tag1.id}/delete/")
+        self.assertTemplateUsed(response, "projects/tag_delete.html")
+
+    def test_user_without_permision_seas_permission_denied(self):
+        self.login_default_user()
+        proj = Project.objects.create(name='Project_1')
+        tag1 = Tag.objects.create(name="t1", project=proj)
+        response = self.client.get(f"/projects/{proj.name}/tags/{tag1.id}/delete/")
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual("<h1>403 Forbidden</h1>",
+                         response.content.decode("utf-8"))
+
+    def test_succes_url(self):
+        self.login_default_user()
+        proj = Project.objects.create(name='Project_1')
+        tag1 = Tag.objects.create(name="t1", project=proj)
+        response = self.client.get(f"/projects/{proj.name}/tags/{tag1.id}/delete/")

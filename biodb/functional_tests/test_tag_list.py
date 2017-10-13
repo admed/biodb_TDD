@@ -127,3 +127,17 @@ class TagListTestCase(FunctionalTest):
         tag.click()
         self.assertEqual(self.browser.current_url,
                          self.live_server_url + f"/projects/{proj1.name}/tags/{tag1.id}/update/")
+
+    def test_user_checks_remove_icon_redirects_to_tag_delete(self):
+        # CREATE SAMPLE PROJECT AND USER
+        usr, proj = self.project_set_up_using_default_data()
+        # ASSIGN PERMISSION TO PROJECTS
+        assign_perm("projects.can_visit_project", usr, proj)
+        # CREATE TAGS TO PROJECTS
+        tag = Tag.objects.create(name='tag_1', project=proj)
+        self.get_tag_list(proj)
+        # User seas list of tags and remove
+        button = self.browser.find_element_by_css_selector('i')
+        button.click()
+        self.assertEqual(self.browser.current_url,
+                         self.live_server_url + f"/projects/{proj.name}/tags/{tag.id}/delete/")
