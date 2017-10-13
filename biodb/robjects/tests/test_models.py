@@ -136,7 +136,7 @@ class RobjectModelTestCase(TestCase):
     def test_Robject_has_ligand_attr(self):
         self.check_Robject_has_attr("ligand")
 
-    def test_Robject_has_ligand_attr(self):
+    def test_Robject_has_receptor_attr(self):
         self.check_Robject_has_attr("receptor")
 
     def test_ref_seq_field_is_RichTextField_instance(self):
@@ -261,6 +261,33 @@ class RobjectModelTestCase(TestCase):
         r.save()
         self.assertAlmostEqual(r.modify_date, t2,
                                delta=datetime.timedelta(milliseconds=1))
+
+    def test_method_get_fields_names(self):
+        # +++ test default behavior +++
+        # this method should return list of robject names.
+        # by defalut without relation fields
+        expected_fields = set(f.name for f in Robject._meta.get_fields()
+                              if not (f.is_relation or f.one_to_one or
+                                      (f.many_to_one and f.related_model)))
+        # create an instance
+        robject = Robject.objects.create()
+        fields_names = robject.get_fields_names()
+        self.assertEqual(expected_fields, fields_names)
+        # +++ test option relation to add relation fields names to list +++
+        # create list of fields names including relational fields names
+        expected_fields = set(f.name for f in Robject._meta.get_fields())
+        fields_names_all = robject.get_fields_names(relation=True)
+        self.assertEqual(expected_fields, fields_names_all)
+        # +++ test option for fields excluding +++
+        excluded_fields = ["name", "author", "names"]
+        # fields should be in normal function call
+        for efield in excluded_fields:
+            self.assertIn(efield, fields_names_all)
+        # call function with exclude options
+        fields = robject.get_fields_names(exclude=excluded_fields)
+        # fields are not allowed if function is called with
+        for efield in excluded_fields:
+            self.assertNotIn(efield, fields)
 
 
 class NameModelTestCase(TestCase):
