@@ -20,6 +20,7 @@ from guardian.mixins import PermissionRequiredMixin
 from biodb import settings
 from django.http import HttpResponseBadRequest, HttpResponse, HttpResponseForbidden
 from samples.views import SampleListView
+from django.core.urlresolvers import Resolver404
 # Create your views here.
 
 
@@ -190,10 +191,11 @@ class NameCreateView(CreatePopupMixin, CreateView):
         from urllib.parse import urlparse
         previously_visited_path = urlparse(
             request.META.get("HTTP_REFERER", None)).path
-        url_name = resolve(previously_visited_path).url_name
-        if url_name == "robject_create" or url_name == "robject_edit":
-            return super().get(request, *args, **kwargs)
-        else:
+        try:
+            url_name = resolve(previously_visited_path).url_name
+            if url_name == "robject_create" or url_name == "robject_edit":
+                return super().get(request, *args, **kwargs)
+        except Resolver404:
             return HttpResponseBadRequest(
                 "<h1>Error 400</h1><p>Form available from robject form only</p>")
 
@@ -208,10 +210,11 @@ class TagCreateView(CreatePopupMixin, CreateView):
         from urllib.parse import urlparse
         previously_visited_path = urlparse(
             request.META.get("HTTP_REFERER", None)).path
-        url_name = resolve(previously_visited_path).url_name
-        if url_name == "robject_create" or url_name == "robject_edit":
-            return super().get(request, *args, **kwargs)
-        else:
+        try:
+            url_name = resolve(previously_visited_path).url_name
+            if url_name == "robject_create" or url_name == "robject_edit":
+                return super().get(request, *args, **kwargs)
+        except Resolver404:
             return HttpResponseBadRequest(
                 "<h1>Error 400</h1><p>Form available from robject form only</p>")
 
