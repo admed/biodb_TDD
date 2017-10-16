@@ -1,6 +1,7 @@
 """Views for robject search."""
 import re
 from biodb.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 from django.db.models import CharField
 from django.db.models import ForeignKey
 from django.db.models import TextField
@@ -15,6 +16,7 @@ from django_addanother.widgets import AddAnotherWidgetWrapper
 from django.core.urlresolvers import reverse
 from django.shortcuts import redirect
 from django_addanother.views import CreatePopupMixin
+from django.utils.decorators import method_decorator
 from guardian.mixins import LoginRequiredMixin as GuardianLoginRequiredMixin
 from guardian.mixins import PermissionRequiredMixin
 from biodb import settings
@@ -272,6 +274,7 @@ class RobjectDeleteView(DeleteView):
         return reverse("projects:robjects:robjects_list", kwargs=self.kwargs)
 
 
+@method_decorator(login_required, name='dispatch')
 class RobjectHistoryView(DetailView):
     """View to show historical records of robject.
 
@@ -280,6 +283,7 @@ class RobjectHistoryView(DetailView):
     """
     model = Robject
     template_name = "robjects/robject_history.html"
+
 
     def get_context_data(self, **kwargs):
         """Add CustomHistory objects as versions to context."""
@@ -293,5 +297,5 @@ class RobjectHistoryView(DetailView):
         exclude_fields = ["create_date", "modify_date"]
         versions = generate_versions(robject_history, exclude=exclude_fields)
         # create table
-        context['versions'] = versions
+        context["versions"] = versions
         return context
