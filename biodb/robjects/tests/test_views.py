@@ -11,6 +11,7 @@ from django.views import generic
 from robjects.views import NameCreateView, TagCreateView
 from biodb import settings
 from guardian.shortcuts import assign_perm
+from tools.history import CustomHistory
 
 
 class RobjectSamplesListTest(FunctionalTest):
@@ -546,3 +547,32 @@ class RobjectDeleteTestCase(FunctionalTest):
         self.assertEqual(len(robjects_context), 2)
         self.assertIn(robj_1, robjects_context)
         self.assertIn(robj_2, robjects_context)
+
+
+class RobjectHistoryViewTest(FunctionalTest):
+    def test_anonymous_user_visit_page(self):
+        proj = Project.objects.create(name="Project_1")
+        robject = Robject.objects.create(name="Robject_1", project=proj)
+        response = self.client.get("/projects/Project_1/robjects/1/history/")
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(
+            f'/accounts/login/?next=/projects/{proj.name}/robjects/{robject.pk}/history/',
+            response.url)
+
+    def test_render_template_on_get(self):
+        user, proj = self.default_set_up_for_robjects_pages()
+        robject = Robject.objects.create(name="Robject_1", project=proj)
+        response = self.client.get(
+            f"/projects/{proj.name}/robjects/{robject.pk}/history/")
+        self.assertTemplateUsed(response, "robjects/robject_history.html")
+
+    def test_versions_in_context(self):
+        user, proj = self.default_set_up_for_robjects_pages()
+        robject = Robject.objects.create(name="Robject_1", project=proj)
+        response = self.client.get(
+            f"/projects/{proj.name}/robjects/{robject.pk}/history/")
+        self.assertTrue("versions" in response.context)
+        versions = response.context["versions"]
+        self.assertIsInstance(versions, list)
+        self.assertEqual(len(versions), 1)
+        self.assertIsInstance(response.context["versions"][0], CustomHistory)
