@@ -2,6 +2,7 @@ from django.db import models
 from projects.models import Project, Tag
 from django.contrib.auth.models import User
 from ckeditor.fields import RichTextField
+from projects.models import RelatedModelsCustomManager
 # Create your models here.
 
 
@@ -34,8 +35,10 @@ class Robject(models.Model):
     class Meta:
         unique_together = ("name", "project")
 
+
 class Name(models.Model):
     name = models.CharField(max_length=100, unique=True)
+    objects = RelatedModelsCustomManager()
 
     def __str__(self):
         return self.name

@@ -13,17 +13,18 @@ from openpyxl import load_workbook
 from robjects.views import NameCreateView, TagCreateView
 from biodb import settings
 from guardian.shortcuts import assign_perm
+from unittest.mock import patch, call
+import datetime
 
 
 class Robjects_export_to_excel_view_test(FunctionalTest):
-    def test_export_to_excel(self):
-        # CREATE SAMPLE USER AND PROJECT
+    def test_excel_filename_and_table_headers(self):
         user, proj = self.default_set_up_for_robjects_pages()
         robj = Robject.objects.create(
             author=user, project=proj, name="robject_1")
-        # He enters robject raport excel page.
         response = self.client.get(f"/projects/{proj.name}/robjects/excel-raport/")
-        # assert attachment name as report.xlsx
+
+        # assert file name in response as report.xlsx
         self.assertEqual(response.get('Content-Disposition'),
                          "attachment; filename=report.xlsx")
 
@@ -33,7 +34,7 @@ class Robjects_export_to_excel_view_test(FunctionalTest):
                             'description', 'bibliography', 'ref_commercial',
                             'ref_clinical', 'names', 'tags']
 
-        # assert headers are the same as robject atrinutes names
+        # assert headers in excel file are the same as robject atributes names
         with BytesIO(response.content) as f:
             self.assertIsNotNone(f)
             wb = load_workbook(f)
@@ -45,20 +46,16 @@ class Robjects_export_to_excel_view_test(FunctionalTest):
                 break
         self.assertCountEqual(first_row_cells, table_heder_list)
 
-        # if status code of requeszt is 200 -
-        # The request was successfully received,
-        # understood, and accepted
         self.assertEqual(response.status_code, 200)
 
-    def test_robjects_export_selected_to_excel_view(self):
-        # logged user goes to biodb to export a excel file
+    def test_excel_rows(self):
         user, proj = self.default_set_up_for_robjects_pages()
         robj1 = Robject.objects.create(
             author=user, project=proj, name="robject_1")
         robj2 = Robject.objects.create(
             author=user, project=proj, name="robject_2")
 
-        response = self.client.post(
+        response = self.client.get(
             f"/projects/{proj.name}/robjects/excel-raport/", {'checkbox': ['1', '2']})
         # assert attachment name as report.xlsx
         self.assertEqual(response.get('Content-Disposition'),
@@ -83,13 +80,81 @@ class Robjects_export_to_excel_view_test(FunctionalTest):
         self.assertListEqual(first_row_cells, table_heder_list)
 
         # check if every robject in different row
+
         # add +1 because of headers
         self.assertEqual(ws.max_row, Robject.objects.count() + 1)
 
-        # if status code of requeszt is 200 -
-        # The request was successfully received,
-        # understood, and accepted
-        self.assertEqual(response.status_code, 200)
+    def test_excel_filename():
+        user, proj = self.default_set_up_for_robjects_pages()
+        response = self.client.get(f"/projects/{proj.name}/robjects/excel-raport/")
+        self.assertEqual(response.get('Content-Disposition'),
+                         "attachment; filename=report.xlsx")
+
+    def get_cells_values_from_excel_row(self, response, row_nr):
+        with BytesIO(response.content) as f:
+            self.assertIsNotNone(f)
+            wb = load_workbook(f)
+            ws = wb.active
+            cells_values = []
+            for row_number, row in enumerate(ws.rows):
+                if row_number == row_nr:
+                    for cell in row:
+                        cells_values.append(cell.value)
+            return cells_values
+
+    def test_excel_content(self):
+        # set up db
+        user, proj = self.default_set_up_for_robjects_pages()
+        tag1 = Tag.objects.create(name="tag_1")
+        tag2 = Tag.objects.create(name="tag_2")
+        name1 = Name.objects.create(name="name_1")
+        name2 = Name.objects.create(name="name_2")
+
+        r = Robject.objects.create(
+            author=user,
+            project=proj,
+            name="robject_1",
+            create_by=user,
+            create_date=datetime.datetime.today(),
+            modify_by=user,
+            modify_date=datetime.datetime.today(),
+            notes="robject_1_notes",
+            ref_seq="robject_1_ref_seq",
+            mod_seq="robject_1_mod_seq",
+            description="robject_1_description",
+            bibliography="robject_1_bibliography",
+            ref_commercial="robject_1_ref_commercial",
+            ref_clinical="robject_1_ref_clinical",
+            ligand="robject_1_ligand",
+            receptor="robject_1_receptor",
+        )
+
+        r.names.add(name1, name2)
+        r.tags.add(tag1, tag2)
+        r.save()
+
+        response = self.client.get(
+            f"/projects/{proj.name}/robjects/excel-raport/",
+            {"robject_1": r.id}
+        )
+
+        cells_values = self.get_cells_values_from_excel_row(response, row_nr=1)
+
+        # following order must be preserved:
+        # 'id', 'project', 'author', 'name', 'create_by', 'create_date',
+        # 'modify_by', 'modify_date', 'notes', 'ref_seq', 'mod_seq',
+        # 'description', 'bibliography', 'ref_commercial', 'ref_clinical',
+        # 'ligand', 'receptor', 'tags', 'names'
+        expected_values = [
+            str(r.id), r.project.name, r.author.username, r.name,
+            r.create_by.username, r.create_date.strftime("%Y-%m-%d %H:%M"),
+            r.modify_by.username, r.modify_date.strftime("%Y-%m-%d %H:%M"),
+            r.notes, r.ref_seq, r.mod_seq, r.description, r.bibliography,
+            r.ref_commercial, r.ref_clinical, r.ligand, r.receptor,
+            r.tags.all().all_as_string(), r.names.all().all_as_string()
+        ]
+
+        self.assertEqual(expected_values, cells_values)
 
 
 class RobjectSamplesListTest(FunctionalTest):

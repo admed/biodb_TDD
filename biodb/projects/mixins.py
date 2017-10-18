@@ -24,11 +24,11 @@ from robjects.models import Robject
 from robjects.models import Tag
 from weasyprint import CSS
 from weasyprint import HTML
+from django.http.response import HttpResponseRedirect
 
 
 class ExportViewMixin(object):
     # django.db.models.Model
-    queryset = None
     model = None
     pdf_template_name = None
     pdf_css_name = None
@@ -58,33 +58,6 @@ class ExportViewMixin(object):
 
         return model_fields
 
-    def get_queryset(self, project_name):
-        """
-        Return the list of items for this view.
-        The return value must be an iterable and may be an instance of
-        `QuerySet` in which case `QuerySet` specific behavior will be enabled.
-        """
-        if self.queryset is not None:
-            queryset = self.queryset
-            if isinstance(queryset, QuerySet):
-                queryset = queryset.filter(project__name=project_name).all()
-        elif self.model is not None:
-            queryset = self.model._default_manager.filter(
-                project__name=project_name).all()  # ???
-        else:
-            raise ImproperlyConfigured(
-                "%(cls)s is missing a QuerySet. Define "
-                "%(cls)s.model, %(cls)s.queryset, or override "
-                "%(cls)s.get_queryset()." % {
-                    'cls': self.__class__.__name__
-                }
-            )
-        if self.request.GET and self.request.GET.getlist('checkbox'):
-            queryset = queryset.filter(
-                pk__in=self.request.GET.getlist('checkbox'))
-
-        return queryset
-
     def strip_field(self, field_value):
         ''' Strip field from HTML'''
         if isinstance(field_value, datetime):
@@ -108,14 +81,17 @@ class ExportViewMixin(object):
         # filling first row by fields names
         fields_names = self.get_model_fields(
             is_relation, one_to_one, many_to_one, exclude_fields)
-        print('fields', fields_names)
         ws.append(fields_names)
         for query_object in queryset:
             temp = list()
             for field_name in fields_names:
                 # holding field value
-                field_value = getattr(query_object, field_name)
-                field_string = self.strip_field(field_value)
+                if field_name in ["tags", "names"]:
+                    field_string = getattr(
+                        query_object, field_name).all().all_as_string()
+                else:
+                    field_value = getattr(query_object, field_name)
+                    field_string = self.strip_field(field_value)
 
                 # append to container
                 temp.append(field_string)
@@ -125,9 +101,9 @@ class ExportViewMixin(object):
         output = HttpResponse()
         # preparing output
         file_name = "report.xlsx"
-        output['Content-Disposition'] = 'attachment; filename=' + file_name
         # saving workbook to output
         wb.save(output)
+        output['Content-Disposition'] = 'attachment; filename=' + file_name
         return output
 
     def export_to_pdf(self, queryset):
@@ -149,6 +125,7 @@ class ExportViewMixin(object):
                              settings.STATIC_URL + self.pdf_css_name)],
         )
         # Add file object to response
+
         http_response = HttpResponse(pdf_file, content_type='application/pdf')
         http_response['Content-Disposition'] = 'filename="raport.pdf"'
         # return response

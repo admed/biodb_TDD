@@ -27,6 +27,11 @@ class FunctionalTest(StaticLiveServerTestCase):
         return self.live_server_url + reverse("projects:robjects:robject_delete",
                                               kwargs={"project_name": "project_1"})
 
+    @property
+    def ROBJECT_EXCEL_URL(self):
+        return self.live_server_url + reverse("projects:robjects:raport_excel",
+                                              kwargs={"project_name": "project_1"})
+
     def setUp(self):
         self.browser = webdriver.Chrome()
         self.main_window = None
