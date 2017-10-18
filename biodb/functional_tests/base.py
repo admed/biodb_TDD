@@ -141,3 +141,16 @@ class FunctionalTest(StaticLiveServerTestCase):
             self.live_server_url +
             reverse("login") + "?next=" + after_login_url
         )
+
+    def permission_view_testing_helper(self, requested_url):
+        proj = Project.objects.create(name="project_1")
+        user = User.objects.create(username="USERNAME", password="PASSWORD")
+        self.login_user(user)
+
+        self.browser.get(requested_url)
+        h1 = self.browser.find_element_by_css_selector("h1")
+
+        self.assertFalse(user.has_perm("projects.can_visit_project", proj))
+
+        self.assertEqual(
+            h1.text, "User doesn't have permission to view this project.")
