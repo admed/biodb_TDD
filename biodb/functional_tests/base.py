@@ -98,6 +98,8 @@ class FunctionalTest(StaticLiveServerTestCase):
 
         return user, proj
 
+    # NOTE: THIS FUNCTION WILL BE REPLACED BY 'default_set_up_for_projects_pages'
+    # IN FUTURE RELEASES!
     def project_set_up_using_default_data(self):
         """ Helper method for all robject page related tests.
             Method include logged user with default creadentials and project
@@ -111,12 +113,26 @@ class FunctionalTest(StaticLiveServerTestCase):
 
         return user, proj
 
+    # NOTE: THIS FUNCTION WILL BE REPLACED BY 'default_set_up_for_robjects_pages'
+    # IN FUTURE RELEASES!
     def set_up_robject_list(self, project_name="project_1", username="username",
                             password="password", assign_visit_perm=True):
         proj = Project.objects.create(name=project_name)
         user = self.login_user(username, password)
         if assign_visit_perm:
             assign_perm("can_visit_project", user, proj)
+        return proj, user
+
+    def default_set_up_for_projects_pages(self):
+        user = User.objects.create_user(
+            username="USERNAME", password="PASSWORD")
+        self.login_user("USERNAME", "PASSWORD")
+        return user
+
+    def default_set_up_for_robjects_pages(self):
+        proj = Project.objects.create(name="project_1")
+        user = self.default_set_up_for_projects_pages()
+        assign_perm("can_visit_project", user, proj)
         return proj, user
 
     def default_url_robject_list(self):

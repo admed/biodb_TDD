@@ -17,7 +17,7 @@ class RobjectDeleteTestCase(FunctionalTest):
             Robject.objects.create(project=proj, name=name)
 
         # User goes to robject page
-        self.browser.get(self.default_url_robject_list())
+        self.browser.get(self.ROBJECT_LIST_URL)
 
         # He notice checkbox input in the first cell in table header.
         table_header = self.browser.find_element_by_css_selector("#header_row")
