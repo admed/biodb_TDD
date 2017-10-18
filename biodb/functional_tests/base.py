@@ -14,6 +14,16 @@ from urllib.parse import urlparse
 
 @override_settings(DEBUG=True)
 class FunctionalTest(StaticLiveServerTestCase):
+    """
+        IMPORTANT!
+        For the sake of simplicity please follow convention below:
+
+        default project name: "project_1"
+        default robject name: "robject_1"
+        default sample name: "sample_1"
+        default user username: "USERNAME"
+        default user password: "PASSWORD"
+    """
     MAX_WAIT = 10
     # DEFAULT SHORTCUT URLS
 
@@ -84,6 +94,8 @@ class FunctionalTest(StaticLiveServerTestCase):
 
         return u
 
+    # NOTE: THIS FUNCTION WILL BE REPLACED BY 'default_set_up_for_projects_pages'
+    # IN FUTURE RELEASES!
     def project_set_up_and_get_robject_page(self, username="USERNAME",
                                             password="PASSWORD", project_name="project_1"):
         """ Helper method for all robject page related tests.
