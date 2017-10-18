@@ -102,7 +102,7 @@ class Robjects_export_to_excel_view_test(FunctionalTest):
                         cells_values.append(cell.value)
             return cells_values
 
-    def test_excel_content(self):
+    def test_excel_single_robject_row_content(self):
         # set up db
         user, proj = self.default_set_up_for_robjects_pages()
         tag1 = Tag.objects.create(name="tag_1")
@@ -115,9 +115,7 @@ class Robjects_export_to_excel_view_test(FunctionalTest):
             project=proj,
             name="robject_1",
             create_by=user,
-            create_date=datetime.datetime.today(),
             modify_by=user,
-            modify_date=datetime.datetime.today(),
             notes="robject_1_notes",
             ref_seq="robject_1_ref_seq",
             mod_seq="robject_1_mod_seq",
@@ -141,8 +139,62 @@ class Robjects_export_to_excel_view_test(FunctionalTest):
         cells_values = self.get_cells_values_from_excel_row(response, row_nr=1)
 
         # following order must be preserved:
-        # 'id', 'project', 'author', 'name', 'create_by', 'create_date',
-        # 'modify_by', 'modify_date', 'notes', 'ref_seq', 'mod_seq',
+        # 'id', 'project', 'author', 'name', 'create_by',
+        # 'modify_by', 'notes', 'ref_seq', 'mod_seq',
+        # 'description', 'bibliography', 'ref_commercial', 'ref_clinical',
+        # 'ligand', 'receptor', 'tags', 'names'
+        expected_values = [
+            str(r.id), r.project.name, r.author.username, r.name,
+            r.create_by.username, r.create_date.strftime("%Y-%m-%d %H:%M"),
+            r.modify_by.username, r.modify_date.strftime("%Y-%m-%d %H:%M"),
+            r.notes, r.ref_seq, r.mod_seq, r.description, r.bibliography,
+            r.ref_commercial, r.ref_clinical, r.ligand, r.receptor,
+            r.tags.all().all_as_string(), r.names.all().all_as_string()
+        ]
+
+        self.assertEqual(expected_values, cells_values)
+
+    def test_excel_another_robject_row_content(self):
+        """ This test is similar to previous except changed data in models
+        """
+        # set up db
+        user, proj = self.default_set_up_for_robjects_pages()
+        tag1 = Tag.objects.create(name="tag_3")
+        tag2 = Tag.objects.create(name="tag_4")
+        name1 = Name.objects.create(name="name_3")
+        name2 = Name.objects.create(name="name_4")
+
+        r = Robject.objects.create(
+            author=user,
+            project=proj,
+            name="robject_2",
+            create_by=user,
+            modify_by=user,
+            notes="robject_2_notes",
+            ref_seq="robject_2_ref_seq",
+            mod_seq="robject_2_mod_seq",
+            description="robject_2_description",
+            bibliography="robject_2_bibliography",
+            ref_commercial="robject_2_ref_commercial",
+            ref_clinical="robject_2_ref_clinical",
+            ligand="robject_2_ligand",
+            receptor="robject_2_receptor",
+        )
+
+        r.names.add(name1, name2)
+        r.tags.add(tag1, tag2)
+        r.save()
+
+        response = self.client.get(
+            f"/projects/{proj.name}/robjects/excel-raport/",
+            {"robject_2": r.id}
+        )
+
+        cells_values = self.get_cells_values_from_excel_row(response, row_nr=1)
+
+        # following order must be preserved:
+        # 'id', 'project', 'author', 'name', 'create_by',
+        # 'modify_by', 'notes', 'ref_seq', 'mod_seq',
         # 'description', 'bibliography', 'ref_commercial', 'ref_clinical',
         # 'ligand', 'receptor', 'tags', 'names'
         expected_values = [
