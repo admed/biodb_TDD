@@ -18,6 +18,9 @@ import datetime
 
 
 class Robjects_export_to_excel_view_test(FunctionalTest):
+    def test_annonymous_request(self):
+        self.annonymous_testing_helper(self.ROBJECT_EXCEL_URL)
+
     def test_excel_filename(self):
         user, proj = self.default_set_up_for_robjects_pages()
         r = Robject.objects.create(project=proj, name="robject_1")

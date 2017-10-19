@@ -17,6 +17,9 @@ class FunctionalTest(TestCase):
         "robject_id": 1
     })
 
+    ROBJECT_EXCEL_URL = reverse("projects:robjects:raport_excel", kwargs={
+        "project_name": "project_1"})
+
     def default_set_up_for_projects_pages(self):
         user = User.objects.create_user(
             username="USERNAME", password="PASSWORD")
