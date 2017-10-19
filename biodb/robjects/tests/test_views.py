@@ -208,6 +208,99 @@ class Robjects_export_to_excel_view_test(FunctionalTest):
 
         self.assertEqual(expected_values, cells_values)
 
+    def test_excel_multiple_rows_content(self):
+        # set up db
+        user, proj = self.default_set_up_for_robjects_pages()
+        tag1 = Tag.objects.create(name="tag_1")
+        tag2 = Tag.objects.create(name="tag_2")
+        name1 = Name.objects.create(name="name_1")
+        name2 = Name.objects.create(name="name_2")
+
+        r1 = Robject.objects.create(
+            author=user,
+            project=proj,
+            name="robject_1",
+            create_by=user,
+            modify_by=user,
+            notes="robject_1_notes",
+            ref_seq="robject_1_ref_seq",
+            mod_seq="robject_1_mod_seq",
+            description="robject_1_description",
+            bibliography="robject_1_bibliography",
+            ref_commercial="robject_1_ref_commercial",
+            ref_clinical="robject_1_ref_clinical",
+            ligand="robject_1_ligand",
+            receptor="robject_1_receptor",
+        )
+
+        r2 = Robject.objects.create(
+            author=user,
+            project=proj,
+            name="robject_2",
+            create_by=user,
+            modify_by=user,
+            notes="robject_2_notes",
+            ref_seq="robject_2_ref_seq",
+            mod_seq="robject_2_mod_seq",
+            description="robject_2_description",
+            bibliography="robject_2_bibliography",
+            ref_commercial="robject_2_ref_commercial",
+            ref_clinical="robject_2_ref_clinical",
+            ligand="robject_2_ligand",
+            receptor="robject_2_receptor",
+        )
+
+        r1.names.add(name1)
+        r1.tags.add(tag1)
+        r1.save()
+
+        r2.names.add(name2)
+        r2.tags.add(tag2)
+        r2.save()
+
+        response = self.client.get(
+            f"/projects/{proj.name}/robjects/excel-raport/",
+            {"robject_1": r1.id, "robject_2": r2.id}
+        )
+
+        row_1_cells_values = self.get_cells_values_from_excel_row(
+            response, row_nr=1)
+
+        # following order must be preserved:
+        # 'id', 'project', 'author', 'name', 'create_by',
+        # 'modify_by', 'notes', 'ref_seq', 'mod_seq',
+        # 'description', 'bibliography', 'ref_commercial', 'ref_clinical',
+        # 'ligand', 'receptor', 'tags', 'names'
+        row_1_expected_values = [
+            str(r1.id), r1.project.name, r1.author.username, r1.name,
+            r1.create_by.username, r1.create_date.strftime("%Y-%m-%d %H:%M"),
+            r1.modify_by.username, r1.modify_date.strftime("%Y-%m-%d %H:%M"),
+            r1.notes, r1.ref_seq, r1.mod_seq, r1.description, r1.bibliography,
+            r1.ref_commercial, r1.ref_clinical, r1.ligand, r1.receptor,
+            r1.tags.all().all_as_string(), r1.names.all().all_as_string()
+        ]
+
+        self.assertEqual(row_1_expected_values, row_1_cells_values)
+
+        row_2_cells_values = self.get_cells_values_from_excel_row(
+            response, row_nr=2)
+
+        # following order must be preserved:
+        # 'id', 'project', 'author', 'name', 'create_by',
+        # 'modify_by', 'notes', 'ref_seq', 'mod_seq',
+        # 'description', 'bibliography', 'ref_commercial', 'ref_clinical',
+        # 'ligand', 'receptor', 'tags', 'names'
+        row_2_expected_values = [
+            str(r2.id), r2.project.name, r2.author.username, r2.name,
+            r2.create_by.username, r2.create_date.strftime("%Y-%m-%d %H:%M"),
+            r2.modify_by.username, r2.modify_date.strftime("%Y-%m-%d %H:%M"),
+            r2.notes, r2.ref_seq, r2.mod_seq, r2.description, r2.bibliography,
+            r2.ref_commercial, r2.ref_clinical, r2.ligand, r2.receptor,
+            r2.tags.all().all_as_string(), r2.names.all().all_as_string()
+        ]
+
+        self.assertEqual(row_2_expected_values, row_2_cells_values)
+
 
 class RobjectSamplesListTest(FunctionalTest):
     def test_anonymous_user_gets_samples_page(self):
