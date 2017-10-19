@@ -1,5 +1,3 @@
-# import time
-# from datetime import datetime
 import time
 from datetime import datetime
 from django.contrib.auth.models import User
@@ -67,7 +65,8 @@ class TagCreateTestCase(FunctionalTest):
         # He input tah name into form.
         self.browser.find_element_by_css_selector("#id_name").send_keys("tag")
         # He clicks save button.
-        self.browser.find_element_by_css_selector("input[type='submit']").click()
+        self.browser.find_element_by_css_selector(
+            "input[type='submit']").click()
         # He seas tag created in tag list.
         tags_list = self.browser.find_elements_by_css_selector("li")
         self.assertEquals(len(tags_list), 1)

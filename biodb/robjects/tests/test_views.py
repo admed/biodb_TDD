@@ -8,9 +8,244 @@ from django_addanother.widgets import AddAnotherWidgetWrapper
 from django import forms
 from django_addanother.views import CreatePopupMixin
 from django.views import generic
+from io import BytesIO
+from openpyxl import load_workbook
 from robjects.views import NameCreateView, TagCreateView
 from biodb import settings
 from guardian.shortcuts import assign_perm
+from unittest.mock import patch, call
+import datetime
+
+
+class Robjects_export_to_excel_view_test(FunctionalTest):
+    def test_excel_filename(self):
+        user, proj = self.default_set_up_for_robjects_pages()
+        r = Robject.objects.create(project=proj, name="robject_1")
+        response = self.client.get(f"/projects/{proj.name}/robjects/excel-raport/",
+                                   {"robject_1": r.id})
+        self.assertEqual(response.get('Content-Disposition'),
+                         "attachment; filename=report.xlsx")
+
+    def get_cells_values_from_excel_row(self, response, row_nr):
+        with BytesIO(response.content) as f:
+            self.assertIsNotNone(f)
+            wb = load_workbook(f)
+            ws = wb.active
+            cells_values = []
+            for row_number, row in enumerate(ws.rows):
+                if row_number == row_nr:
+                    for cell in row:
+                        cells_values.append(cell.value)
+            return cells_values
+
+    def test_excel_single_robject_row_content(self):
+        # set up db
+        user, proj = self.default_set_up_for_robjects_pages()
+        tag1 = Tag.objects.create(name="tag_1")
+        tag2 = Tag.objects.create(name="tag_2")
+        name1 = Name.objects.create(name="name_1")
+        name2 = Name.objects.create(name="name_2")
+
+        r = Robject.objects.create(
+            author=user,
+            project=proj,
+            name="robject_1",
+            create_by=user,
+            modify_by=user,
+            notes="robject_1_notes",
+            ref_seq="robject_1_ref_seq",
+            mod_seq="robject_1_mod_seq",
+            description="robject_1_description",
+            bibliography="robject_1_bibliography",
+            ref_commercial="robject_1_ref_commercial",
+            ref_clinical="robject_1_ref_clinical",
+            ligand="robject_1_ligand",
+            receptor="robject_1_receptor",
+        )
+
+        r.names.add(name1, name2)
+        r.tags.add(tag1, tag2)
+        r.save()
+
+        response = self.client.get(
+            f"/projects/{proj.name}/robjects/excel-raport/",
+            {"robject_1": r.id}
+        )
+
+        cells_values = self.get_cells_values_from_excel_row(response, row_nr=1)
+
+        # following order must be preserved:
+        # 'id', 'project', 'author', 'name', 'create_by',
+        # 'modify_by', 'notes', 'ref_seq', 'mod_seq',
+        # 'description', 'bibliography', 'ref_commercial', 'ref_clinical',
+        # 'ligand', 'receptor', 'tags', 'names'
+        expected_values = [
+            str(r.id), r.project.name, r.author.username, r.name,
+            r.create_by.username, r.create_date.strftime("%Y-%m-%d %H:%M"),
+            r.modify_by.username, r.modify_date.strftime("%Y-%m-%d %H:%M"),
+            r.notes, r.ref_seq, r.mod_seq, r.description, r.bibliography,
+            r.ref_commercial, r.ref_clinical, r.ligand, r.receptor,
+            r.tags.all().all_as_string(), r.names.all().all_as_string()
+        ]
+
+        self.assertEqual(expected_values, cells_values)
+
+    def test_excel_another_robject_row_content(self):
+        """ This test is similar to previous except changed data in models
+        """
+        # set up db
+        user, proj = self.default_set_up_for_robjects_pages()
+        tag1 = Tag.objects.create(name="tag_3")
+        tag2 = Tag.objects.create(name="tag_4")
+        name1 = Name.objects.create(name="name_3")
+        name2 = Name.objects.create(name="name_4")
+
+        r = Robject.objects.create(
+            author=user,
+            project=proj,
+            name="robject_2",
+            create_by=user,
+            modify_by=user,
+            notes="robject_2_notes",
+            ref_seq="robject_2_ref_seq",
+            mod_seq="robject_2_mod_seq",
+            description="robject_2_description",
+            bibliography="robject_2_bibliography",
+            ref_commercial="robject_2_ref_commercial",
+            ref_clinical="robject_2_ref_clinical",
+            ligand="robject_2_ligand",
+            receptor="robject_2_receptor",
+        )
+
+        r.names.add(name1, name2)
+        r.tags.add(tag1, tag2)
+        r.save()
+
+        response = self.client.get(
+            f"/projects/{proj.name}/robjects/excel-raport/",
+            {"robject_2": r.id}
+        )
+
+        cells_values = self.get_cells_values_from_excel_row(response, row_nr=1)
+
+        # following order must be preserved:
+        # 'id', 'project', 'author', 'name', 'create_by',
+        # 'modify_by', 'notes', 'ref_seq', 'mod_seq',
+        # 'description', 'bibliography', 'ref_commercial', 'ref_clinical',
+        # 'ligand', 'receptor', 'tags', 'names'
+        expected_values = [
+            str(r.id), r.project.name, r.author.username, r.name,
+            r.create_by.username, r.create_date.strftime("%Y-%m-%d %H:%M"),
+            r.modify_by.username, r.modify_date.strftime("%Y-%m-%d %H:%M"),
+            r.notes, r.ref_seq, r.mod_seq, r.description, r.bibliography,
+            r.ref_commercial, r.ref_clinical, r.ligand, r.receptor,
+            r.tags.all().all_as_string(), r.names.all().all_as_string()
+        ]
+
+        self.assertEqual(expected_values, cells_values)
+
+    def test_excel_multiple_rows_content(self):
+        # set up db
+        user, proj = self.default_set_up_for_robjects_pages()
+        tag1 = Tag.objects.create(name="tag_1")
+        tag2 = Tag.objects.create(name="tag_2")
+        name1 = Name.objects.create(name="name_1")
+        name2 = Name.objects.create(name="name_2")
+
+        r1 = Robject.objects.create(
+            author=user,
+            project=proj,
+            name="robject_1",
+            create_by=user,
+            modify_by=user,
+            notes="robject_1_notes",
+            ref_seq="robject_1_ref_seq",
+            mod_seq="robject_1_mod_seq",
+            description="robject_1_description",
+            bibliography="robject_1_bibliography",
+            ref_commercial="robject_1_ref_commercial",
+            ref_clinical="robject_1_ref_clinical",
+            ligand="robject_1_ligand",
+            receptor="robject_1_receptor",
+        )
+
+        r2 = Robject.objects.create(
+            author=user,
+            project=proj,
+            name="robject_2",
+            create_by=user,
+            modify_by=user,
+            notes="robject_2_notes",
+            ref_seq="robject_2_ref_seq",
+            mod_seq="robject_2_mod_seq",
+            description="robject_2_description",
+            bibliography="robject_2_bibliography",
+            ref_commercial="robject_2_ref_commercial",
+            ref_clinical="robject_2_ref_clinical",
+            ligand="robject_2_ligand",
+            receptor="robject_2_receptor",
+        )
+
+        r1.names.add(name1)
+        r1.tags.add(tag1)
+        r1.save()
+
+        r2.names.add(name2)
+        r2.tags.add(tag2)
+        r2.save()
+
+        response = self.client.get(
+            f"/projects/{proj.name}/robjects/excel-raport/",
+            {"robject_1": r1.id, "robject_2": r2.id}
+        )
+
+        row_1_cells_values = self.get_cells_values_from_excel_row(
+            response, row_nr=1)
+
+        # following order must be preserved:
+        # 'id', 'project', 'author', 'name', 'create_by',
+        # 'modify_by', 'notes', 'ref_seq', 'mod_seq',
+        # 'description', 'bibliography', 'ref_commercial', 'ref_clinical',
+        # 'ligand', 'receptor', 'tags', 'names'
+        row_1_expected_values = [
+            str(r1.id), r1.project.name, r1.author.username, r1.name,
+            r1.create_by.username, r1.create_date.strftime("%Y-%m-%d %H:%M"),
+            r1.modify_by.username, r1.modify_date.strftime("%Y-%m-%d %H:%M"),
+            r1.notes, r1.ref_seq, r1.mod_seq, r1.description, r1.bibliography,
+            r1.ref_commercial, r1.ref_clinical, r1.ligand, r1.receptor,
+            r1.tags.all().all_as_string(), r1.names.all().all_as_string()
+        ]
+
+        self.assertEqual(row_1_expected_values, row_1_cells_values)
+
+        row_2_cells_values = self.get_cells_values_from_excel_row(
+            response, row_nr=2)
+
+        # following order must be preserved:
+        # 'id', 'project', 'author', 'name', 'create_by',
+        # 'modify_by', 'notes', 'ref_seq', 'mod_seq',
+        # 'description', 'bibliography', 'ref_commercial', 'ref_clinical',
+        # 'ligand', 'receptor', 'tags', 'names'
+        row_2_expected_values = [
+            str(r2.id), r2.project.name, r2.author.username, r2.name,
+            r2.create_by.username, r2.create_date.strftime("%Y-%m-%d %H:%M"),
+            r2.modify_by.username, r2.modify_date.strftime("%Y-%m-%d %H:%M"),
+            r2.notes, r2.ref_seq, r2.mod_seq, r2.description, r2.bibliography,
+            r2.ref_commercial, r2.ref_clinical, r2.ligand, r2.receptor,
+            r2.tags.all().all_as_string(), r2.names.all().all_as_string()
+        ]
+
+        self.assertEqual(row_2_expected_values, row_2_cells_values)
+
+    def test_error_message_when_no_selection(self):
+        user, proj = self.default_set_up_for_robjects_pages()
+        response = self.client.get(f"/projects/{proj.name}/robjects/excel-raport/", follow=True)
+        message = list(response.context['messages'])[0]
+        self.assertEqual(
+            message.message,
+            "No robject selected!"
+        )
+        self.assertEqual(message.tags, "error")
 
 
 class RobjectSamplesListTest(FunctionalTest):

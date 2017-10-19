@@ -4,10 +4,15 @@
 
 </script>
 {% endblock %} {% block content %}
+
+<!-- Search form -->
 <form id="search_form" action="/projects/{{ project_name }}/robjects/search/">
   <input type="text" name="query" id="search_input">
   <button id="search_button">Search</button>
 </form>
+<!-- End search form -->
+
+<!-- Links section -->
 <div class="links">
   Links:
   <ul>
@@ -24,40 +29,60 @@
     </li>
   </ul>
 </div>
+<!-- End links section -->
+
+<!-- Actions section -->
 <div class="actions">
   Actions:
   <ul>
     <li>
-    <form id="delete-form"
-      action="{% url 'projects:robjects:robject_delete' project_name=request.resolver_match.kwargs.project_name %}">
-      <input type="submit" value="Delete" class="delete-button">
-    </form>
+      <input type="submit" value="Delete" class="delete-button"
+      form="robjects-form"
+      formaction="{% url 'projects:robjects:robject_delete' project_name=request.resolver_match.kwargs.project_name %}">
+    </li>
+    <li>
+      <input type="submit" value='Excel' class="excel-button"
+      formaction="/projects/{{ project_name }}/robjects/excel-raport/"
+      form="robjects-form"
+      >
     </li>
   </ul>
 </div>
-<table id="robjects_table">
-  <tr id="header_row">
-    <th><input type="checkbox" class="select-all"></th>
-    <th>id</th>
-    <th>name</th>
-    <th>author</th>
-    <th>create by</th>
-    <th>create date</th>
-    <th>modify by</th>
-  </tr>
-  {% for robject in robject_list %}
-  <tr class="row {{ robject.name }}">
-    <td><input type="checkbox" class="robject checkbox" name="{{ robject.name }}"
-      value="{{ robject.id }}" form="delete-form"></td>
-    <td>{{ robject.id }}</td>
-    <td>{{ robject.name }}</td>
-    <td>{{ robject.author }}</td>
-    <td>{{ robject.create_by }}</td>
-    <td>{{ robject.create_date }}</td>
-    <td>{{ robject.modify_by }}</td>
-  </tr>
-  {% endfor %}
-</table>
+<!-- End actions section -->
+
+<!-- Robject table -->
+<form id="robjects-form">
+  <table id="robjects_table">
+    <tr id="header_row">
+      <th><input type="checkbox" class="select-all"></th>
+      <th>id</th>
+      <th>name</th>
+      <th>author</th>
+      <th>create by</th>
+      <th>create date</th>
+      <th>modify by</th>
+    </tr>
+    {% for robject in robject_list %}
+      <tr class="row {{ robject.name }}">
+        <td>
+          <input
+          type="checkbox"
+          class="robject checkbox"
+          name="{{ robject.name }}"
+          value="{{ robject.id }}">
+        </td>
+        <td>{{ robject.id }}</td>
+        <td>{{ robject.name }}</td>
+        <td>{{ robject.author }}</td>
+        <td>{{ robject.create_by }}</td>
+        <td>{{ robject.create_date }}</td>
+        <td>{{ robject.modify_by }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+</form>
+<!-- End robject table -->
+
 <style>
   .links, .actions {
     margin: 20px 0;

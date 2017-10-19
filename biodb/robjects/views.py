@@ -5,10 +5,12 @@ from django.db.models import CharField
 from django.db.models import ForeignKey
 from django.db.models import TextField
 from django.db.models import Q
+from django.http import Http404
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render
 from django.views.generic import View, CreateView, DeleteView, UpdateView
 from projects.models import Project, Tag
+from projects.mixins import ExportViewMixin
 from robjects.models import Robject, Name
 from django import forms
 from django_addanother.widgets import AddAnotherWidgetWrapper
@@ -21,6 +23,7 @@ from biodb import settings
 from django.http import HttpResponseBadRequest, HttpResponse, HttpResponseForbidden
 from samples.views import SampleListView
 from django.core.urlresolvers import Resolver404
+from django.contrib import messages
 # Create your views here.
 
 
@@ -31,6 +34,40 @@ def robjects_list_view(request, project_name):
     robject_list = Robject.objects.filter(project=project)
     return render(request, "projects/robjects_list.html",
                   {"robject_list": robject_list, "project_name": project_name})
+
+
+class ExportExcelView(ExportViewMixin, View):
+    model = Robject
+    queryset = None
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated():
+            permission_obj = self.get_permission_object()
+            if request.user.has_perm("projects.can_visit_project", permission_obj):
+                return super().dispatch(request, *args, **kwargs)
+            else:
+                raise PermissionDenied
+        else:
+            return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
+
+    def get_permission_object(self):
+        project = Project.objects.get(name=self.kwargs['project_name'])
+        return project
+
+    def get(self, request, project_name, *args, **kwargs):
+        robjects_pk = list(request.GET.values())
+        qs = Robject.objects.filter(pk__in=robjects_pk)
+        if not qs:
+            messages.error(request, "No robject selected!")
+            return redirect(self.get_success_url())
+
+        return self.export_to_excel(qs, is_relation=True,
+                                    one_to_one=True, many_to_one=True,
+                                    exclude_fields=['sample'])
+
+    def get_success_url(self):
+        return reverse("projects:robjects:robjects_list", kwargs={
+            "project_name": self.kwargs["project_name"]})
 
 
 # TODO: Add multipleObjectMixin to inherit by this class??
