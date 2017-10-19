@@ -237,6 +237,16 @@ class Robjects_export_to_excel_view_test(FunctionalTest):
 
         self.assertEqual(row_2_expected_values, row_2_cells_values)
 
+    def test_error_message_when_no_selection(self):
+        user, proj = self.default_set_up_for_robjects_pages()
+        response = self.client.get(f"/projects/{proj.name}/robjects/excel-raport/", follow=True)
+        message = list(response.context['messages'])[0]
+        self.assertEqual(
+            message.message,
+            "No robject selected!"
+        )
+        self.assertEqual(message.tags, "error")
+
 
 class RobjectSamplesListTest(FunctionalTest):
     def test_anonymous_user_gets_samples_page(self):
