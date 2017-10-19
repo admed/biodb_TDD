@@ -559,20 +559,69 @@ class RobjectHistoryViewTest(FunctionalTest):
             f'/accounts/login/?next=/projects/{proj.name}/robjects/{robject.pk}/history/',
             response.url)
 
-    def test_render_template_on_get(self):
+    def test_logged_user_canrender_template_on_get(self):
         user, proj = self.default_set_up_for_robjects_pages()
         robject = Robject.objects.create(name="Robject_1", project=proj)
         response = self.client.get(
             f"/projects/{proj.name}/robjects/{robject.pk}/history/")
         self.assertTemplateUsed(response, "robjects/robject_history.html")
 
-    def test_versions_in_context(self):
+    def test_variables_in_context(self):
+        # set default data for user, project and permision to visit project
+        user, proj = self.default_set_up_for_robjects_pages()
+        # create robject
+        robject = Robject.objects.create(name="Robject_1", project=proj)
+        # render the template
+        response = self.client.get(
+            f"/projects/{proj.name}/robjects/{robject.pk}/history/")
+        # check if versions are in context
+        self.assertTrue("versions" in response.context)
+        versions = response.context["versions"]
+        # check that versions are the list type,
+        # by defult created objec should have only creation history
+        self.assertIsInstance(versions, list)
+        self.assertEqual(len(versions), 1)
+        # check the type of objects in list
+        self.assertIsInstance(response.context["versions"][0], CustomHistory)
+        # chcec that object is in context
+        self.assertTrue("object" in response.context)
+        # check that an context object is our robject
+        context_object = response.context["object"]
+        self.assertEqual(context_object, robject)
+
+    def test_versions_for_edited_robject(self):
         user, proj = self.default_set_up_for_robjects_pages()
         robject = Robject.objects.create(name="Robject_1", project=proj)
+        robject.name = "newname"
+        robject.save()
         response = self.client.get(
             f"/projects/{proj.name}/robjects/{robject.pk}/history/")
         self.assertTrue("versions" in response.context)
         versions = response.context["versions"]
         self.assertIsInstance(versions, list)
-        self.assertEqual(len(versions), 1)
-        self.assertIsInstance(response.context["versions"][0], CustomHistory)
+        self.assertEqual(len(versions), 2)
+        # get the versions from the list to check them
+        version_created, version_changed = response.context["versions"]
+        self.assertIsInstance(version_created, CustomHistory)
+        self.assertIsInstance(version_changed, CustomHistory)
+        # check the attributes of created version
+        self.assertEqual(version_created.version_id, 1)
+        self.assertEqual(version_created.modify_type, 'Created')
+        self.assertCountEqual(version_created.exclude, ["id", "create_date",
+                                                  "modify_date"])
+        # check differ fields
+        vcreated_diff_objects = version_created.get_diff_objects()
+        self.assertEqual(vcreated_diff_objects, [])
+        # check the attributes of changed version
+        self.assertEqual(version_changed.version_id, 2)
+        self.assertEqual(version_changed.modify_type, 'Changed')
+        self.assertCountEqual(version_changed.exclude, ["id", "create_date",
+                                                  "modify_date"])
+        # check differ fields
+        vchanged_diff_objects = version_changed.get_diff_objects()
+        self.assertEqual(len(vchanged_diff_objects), 1)
+        # check the diff field values
+        diff_object = vchanged_diff_objects[0]
+        self.assertEqual(diff_object.field, "name")
+        self.assertEqual(diff_object.old_value, "Robject_1")
+        self.assertEqual(diff_object.new_value, "newname")
