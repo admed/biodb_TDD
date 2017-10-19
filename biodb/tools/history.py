@@ -33,7 +33,8 @@ class CustomHistory():
         else:
             self.exclude = exclude
         # by default exclude ID (some history can have problems with changed ID)
-        self.exclude.append("id")
+        if "id" not in self.exclude:
+            self.exclude.append("id")
 
     def return_previous_version(self):
         """Return previous version of object or None"""
