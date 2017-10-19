@@ -18,75 +18,11 @@ import datetime
 
 
 class Robjects_export_to_excel_view_test(FunctionalTest):
-    def test_excel_filename_and_table_headers(self):
+    def test_excel_filename(self):
         user, proj = self.default_set_up_for_robjects_pages()
-        robj = Robject.objects.create(
-            author=user, project=proj, name="robject_1")
-        response = self.client.get(f"/projects/{proj.name}/robjects/excel-raport/")
-
-        # assert file name in response as report.xlsx
-        self.assertEqual(response.get('Content-Disposition'),
-                         "attachment; filename=report.xlsx")
-
-        table_heder_list = ['id', 'project', 'author', 'name', 'create_by',
-                            'create_date', 'modify_date', 'modify_by', 'notes',
-                            'ligand', 'receptor', 'ref_seq', 'mod_seq',
-                            'description', 'bibliography', 'ref_commercial',
-                            'ref_clinical', 'names', 'tags']
-
-        # assert headers in excel file are the same as robject atributes names
-        with BytesIO(response.content) as f:
-            self.assertIsNotNone(f)
-            wb = load_workbook(f)
-            ws = wb.active
-            first_row_cells = []
-            for row in ws.rows:
-                for cell in row:
-                    first_row_cells.append(cell.value)
-                break
-        self.assertCountEqual(first_row_cells, table_heder_list)
-
-        self.assertEqual(response.status_code, 200)
-
-    def test_excel_rows(self):
-        user, proj = self.default_set_up_for_robjects_pages()
-        robj1 = Robject.objects.create(
-            author=user, project=proj, name="robject_1")
-        robj2 = Robject.objects.create(
-            author=user, project=proj, name="robject_2")
-
-        response = self.client.get(
-            f"/projects/{proj.name}/robjects/excel-raport/", {'checkbox': ['1', '2']})
-        # assert attachment name as report.xlsx
-        self.assertEqual(response.get('Content-Disposition'),
-                         "attachment; filename=report.xlsx")
-
-        table_heder_list = ['id', 'project', 'author', 'name', 'create_by',
-                            'create_date', 'modify_date', 'modify_by', 'notes',
-                            'ligand', 'receptor', 'ref_seq', 'mod_seq',
-                            'description', 'bibliography', 'ref_commercial',
-                            'ref_clinical']
-        # assert headers are the same as robject atrinutes names
-        with BytesIO(response.content) as f:
-            self.assertIsNotNone(f)
-            wb = load_workbook(f)
-            ws = wb.active
-            first_row_cells = []
-            for row in ws.rows:
-                for cell in row:
-                    first_row_cells.append(cell.value)
-                break
-        # check if heaer are the same as first row
-        self.assertListEqual(first_row_cells, table_heder_list)
-
-        # check if every robject in different row
-
-        # add +1 because of headers
-        self.assertEqual(ws.max_row, Robject.objects.count() + 1)
-
-    def test_excel_filename():
-        user, proj = self.default_set_up_for_robjects_pages()
-        response = self.client.get(f"/projects/{proj.name}/robjects/excel-raport/")
+        r = Robject.objects.create(project=proj, name="robject_1")
+        response = self.client.get(f"/projects/{proj.name}/robjects/excel-raport/",
+                                   {"robject_1": r.id})
         self.assertEqual(response.get('Content-Disposition'),
                          "attachment; filename=report.xlsx")
 
