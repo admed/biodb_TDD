@@ -53,7 +53,8 @@ class TestUserVisitsSampleList(FunctionalTest):
         # uses function from base module
         self.get_sample_list(proj)
         current_url = self.browser.current_url
-        expected_url = self.live_server_url + f"/accounts/login/?next=/projects/{proj.name}/samples/"
+        expected_url = self.live_server_url + \
+            f"/accounts/login/?next=/projects/{proj.name}/samples/"
         self.assertEqual(current_url, expected_url)
 
     def test_user_without_project_visit_permission_tries_to_get_sample_list(self):
@@ -87,7 +88,8 @@ class TestUserVisitsSampleList(FunctionalTest):
         link = self.browser.find_element_by_css_selector("a.link_back")
         link.click()
         self.assertEqual(self.browser.current_url,
-                         self.live_server_url + f"/projects/{proj.name}/robjects/")
+                         self.live_server_url +
+                         f"/projects/{proj.name}/robjects/")
 
     def test_user_examine_one_sample_row(self):
         # CREATE SAMPLE PROJECT AND ROBJECT

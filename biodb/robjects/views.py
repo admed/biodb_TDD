@@ -24,6 +24,7 @@ from django.http import HttpResponseBadRequest, HttpResponse, HttpResponseForbid
 from samples.views import SampleListView
 from django.core.urlresolvers import Resolver404
 from django.contrib import messages
+from django.utils.translation import ugettext as _
 # Create your views here.
 
 
@@ -69,6 +70,36 @@ class ExportExcelView(ExportViewMixin, View):
     def get_success_url(self):
         return reverse("projects:robjects:robjects_list", kwargs={
             "project_name": self.kwargs["project_name"]})
+
+
+class RobjectPDFeView(View, ExportViewMixin):
+    model = Robject
+    pdf_template_name = "robjects/robject_raport_pdf.html"
+    pdf_css_name = 'robjects/css/raport_pdf.css'
+    css_sufix = '/robjects'
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated():
+            permission_obj = self.get_permission_object()
+            if request.user.has_perm("projects.can_visit_project",
+                                     permission_obj):
+                return super().dispatch(request, *args, **kwargs)
+            else:
+                raise PermissionDenied
+        else:
+            return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
+
+    def get_permission_object(self):
+        project = Project.objects.get(name=self.kwargs['project_name'])
+        return project
+
+    def get(self, request, project_name, *args, **kwargs):
+        self.object_list = Robject.objects.filter(pk__in=request.GET.values())
+        if not self.object_list:
+            raise Http404(_("Empty list and '%(class_name)s.allow_empty' is False.") % {
+                'class_name': self.__class__.__name__,
+            })
+        return self.export_to_pdf(self.object_list)
 
 
 # TODO: Add multipleObjectMixin to inherit by this class??

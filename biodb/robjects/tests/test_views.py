@@ -1,3 +1,4 @@
+import PyPDF2
 from unit_tests.base import FunctionalTest
 from robjects.models import Robject, Name, Tag
 from projects.models import Project
@@ -13,6 +14,8 @@ from openpyxl import load_workbook
 from robjects.views import NameCreateView, TagCreateView
 from biodb import settings
 from guardian.shortcuts import assign_perm
+from io import BytesIO
+from openpyxl import load_workbook
 from unittest.mock import patch, call
 import datetime
 
@@ -823,3 +826,87 @@ class RobjectEditView(FunctionalTest):
 
         self.assertRedirects(response, reverse(
             "projects:robjects:robjects_list", kwargs={"project_name": proj.name}))
+
+
+class RobjectsPdfTestCase(FunctionalTest):
+    def test_anonymous_user_gets_robject_raport_page(self):
+        proj = Project.objects.create(name="PROJECT_1")
+        Robject.objects.create(name="Robject_1", project=proj)
+        response = self.client.get(
+            f"/projects/{proj.name}/robjects/PDF-raport/")
+        self.assertEqual(response.status_code, 302)
+        self.assertIn('/accounts/login/?next=', response.url)
+
+    def test_render_template_on_get(self):
+        user, proj = self.default_set_up_for_robjects_pages()
+        robj = Robject.objects.create(name="rob", project=proj)
+        assign_perm("projects.can_visit_project", user, proj)
+        response = self.client.get(
+            f"/projects/{proj.name}/robjects/PDF-raport/", {robj.name: robj.id})
+        self.assertTemplateUsed(response, "robjects/robject_raport_pdf.html")
+
+    def test_user_generfates_pdf(self):
+        # logged user goes to biodb to export a excel file
+        user, proj = self.default_set_up_for_robjects_pages()
+        robj = Robject.objects.create(
+            author=user, project=proj, name="robject_1")
+
+        response = self.client.get(
+            f"/projects/{proj.name}/robjects/PDF-raport/", {robj.name: robj.id})
+        # assert attachment name as robject_raport.pdf
+        self.assertEqual(response.get('Content-Disposition'),
+                         'filename="raport.pdf"')
+        # check if pdf_file is not empty
+        pdf_file = BytesIO(response.content)
+        self.assertIsNotNone(pdf_file)
+        # open and read pdf file
+        read_pdf = PyPDF2.PdfFileReader(pdf_file)
+        number_of_pages = read_pdf.getNumPages()
+        page = read_pdf.getPage(0)
+        page_content = page.extractText()
+        # chcek if robjects name is in page content
+        self.assertIn('robject_1', page_content)
+        # if status code of requeszt is 200 -
+        # The request was successfully received,
+        # understood, and accepted
+        self.assertEqual(response.status_code, 200)
+
+    def test_robjects_pdf_view_for_multiple_robjects(self):
+        # CREATE SAMPLE PROJECT AND USER.
+        # ASSIGNE PERMISION TO PROJECT.
+        user, proj = self.default_set_up_for_robjects_pages()
+        # CREATE SAMPLE ROBJECTS AND ADD IT TO PROJECT.
+        robj1 = Robject.objects.create(
+            author=user, project=proj, name="robject_1")
+        robj2 = Robject.objects.create(
+            author=user, project=proj, name="robject_2")
+        # User enters project robjects pdf raport page.
+        response = self.client.get(
+            f"/projects/{proj.name}/robjects/PDF-raport/", {
+                robj1.name: robj1.id, robj2.name: robj2.id})
+        # User seas name of file.
+        self.assertEqual(response.get('Content-Disposition'),
+                         'filename="raport.pdf"')
+        # He checks if file is not empty.
+        pdf_file = BytesIO(response.content)
+        self.assertIsNotNone(pdf_file)
+        # He opens and reads file.
+        read_pdf = PyPDF2.PdfFileReader(pdf_file)
+        # He count numbers of pages.
+        number_of_pages = read_pdf.getNumPages()
+        # He seas two pages, one for every robjects.
+        self.assertEqual(number_of_pages, 2)
+        # He seas first page of pdf.
+        page = read_pdf.getPage(0)
+        page_content = page.extractText()
+        # He seas that first page is for robject_1 model.
+        self.assertIn('robject_1', page_content)
+        # He checks second page for robject_2.
+        page = read_pdf.getPage(1)
+        page_content = page.extractText()
+        self.assertIn('robject_2', page_content)
+
+        # if status code of requeszt is 200 -
+        # The request was successfully received,
+        # understood, and accepted
+        self.assertEqual(response.status_code, 200)

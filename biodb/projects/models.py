@@ -1,4 +1,3 @@
-# from django.contrib.auth.models import User
 import string
 from django.core.exceptions import ValidationError
 from django.db import models

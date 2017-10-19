@@ -17,6 +17,11 @@ class RobjectCreateTestCase(FunctionalTest):
     def get_robject_create_url(self):
         return self.live_server_url + reverse("projects:robjects:robject_create", kwargs={"project_name": "project_1"})
 
+    # TODO: check if below method is accurate and relevant
+    def get_robject_form_url(self, proj):
+        return self.live_server_url + \
+            reverse("projects:robjects:robject_create", args=(proj.name,))
+
     def add_related_name(self, name):
         """User click in plus button, switch to popup, add related and get back.
         """
@@ -83,11 +88,11 @@ class RobjectCreateTestCase(FunctionalTest):
         return r
 
     def get_robject_create_page(self):
-        print()
         self.browser.get(self.get_robject_create_url())
 
     def submit_and_assert_valid_redirect(self):
         self.browser.find_element_by_css_selector("button").click()
+
         self.assertEqual(
             self.browser.current_url,
             self.live_server_url +

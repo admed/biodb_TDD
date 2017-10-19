@@ -1,5 +1,3 @@
-# from django.contrib.auth.models import User
-# from django.test import TestCase
 from projects.models import Project, Tag
 from unit_tests.base import FunctionalTest
 from guardian.shortcuts import assign_perm

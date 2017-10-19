@@ -1,0 +1,75 @@
+<html>
+ <head>
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+  <style>
+      @page {
+        margin: 3cm 3cm;
+        @top-center {
+            content: "   ";
+            width: 100%;
+            vertical-align: bottom;
+            border-bottom: .5pt solid;
+            margin-bottom: 1.2cm;
+            color: gray;
+        }
+        @top-right{
+            color: gray;
+            font-size: 70%;
+            content: "Confidential";
+        }
+        @top-left{
+            color: gray;
+            font-size: 70%;
+            content: "Studynumber";
+        }
+        @bottom-right {
+            font-size: 70%;
+            content: "Page " counter(page) " of " counter(pages);
+            color: gray;
+        }
+        @bottom-left {
+            font-size: 70%;
+            content: "Created by: {{ user }}, {{ object.create_date }}";
+            color: gray;
+        }
+    }
+    @media print {
+        #detail_table {page-break-after: always;}
+    }
+    }
+  </style>
+</head>
+
+{% if robjects %}
+  {% for robject in robjects %}
+<h1>Raport</h1>
+<div class="names">
+  <h2>{{ robject.name }}</h2>
+</div>
+
+  <table id="general_table">
+    <caption>General Table </caption>
+    {% for field, value in robject.get_general_fields %}
+    <tr>
+      <th>{{ field }}:</th>
+      <td nowrap>{{ value }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  <table id="detail_table">
+    <caption>Detail Table </caption>
+    {% for field, value in robject.get_detail_fields %}
+    <tr>
+      <th>{{ field }}: </th>
+      <td nowrap>{{ value }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+
+{% endfor %}
+
+{% else %}
+  No objects were selected
+{% endif  %}
+  </body>
+ </html>

@@ -29,13 +29,15 @@ class FunctionalTest(StaticLiveServerTestCase):
 
     @property
     def ROBJECT_LIST_URL(self):
-        return self.live_server_url + reverse("projects:robjects:robjects_list",
-                                              kwargs={"project_name": "project_1"})
+        return self.live_server_url + \
+            reverse("projects:robjects:robjects_list",
+                    kwargs={"project_name": "project_1"})
 
     @property
     def ROBJECT_DELETE_URL(self):
-        return self.live_server_url + reverse("projects:robjects:robject_delete",
-                                              kwargs={"project_name": "project_1"})
+        return self.live_server_url + \
+            reverse("projects:robjects:robject_delete",
+                    kwargs={"project_name": "project_1"})
 
     @property
     def ROBJECT_EXCEL_URL(self):
@@ -153,7 +155,9 @@ class FunctionalTest(StaticLiveServerTestCase):
         return proj, user
 
     def default_url_robject_list(self):
-        return self.live_server_url + reverse("projects:robjects:robjects_list", kwargs={"project_name": "project_1"})
+        return self.live_server_url + \
+            reverse("projects:robjects:robjects_list",
+                    kwargs={"project_name": "project_1"})
 
     def annonymous_testing_helper(self, requested_url, after_login_url=None):
         # SET UP

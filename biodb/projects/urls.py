@@ -19,4 +19,5 @@ urlpatterns = [
         TagUpdateView.as_view(), name="tag_update"),
     url(r"^(?P<project_name>\w+)/tags/(?P<tag_id>[0-9]+)/delete/$",
         TagDeleteView.as_view(), name="tag_delete"),
+    url(r"^(?P<project_name>\w+)/samples/", include("samples.urls"))
 ]

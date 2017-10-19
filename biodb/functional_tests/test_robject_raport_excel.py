@@ -27,7 +27,10 @@ class UserGeneratesExcel(FunctionalTest):
         self.browser.get(self.live_server_url +
                          f"/projects/{proj.name}/robjects/excel-raport/")
         error = self.browser.find_element_by_css_selector("h1")
-        self.assertEqual(error.text, "403 Forbidden")
+        self.assertEqual(
+            error.text,
+            "User doesn't have permission to visit the project."
+        )
 
     def test_user_tries_to_generate_report_without_any_selection(self):
         proj, user = self.set_up_robject_list()

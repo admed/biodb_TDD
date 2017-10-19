@@ -54,7 +54,8 @@ class TestUserVisitsSampleList(FunctionalTest):
         # uses function from base module
         self.get_sample_list(proj, robj)
         current_url = self.browser.current_url
-        expected_url = self.live_server_url + f"/accounts/login/?next=/projects/{proj.name}/robjects/{robj.id}/samples/"
+        expected_url = self.live_server_url + \
+            f"/accounts/login/?next=/projects/{proj.name}/robjects/{robj.id}/samples/"
         self.assertEqual(current_url, expected_url)
 
     def test_user_without_project_visit_permission_tries_to_get_robject_sample_list(self):
