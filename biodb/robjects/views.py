@@ -46,7 +46,8 @@ class ExportExcelView(ExportViewMixin, View):
             if request.user.has_perm("projects.can_visit_project", permission_obj):
                 return super().dispatch(request, *args, **kwargs)
             else:
-                raise PermissionDenied
+                return HttpResponseForbidden(
+                    "<h1>User doesn't have permission to visit the project.</h1>")
         else:
             return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
 
