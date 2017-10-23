@@ -9,7 +9,7 @@ from django.db.models import Q
 from django.http import Http404
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render
-from django.views.generic import ViewDetailView
+from django.views.generic import DetailView
 from django.views.generic import View, CreateView, DeleteView, UpdateView
 from projects.models import Project, Tag
 from projects.mixins import ExportViewMixin
