@@ -12,7 +12,7 @@ from django.test import override_settings
 from urllib.parse import urlparse
 
 
-@override_settings(DEBUG=True)
+@override_settings(DEBUG=False)
 class FunctionalTest(StaticLiveServerTestCase):
     """
         IMPORTANT!

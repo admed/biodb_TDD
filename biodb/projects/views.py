@@ -15,6 +15,8 @@ from projects.models import Tag
 from django.shortcuts import redirect
 from biodb import settings
 from django.core.urlresolvers import reverse
+from biodb.mixins import LoginPermissionRequiredMixin
+from django.shortcuts import get_object_or_404
 # Create your views here.
 
 
@@ -22,20 +24,10 @@ class ProjectListView(LoginRequiredMixin, ListView):
     model = Project
 
 
-class TagsListView(ListView):
+class TagsListView(LoginPermissionRequiredMixin, ListView):
     model = Tag
     template_name = 'projects/tags_list.html'
-
-    def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated():
-            permission_obj = self.get_permission_object()
-            if request.user.has_perm("projects.can_visit_project",
-                                     permission_obj):
-                return super().dispatch(request, *args, **kwargs)
-            else:
-                raise PermissionDenied
-        else:
-            return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
+    permissions_required = ["can_visit_project"]
 
     def get_permission_object(self):
         project = Project.objects.get(name=self.kwargs['project_name'])
@@ -58,24 +50,16 @@ class TagsListView(ListView):
         return context
 
 
-class TagCreateView(CreateView):
+class TagCreateView(LoginPermissionRequiredMixin, CreateView):
     model = Tag
     template_name = 'projects/tag_create.html'
     fields = ['name']
-
-    def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated():
-            permission_obj = self.get_permission_object()
-            if request.user.has_perm("projects.can_visit_project",
-                                     permission_obj):
-                return super().dispatch(request, *args, **kwargs)
-            else:
-                raise PermissionDenied
-        else:
-            return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
+    permissions_required = ["can_visit_project", "can_modify_project"]
 
     def get_permission_object(self):
-        project = Project.objects.get(name=self.kwargs['project_name'])
+        project = get_object_or_404(
+            Project, name=self.kwargs['project_name'])
+        # project = Project.objects.get(name=self.kwargs['project_name'])
         return project
 
     def get_context_data(self, **kwargs):
@@ -90,37 +74,27 @@ class TagCreateView(CreateView):
             project = Project.objects.get(name=project_name)
             form.instance.project = project
         except Project.DoesNotExist:
-            print('Bla bla')
             raise Http404
         return super(TagCreateView, self).form_valid(form)
 
 
-class TagUpdateView(UpdateView):
+class TagUpdateView(LoginPermissionRequiredMixin, UpdateView):
     model = Tag
     fields = ['name']
     pk_url_kwarg = 'tag_id'
     template_name = "projects/tag_update.html"
-
-    def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated():
-            permission_obj = self.get_permission_object()
-            if request.user.has_perm("projects.can_visit_project",
-                                     permission_obj):
-                return super().dispatch(request, *args, **kwargs)
-            else:
-                raise PermissionDenied
-        else:
-            return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
+    permissions_required = ["can_visit_project", "can_modify_project"]
 
     def get_permission_object(self):
         project = Project.objects.get(name=self.kwargs['project_name'])
         return project
 
 
-class TagDeleteView(DeleteView):
+class TagDeleteView(LoginPermissionRequiredMixin, DeleteView):
     model = Tag
     pk_url_kwarg = 'tag_id'
     template_name = 'projects/tag_delete.html'
+    permissions_required = ["can_visit_project", "can_modify_project"]
 
     def get_success_url(self):
         return reverse("projects:tag_list", kwargs={"project_name": self.kwargs['project_name']})

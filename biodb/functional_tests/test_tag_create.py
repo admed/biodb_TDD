@@ -33,13 +33,15 @@ class TagCreateTestCase(FunctionalTest):
         self.get_tag_create(proj)
         # He sees perrmision denied error.
         error = self.browser.find_element_by_css_selector("h1")
-        self.assertEqual(error.text, "403 Forbidden")
+        self.assertEqual(
+            error.text, "User doesn't have permission: can visit project")
 
     def test_user_seas_statatic_elements_of_page(self):
         # CREATE SAMPLE PROJECT AND USER
         usr, proj = self.project_set_up_using_default_data()
         # ASSIGN PERMISION FOR USR TO PROJECT.
         assign_perm("projects.can_visit_project", usr, proj)
+        assign_perm("projects.can_modify_project", usr, proj)
         # User gets tag list. He doesn't have project visit permission.
         self.get_tag_create(proj)
         # He seas satble element of page
@@ -60,6 +62,7 @@ class TagCreateTestCase(FunctionalTest):
         usr, proj = self.project_set_up_using_default_data()
         # ASSIGN PERMISION FOR USR TO PROJECT.
         assign_perm("projects.can_visit_project", usr, proj)
+        assign_perm("projects.can_modify_project", usr, proj)
         # User gets tag list. He doesn't have project visit permission.
         self.get_tag_create(proj)
         # He input tah name into form.
@@ -76,9 +79,11 @@ class TagCreateTestCase(FunctionalTest):
         usr, proj = self.project_set_up_using_default_data()
         # ASSIGN PERMISION FOR USR TO PROJECT.
         assign_perm("projects.can_visit_project", usr, proj)
-        # User gets undefined projects create tag page.
-        self.browser.get(self.live_server_url +
-                         f"/projects/random_project/tags/create/")
-        # He seas does not exist error.
-        error = self.browser.find_element_by_css_selector('h1')
-        self.assertIn('DoesNotExist', error.text)
+        # User gets undefined projects create tag page. Server throws error.
+        request_url = "/projects/random_project/tags/create/"
+        self.browser.get(self.live_server_url + request_url)
+        error_header = self.browser.find_element_by_css_selector("h1")
+        error_text = self.browser.find_element_by_css_selector("p")
+        self.assertEqual(error_header.text, "Not Found")
+        self.assertEqual(error_text.text,
+                         f"The requested URL {request_url} was not found on this server.")
