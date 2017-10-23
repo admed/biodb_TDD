@@ -6,3 +6,7 @@ django-tables2
 django-addanother
 django-simple-history
 openpyxl
+beautifulsoup4
+# problems with cairocffi 0.7 and 0.8 to install weasyprint
+cairocffi==0.6
+weasyprint
