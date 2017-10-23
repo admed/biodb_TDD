@@ -1,6 +1,6 @@
 """Views for robject search."""
 import re
-from biodb.mixins import LoginRequiredMixin
+from biodb.mixins import LoginRequiredMixin, LoginPermissionRequiredMixin
 from django.db.models import CharField
 from django.db.models import ForeignKey
 from django.db.models import TextField
@@ -37,20 +37,10 @@ def robjects_list_view(request, project_name):
                   {"robject_list": robject_list, "project_name": project_name})
 
 
-class ExportExcelView(ExportViewMixin, View):
+class ExportExcelView(LoginPermissionRequiredMixin, ExportViewMixin, View):
     model = Robject
     queryset = None
-
-    def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated():
-            permission_obj = self.get_permission_object()
-            if request.user.has_perm("projects.can_visit_project", permission_obj):
-                return super().dispatch(request, *args, **kwargs)
-            else:
-                return HttpResponseForbidden(
-                    "<h1>User doesn't have permission to visit the project.</h1>")
-        else:
-            return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
+    permissions_required = ["can_visit_project"]
 
     def get_permission_object(self):
         project = Project.objects.get(name=self.kwargs['project_name'])
@@ -72,22 +62,12 @@ class ExportExcelView(ExportViewMixin, View):
             "project_name": self.kwargs["project_name"]})
 
 
-class RobjectPDFeView(View, ExportViewMixin):
+class RobjectPDFeView(LoginPermissionRequiredMixin, View, ExportViewMixin):
     model = Robject
     pdf_template_name = "robjects/robject_raport_pdf.html"
     pdf_css_name = 'robjects/css/raport_pdf.css'
     css_sufix = '/robjects'
-
-    def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated():
-            permission_obj = self.get_permission_object()
-            if request.user.has_perm("projects.can_visit_project",
-                                     permission_obj):
-                return super().dispatch(request, *args, **kwargs)
-            else:
-                raise PermissionDenied
-        else:
-            return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
+    permissions_required = ["can_visit_project"]
 
     def get_permission_object(self):
         project = Project.objects.get(name=self.kwargs['project_name'])
@@ -103,9 +83,14 @@ class RobjectPDFeView(View, ExportViewMixin):
 
 
 # TODO: Add multipleObjectMixin to inherit by this class??
-class SearchRobjectsView(LoginRequiredMixin, View):
+class SearchRobjectsView(LoginPermissionRequiredMixin, View):
     """View to show filtered list of objects."""
     model = Robject
+    permissions_required = ["can_visit_project"]
+
+    def get_permission_object(self):
+        project = Project.objects.get(name=self.kwargs['project_name'])
+        return project
 
     def get(self, request, project_name):
         query = request.GET.get("query")
@@ -194,20 +179,11 @@ class SearchRobjectsView(LoginRequiredMixin, View):
         return self.model.objects.filter(qs, project__name=project_name)
 
 
-class RobjectCreateView(CreateView):
+class RobjectCreateView(LoginPermissionRequiredMixin, CreateView):
     model = Robject
     template_name = "robjects/robject_create.html"
+    permissions_required = ["can_visit_project", "can_modify_project"]
     # raise_exception = True
-
-    def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated():
-            permission_obj = self.get_permission_object()
-            if request.user.has_perm("projects.can_modify_project", permission_obj):
-                return super().dispatch(request, *args, **kwargs)
-            else:
-                raise PermissionDenied
-        else:
-            return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
 
     def get_form_class(self):
         form = forms.modelform_factory(
@@ -293,7 +269,8 @@ class TagCreateView(CreatePopupMixin, CreateView):
         return super().form_valid(form)
 
 
-class RobjectSamplesList(SampleListView):
+class RobjectSamplesList(LoginPermissionRequiredMixin, SampleListView):
+    permissions_required = ["can_visit_project"]
 
     def get_queryset(self):
         """
@@ -308,9 +285,15 @@ class RobjectSamplesList(SampleListView):
         return qs
 
 
-class RobjectDeleteView(DeleteView):
+class RobjectDeleteView(LoginPermissionRequiredMixin, DeleteView):
     model = Robject
     context_object_name = "robjects"
+    permissions_required = ["can_visit_project",
+                            "can_modify_project", "can_delete_robjects"]
+
+    def get_permission_object(self):
+        project = Project.objects.get(name=self.kwargs['project_name'])
+        return project
 
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated():
@@ -341,6 +324,7 @@ class RobjectDeleteView(DeleteView):
 
 class RobjectEditView(RobjectCreateView, UpdateView):
     pk_url_kwarg = "robject_id"
+    permissions_required = ["can_visit_project", "can_modify_project"]
 
     def form_valid(self, form):
         robject = form.save()
