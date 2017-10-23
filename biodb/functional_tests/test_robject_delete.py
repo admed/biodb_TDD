@@ -17,7 +17,7 @@ class RobjectDeleteTestCase(FunctionalTest):
             Robject.objects.create(project=proj, name=name)
 
         # User goes to robject page
-        self.browser.get(self.default_url_robject_list())
+        self.browser.get(self.ROBJECT_LIST_URL)
 
         # He notice checkbox input in the first cell in table header.
         table_header = self.browser.find_element_by_css_selector("#header_row")
@@ -91,7 +91,7 @@ class RobjectDeleteTestCase(FunctionalTest):
         # He marks one robject in table and clicks delete button.
         self.browser.find_element_by_css_selector(
             f".row.{robj.name} .checkbox").click()
-        self.browser.find_element_by_css_selector(f"#delete-form .delete-button").click()
+        self.browser.find_element_by_css_selector(".delete-button").click()
 
         # User is redirect to robject delete confirmation page. He sees GET data
         # in url that following the format ?<robject-name>=<robject-id>.

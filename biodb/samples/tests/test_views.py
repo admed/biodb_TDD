@@ -68,8 +68,7 @@ class SampleListViewTest(FunctionalTest):
 
 class SampleDetailViewTest(FunctionalTest):
     def create_sample_data(self):
-        user = self.default_set_up_for_projects_pages()
-        proj = Project.objects.create(name="project_1")
+        user, proj = self.default_set_up_for_robjects_pages()
         robj = Robject.objects.create(name='Robject', project=proj)
         samp = Sample.objects.create(code='code', robject=robj)
         return(user, proj, robj, samp)
@@ -83,8 +82,11 @@ class SampleDetailViewTest(FunctionalTest):
         self.assertRedirects(response,
                              f'/accounts/login/?next=/projects/{proj.name}/samples/{samp.id}/')
 
-    def test_user_without_permision_sees_permission_denied(self):
-        user, proj, robj, samp = self.create_sample_data()
+    def test_user_without_permision_seas_permission_denied(self):
+        user = self.default_set_up_for_projects_pages()
+        proj = Project.objects.create(name="project_1")
+        robj = Robject.objects.create(project=proj, name="robject_1")
+        samp = Sample.objects.create(code="sample_1", robject=robj)
         response = self.client.get(f"/projects/{proj.name}/samples/{samp.id}/")
         self.assertEqual(response.status_code, 403)
         self.assertEqual("<h1>403 Forbidden</h1>",

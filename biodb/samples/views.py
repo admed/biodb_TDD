@@ -1,20 +1,6 @@
 """Views for robject search."""
-import re
-from biodb.mixins import LoginRequiredMixin
-from django import forms
-from django.contrib.auth.decorators import login_required
-from django.core.exceptions import ValidationError
 from django.http import Http404
-from biodb.mixins import LoginRequiredMixin
-from django_tables2 import RequestConfig
-from django.utils.decorators import method_decorator
-from django.urls import reverse
-from django.http import HttpResponseRedirect
-from django.utils.translation import ugettext_lazy as _
-from django.views.generic import CreateView
-from django.views.generic import DeleteView
 from django.views.generic import DetailView
-from django.views.generic import UpdateView
 from django.views.generic.list import ListView
 from projects.models import Project
 from robjects.models import Robject

@@ -2,8 +2,11 @@ from django.db import models
 from projects.models import Project, Tag
 from django.contrib.auth.models import User
 from ckeditor.fields import RichTextField
-from projects.models import RelatedModelsCustomManager
+<<<<<<< HEAD
 from simple_history.models import HistoricalRecords
+=======
+from projects.models import RelatedModelsCustomManager
+>>>>>>> master
 # Create your models here.
 
 
@@ -34,9 +37,6 @@ class Robject(models.Model):
     def __str__(self):
         return "Robject " + str(self.id)
 
-    class Meta:
-        unique_together = ("name", "project")
-
     @staticmethod
     def get_fields(instance, fields=[]):
         """
@@ -46,7 +46,6 @@ class Robject(models.Model):
         fields_dict = {field.verbose_name: getattr(
             instance, field.name) for field in instance._meta.get_fields() if field.name in fields}
         return sorted(fields_dict.items())
-
 
     def get_general_fields(self):
         '''
@@ -64,6 +63,18 @@ class Robject(models.Model):
         fields = ["ligand", "receptor", "ref_seq", "mod_seq", "description",
                   "bibliography", "ref_commercial", "ref_clinical", "notes"]
         return self.get_fields(self, fields)
+
+    class Meta:
+        unique_together = ("name", "project")
+
+<<<<<<< HEAD
+    @property
+    def _history_user(self):
+        return self.modify_by
+
+    @_history_user.setter
+    def _history_user(self, value):
+        self.modify_by = value
 
     def get_fields_names(self, exclude=None, relation=False):
         """This method return set of model fields.
@@ -93,16 +104,9 @@ class Robject(models.Model):
         # return difference set
         return fields.difference(excludes)
 
-    @property
-    def _history_user(self):
-        return self.modify_by
 
-    @_history_user.setter
-    def _history_user(self, value):
-        self.modify_by = value
-
-
-
+=======
+>>>>>>> master
 class Name(models.Model):
     name = models.CharField(max_length=100, unique=True)
     objects = RelatedModelsCustomManager()

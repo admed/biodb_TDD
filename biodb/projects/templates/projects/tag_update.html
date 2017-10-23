@@ -1,0 +1,10 @@
+{% extends "biodb/base.html" %} {% block content %}
+
+<h1>Update Tag:</h1>
+
+<form action="" method="post">{% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Update" />
+</form>
+
+<a class='link_back' href="/projects/{{ tag.project.name }}/tags/">Return back to project tag list</a> {% endblock %}

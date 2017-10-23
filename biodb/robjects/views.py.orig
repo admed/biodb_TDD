@@ -9,8 +9,11 @@ from django.db.models import Q
 from django.http import Http404
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render
-from django.views.generic import ViewDetailView
+<<<<<<< HEAD
+from django.views.generic import View, CreateView, DeleteView, DetailView
+=======
 from django.views.generic import View, CreateView, DeleteView, UpdateView
+>>>>>>> master
 from projects.models import Project, Tag
 from projects.mixins import ExportViewMixin
 from robjects.models import Robject, Name
@@ -25,10 +28,13 @@ from guardian.mixins import PermissionRequiredMixin
 from biodb import settings
 from django.http import HttpResponseBadRequest, HttpResponse, HttpResponseForbidden
 from samples.views import SampleListView
+<<<<<<< HEAD
+from tools.history import generate_versions
+=======
 from django.core.urlresolvers import Resolver404
 from django.contrib import messages
 from django.utils.translation import ugettext as _
-from tools.history import generate_versions
+>>>>>>> master
 # Create your views here.
 
 
@@ -343,15 +349,7 @@ class RobjectDeleteView(DeleteView):
         return reverse("projects:robjects:robjects_list", kwargs=self.kwargs)
 
 
-class RobjectEditView(RobjectCreateView, UpdateView):
-    pk_url_kwarg = "robject_id"
-
-    def form_valid(self, form):
-        robject = form.save()
-        robject.modify_by = self.request.user
-        robject.save()
-        return redirect(self.get_success_url())
-
+<<<<<<< HEAD
 @method_decorator(login_required, name='dispatch')
 class RobjectHistoryView(DetailView):
     """View to show historical records of robject.
@@ -377,3 +375,13 @@ class RobjectHistoryView(DetailView):
         # create table
         context["versions"] = versions
         return context
+=======
+class RobjectEditView(RobjectCreateView, UpdateView):
+    pk_url_kwarg = "robject_id"
+
+    def form_valid(self, form):
+        robject = form.save()
+        robject.modify_by = self.request.user
+        robject.save()
+        return redirect(self.get_success_url())
+>>>>>>> master

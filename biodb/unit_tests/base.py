@@ -12,6 +12,13 @@ class FunctionalTest(TestCase):
                                "project_name": "project_1"})
     ROBJECT_DELETE_URL = reverse("projects:robjects:robject_delete", kwargs={
                                  "project_name": "project_1"})
+    ROBJECT_EDIT_URL = reverse("projects:robjects:robject_edit", kwargs={
+        "project_name": "project_1",
+        "robject_id": 1
+    })
+
+    ROBJECT_EXCEL_URL = reverse("projects:robjects:raport_excel", kwargs={
+        "project_name": "project_1"})
 
     def default_set_up_for_projects_pages(self):
         user = User.objects.create_user(
@@ -22,7 +29,7 @@ class FunctionalTest(TestCase):
     def default_set_up_for_robjects_pages(self):
         user = self.default_set_up_for_projects_pages()
         proj = Project.objects.create(name="project_1")
-        assign_perm("can_visit_project", user, proj)
+        assign_perm("projects.can_visit_project", user, proj)
 
         return user, proj
 

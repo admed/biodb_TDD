@@ -4,7 +4,6 @@ from django.contrib.auth.models import User
 from django.test import tag
 from functional_tests.base import FunctionalTest
 from projects.models import Project
-# from projects.models import Tag
 from robjects.models import Robject
 from samples.models import Sample
 from selenium import webdriver
@@ -15,7 +14,8 @@ from guardian.shortcuts import assign_perm
 class TestUserVisitsSampleList(FunctionalTest):
     def get_sample_list(self, proj):
         sample_list_url = f"/projects/{proj.name}/samples/"
-        self.browser.get(self.live_server_url + sample_list_url)
+        response = self.browser.get(self.live_server_url + sample_list_url)
+        return response
 
     def get_rows_from_table(self):
         table = self.browser.find_element_by_css_selector('table')
@@ -53,7 +53,8 @@ class TestUserVisitsSampleList(FunctionalTest):
         # uses function from base module
         self.get_sample_list(proj)
         current_url = self.browser.current_url
-        expected_url = self.live_server_url + f"/accounts/login/?next=/projects/{proj.name}/samples/"
+        expected_url = self.live_server_url + \
+            f"/accounts/login/?next=/projects/{proj.name}/samples/"
         self.assertEqual(current_url, expected_url)
 
     def test_user_without_project_visit_permission_tries_to_get_sample_list(self):
@@ -87,7 +88,8 @@ class TestUserVisitsSampleList(FunctionalTest):
         link = self.browser.find_element_by_css_selector("a.link_back")
         link.click()
         self.assertEqual(self.browser.current_url,
-                         self.live_server_url + f"/projects/{proj.name}/robjects/")
+                         self.live_server_url +
+                         f"/projects/{proj.name}/robjects/")
 
     def test_user_examine_one_sample_row(self):
         # CREATE SAMPLE PROJECT AND ROBJECT
@@ -165,3 +167,36 @@ class TestUserVisitsSampleList(FunctionalTest):
         # He checks that table contains appropiate samples for current project.
         rows = self.get_rows_from_table()
         self.assertEqual(len(rows), 2)
+
+    def test_user_clicks_sample_code_link_and_seas_sample_details(self):
+        # CREATE SAMPLE PROJECT AND ROBJECT
+        usr, proj1 = self.project_set_up_using_default_data()
+        # CREATE SAMPLE ROBJECTS
+        robject_1 = Robject.objects.create(name='robject_1', project=proj1)
+        # CRETE SAMPLE SAMPLE.
+        sample = Sample.objects.create(code='Sample1',
+                                       robject=robject_1,
+                                       owner=usr,
+                                       modify_by=usr,
+                                       notes="Notes")
+        # ASSIGN PERMISSION TO USER
+        assign_perm("projects.can_visit_project", usr, proj1)
+        # User gets sample list.
+        response = self.get_sample_list(proj1)
+        # User clicks on sample_code.
+        link = self.browser.find_element_by_css_selector("a.sample-details")
+        link.click()
+        # User seas sample details informations.
+        detail_list = self.browser.find_elements_by_css_selector("li")
+
+        self.assertIn(sample.robject.name, detail_list[0].text)
+        self.assertIn(sample.owner.username, detail_list[1].text)
+        self.assertIn(sample.create_date.strftime(
+            '%Y-%m-%d, %H:%M'), detail_list[2].text)
+        self.assertIn(sample.modify_date.strftime(
+            '%Y-%m-%d, %H:%M'), detail_list[3].text)
+        self.assertIn(sample.modify_by.username, detail_list[4].text)
+        self.assertIn(sample.notes, detail_list[5].text)
+        self.assertIn(sample.form, detail_list[6].text)
+        self.assertIn(sample.source, detail_list[7].text)
+        self.assertIn(sample.get_status_display(), detail_list[8].text)
