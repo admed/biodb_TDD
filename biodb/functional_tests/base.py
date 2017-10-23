@@ -73,7 +73,7 @@ class FunctionalTest(StaticLiveServerTestCase):
             user.set_password(password)
             user.save()
 
-        self.browser.get(self.live_server_url)
+        self.browser.get(self.live_server_url + "/accounts/login/")
         username_input = self.browser.find_element_by_css_selector(
             "#username_input")
         password_input = self.browser.find_element_by_css_selector(
