@@ -8,7 +8,8 @@ class LoginRequiredMixin(object):
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated():
             return super(LoginRequiredMixin, self).dispatch(request, *args, **kwargs)
-        raise PermissionDenied
+
+        return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
 
 
 class LoginPermissionRequiredMixin(object):

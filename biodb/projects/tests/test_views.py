@@ -24,7 +24,7 @@ class ProjectListViewTestCase(FunctionalTest):
 
     def test_login_requirement(self):
         response = self.client.get("/projects/")
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 302)
 
 
 class TagListViewTestCase(FunctionalTest):
