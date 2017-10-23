@@ -305,7 +305,7 @@ class RObjectsListViewTests(FunctionalTest):
     def test_anonymous_user_gets_robjects_page(self):
         Project.objects.create(name="PROJECT_1")
         response = self.client.get("/projects/PROJECT_1/robjects/")
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 302)
 
     def test_render_template_on_get(self):
         user, proj = self.default_set_up_for_robjects_pages()

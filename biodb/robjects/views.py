@@ -8,7 +8,7 @@ from django.db.models import Q
 from django.http import Http404
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render
-from django.views.generic import View, CreateView, DeleteView, UpdateView
+from django.views.generic import View, CreateView, DeleteView, UpdateView, ListView
 from projects.models import Project, Tag
 from projects.mixins import ExportViewMixin
 from robjects.models import Robject, Name
@@ -35,6 +35,26 @@ def robjects_list_view(request, project_name):
     robject_list = Robject.objects.filter(project=project)
     return render(request, "projects/robjects_list.html",
                   {"robject_list": robject_list, "project_name": project_name})
+
+
+class RobjectListView(LoginPermissionRequiredMixin, ListView):
+    template_name = "projects/robjects_list.html"
+    context_object_name = "robject_list"
+    permissions_required = ["can_visit_project"]
+
+    def get_queryset(self):
+        project = self.get_permission_object()
+        qs = Robject.objects.filter(project=project)
+        return qs
+
+    def get_context_data(self):
+        context = super().get_context_data()
+        context["project_name"] = self.kwargs["project_name"]
+        return context
+
+    def get_permission_object(self):
+        project = Project.objects.get(name=self.kwargs["project_name"])
+        return project
 
 
 class ExportExcelView(LoginPermissionRequiredMixin, ExportViewMixin, View):
