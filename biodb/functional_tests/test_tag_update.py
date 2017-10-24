@@ -15,7 +15,6 @@ class TagUpdateTestCase(FunctionalTest):
         self.browser.get(self.live_server_url +
                          f"/projects/{proj.name}/tags/{tag.id}/update/")
 
-
     def test_annonymous_user_visits_tags_list(self):
         # CREATE SAMPLE RPOJECT.
         proj = Project.objects.create(name="project_1")
@@ -28,7 +27,6 @@ class TagUpdateTestCase(FunctionalTest):
         current_url = self.browser.current_url
         expected_url = self.live_server_url + f"/accounts/login/?next=/projects/{proj.name}/tags/{tag.id}/update/"
         self.assertEqual(current_url, expected_url)
-
 
     def test_user_without_project_visit_permission_tries_to_get_tagupdate(self):
         # CREATE SAMPLE RPOJECT.
@@ -49,6 +47,7 @@ class TagUpdateTestCase(FunctionalTest):
         tag = Tag.objects.create(name="tag", project=proj)
         # ASSIGN PERMISSION TO PROJECT
         assign_perm("projects.can_visit_project", usr, proj)
+        assign_perm("projects.can_modify_project", usr, proj)
         # User gets tag update page.
         self.get_tag_update(proj, tag)
         # He seas header Update Tag.
@@ -61,7 +60,6 @@ class TagUpdateTestCase(FunctionalTest):
         self.assertEqual(self.browser.current_url,
                          self.live_server_url + f"/projects/{proj.name}/tags/")
 
-
     def test_user_updates_tag_name(self):
         # CREATE SAMPLE PROJECT AND USER
         usr, proj = self.project_set_up_using_default_data()
@@ -69,6 +67,7 @@ class TagUpdateTestCase(FunctionalTest):
         tag = Tag.objects.create(name="tag", project=proj)
         # ASSIGN PERMISSION TO PROJECT
         assign_perm("projects.can_visit_project", usr, proj)
+        assign_perm("projects.can_modify_project", usr, proj)
         # User gets tag update page.
         self.get_tag_update(proj, tag)
         # type correct tag name in name form.
@@ -76,7 +75,8 @@ class TagUpdateTestCase(FunctionalTest):
         input_form.clear()
         input_form.send_keys("QWERTY")
         # He clicks save button.
-        self.browser.find_element_by_css_selector("input[type='submit']").click()
+        self.browser.find_element_by_css_selector(
+            "input[type='submit']").click()
         # He seas tag updated list.
         tag_element = self.browser.find_element_by_css_selector("li")
         self.assertEqual(tag_element.text, "QWERTY")

@@ -32,6 +32,10 @@ class FunctionalTest(StaticLiveServerTestCase):
         return "/login/"
 
     @property
+    def PROJECT_LIST_URL(self):
+        return self.live_server_url + reverse("projects:projects_list")
+
+    @property
     def ROBJECT_LIST_URL(self):
         return self.live_server_url + \
             reverse("projects:robjects:robjects_list",

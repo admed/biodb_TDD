@@ -4,7 +4,6 @@ from functional_tests.base import FunctionalTest
 from selenium.common.exceptions import NoSuchElementException
 
 
-
 class UserLogoutTests(FunctionalTest):
     @tag('slow')
     def test_logged_user_logs_out(self):
@@ -29,9 +28,7 @@ class UserLogoutTests(FunctionalTest):
         # When he wants to get to projects page he sees permission denied
         # message.
 
-        self.browser.get(self.live_server_url + "/projects/")
-        body_element = self.browser.find_element_by_tag_name("body")
-        self.assertEqual(body_element.text, "403 Forbidden")
+        self.annonymous_testing_helper(self.PROJECT_LIST_URL)
 
     @tag('slow')
     def test_annonymous_user_cant_find_logout_button(self):

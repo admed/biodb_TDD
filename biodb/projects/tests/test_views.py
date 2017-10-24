@@ -124,8 +124,9 @@ class TagCreateViewTest(FunctionalTest):
         user = self.default_set_up_for_projects_pages()
         proj1 = Project.objects.create(name='Project_1')
         assign_perm("projects.can_visit_project", user, proj1)
-        with self.assertRaises(Project.DoesNotExist):
-            response = self.client.get(f"/projects/random_project/tags/create/")
+        response = self.client.get(f"/projects/random_project/tags/create/")
+        self.assertEqual(response.status_code, 404)
+        self.assertInHTML("<h1>Not Found</h1>", str(response.content))
 
 
 class TagUpdateViewTestCase(FunctionalTest):

@@ -375,7 +375,8 @@ class RobjectCreateTestCase(FunctionalTest):
 
         # He gets 403 permission denied message.
         message = self.browser.find_element_by_css_selector("h1")
-        self.assertEqual(message.text, "403 Forbidden")
+        self.assertEqual(
+            message.text, "User doesn't have permission: can modify project")
 
     def test_user_fill_form_without_name(self):
         # USER AND PROJ SETTING

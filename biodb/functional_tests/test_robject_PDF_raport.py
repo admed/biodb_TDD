@@ -33,7 +33,8 @@ class UserGeneratePDFRaport(FunctionalTest):
         self.browser.get(self.live_server_url +
                          f"/projects/{proj.name}/robjects/PDF-raport/")
         error = self.browser.find_element_by_css_selector("h1")
-        self.assertEqual(error.text, "403 Forbidden")
+        self.assertEqual(
+            error.text, "User doesn't have permission: can visit project")
 
     # def test_logged_user_checks_robject_name(self):
     #     # CREATE SAMPLE PROJECT AND USER

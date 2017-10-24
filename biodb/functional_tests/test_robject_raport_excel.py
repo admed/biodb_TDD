@@ -29,7 +29,7 @@ class UserGeneratesExcel(FunctionalTest):
         error = self.browser.find_element_by_css_selector("h1")
         self.assertEqual(
             error.text,
-            "User doesn't have permission to visit the project."
+            "User doesn't have permission: can visit project"
         )
 
     def test_user_tries_to_generate_report_without_any_selection(self):
