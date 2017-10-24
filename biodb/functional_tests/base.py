@@ -28,6 +28,10 @@ class FunctionalTest(StaticLiveServerTestCase):
     # DEFAULT SHORTCUT URLS
 
     @property
+    def LOGIN_URL(self):
+        return "/login/"
+
+    @property
     def ROBJECT_LIST_URL(self):
         return self.live_server_url + \
             reverse("projects:robjects:robjects_list",
@@ -42,6 +46,11 @@ class FunctionalTest(StaticLiveServerTestCase):
     @property
     def ROBJECT_EXCEL_URL(self):
         return self.live_server_url + reverse("projects:robjects:raport_excel",
+                                              kwargs={"project_name": "project_1"})
+
+    @property
+    def ROBJECT_SEARCH_URL(self):
+        return self.live_server_url + reverse("projects:robjects:search_robjects",
                                               kwargs={"project_name": "project_1"})
 
     def setUp(self):

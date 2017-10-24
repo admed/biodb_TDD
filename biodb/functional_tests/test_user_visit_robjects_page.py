@@ -11,18 +11,11 @@ from selenium.common.exceptions import NoSuchElementException
 class UserVisitRobjectsPage(FunctionalTest):
     @tag('slow')
     def test_annonymous_user_visit_robjects_page(self):
-        # To visit any robjects page, project object needed.
-        Project.objects.create(name="PROJECT_1")
-        # Anonymous user goes to robjects page. He sees permission denied
-        # message
-        self.browser.get(self.live_server_url +
-                         "/projects/PROJECT_1/robjects/")
-        body = self.browser.find_element_by_tag_name("body")
-        self.assertEqual(body.text, "403 Forbidden")
+        self.annonymous_testing_helper(self.ROBJECT_LIST_URL)
 
     @tag('slow')
     def test_logged_user_visit_robjects_page___no_robjects_exists(self):
-        user, proj = self.project_set_up_and_get_robject_page()
+        proj, usr = self.default_set_up_for_robjects_pages()
 
         # Logged user visit robjects page. He sees robjects table. Table has
         # several columns: robject id, robject name, robject create date,
@@ -47,7 +40,7 @@ class UserVisitRobjectsPage(FunctionalTest):
 
     @tag('slow')
     def test_logged_user_visit_robjects_page___robjects_exists_in_project(self):
-        usr, proj = self.project_set_up_and_get_robject_page()
+        proj, usr = self.default_set_up_for_robjects_pages()
 
         # Create sample robjects.
         robj1 = Robject.objects.create(
@@ -66,7 +59,6 @@ class UserVisitRobjectsPage(FunctionalTest):
         # capture all rows
         robject_rows = self.browser.find_elements_by_css_selector(
             ".row")
-        time.sleep(20)
         self.assertEqual(len(robject_rows), 3)
 
         for robject in [robj1, robj2, robj3]:
@@ -112,7 +104,7 @@ class SearchEngineTests(FunctionalTest):
     @tag('slow')
     def create_sample_robject_then_search_for_him_using_query(self, query,
                                                               robject_kwargs):
-        user, proj = self.project_set_up_and_get_robject_page()
+        proj, user = self.default_set_up_for_robjects_pages()
 
         # Create sample robject.
         # User goes to robjects page.
@@ -140,7 +132,7 @@ class SearchEngineTests(FunctionalTest):
 
     @tag('slow')
     def test_user_perform_search_based_on_whole_robj_name_and_find_robject(self):
-        user, project = self.project_set_up_and_get_robject_page()
+        project, user = self.default_set_up_for_robjects_pages()
 
         # Create sample robjects.
         Robject.objects.create(name="robject_1", project=project, id=1)
@@ -171,7 +163,7 @@ class SearchEngineTests(FunctionalTest):
     @tag('slow')
     def test_user_search_for_one_robject_using_name_fragment(self):
         # Default setup for robjects page.
-        user, proj = self.project_set_up_and_get_robject_page()
+        proj, user = self.default_set_up_for_robjects_pages()
 
         # Create sample robjects.
         Robject.objects.create(name="robject_1", project=proj)
@@ -200,7 +192,7 @@ class SearchEngineTests(FunctionalTest):
     @tag('slow')
     def test_user_search_for_multiple_robjects_using_name_fragment(self):
         # Make set up for robjects page.
-        user, proj = self.project_set_up_and_get_robject_page()
+        proj, user = self.default_set_up_for_robjects_pages()
 
         # Create sample robjects.
         Robject.objects.create(name="robject_1", project=proj)
@@ -229,17 +221,7 @@ class SearchEngineTests(FunctionalTest):
 
     @tag('slow')
     def test_annonymous_user_cant_request_search_url(self):
-        # create sample project
-        proj = Project.objects.create(name="project_1")
-
-        # User would like to know if he can reach search robjecs url without
-        # logging. He requests search url.
-        self.browser.get(self.live_server_url +
-                         f"/projects/{proj.name}/robjects/search")
-
-        # Now he sees permission denied message.
-        body = self.browser.find_element_by_tag_name("body")
-        self.assertEqual(body.text, "403 Forbidden")
+        self.annonymous_testing_helper(self.ROBJECT_SEARCH_URL)
 
     @tag('slow')
     def test_user_search_for_robject_name_using_case_insensitivity(self):
@@ -250,7 +232,7 @@ class SearchEngineTests(FunctionalTest):
         # results.
 
         # Make set up for robjects page.
-        user, proj = self.project_set_up_and_get_robject_page()
+        proj, usr = self.default_set_up_for_robjects_pages()
 
         # Create sample robject.
         robj = Robject.objects.create(name="RoBjEcT_1", project=proj)
@@ -298,7 +280,7 @@ class SearchEngineTests(FunctionalTest):
     @tag('slow')
     def test_user_can_display_all_robjects_leaving_search_input_empty(self):
         # Make set up for robjects page.
-        user, proj = self.project_set_up_and_get_robject_page()
+        proj, user = self.default_set_up_for_robjects_pages()
 
         # Create sample robjects.
         robj_1 = Robject.objects.create(name="robj_1", project=proj)
@@ -326,7 +308,7 @@ class SearchEngineTests(FunctionalTest):
     @tag('slow')
     def test_user_cant_search_robjects_from_outside_project(self):
         # Make set up for robjects page.
-        user, proj = self.project_set_up_and_get_robject_page()
+        proj, user = self.default_set_up_for_robjects_pages()
 
         # Create new project and attach robject to it.
         other_proj = Project.objects.create(name="other_proj")
@@ -349,7 +331,7 @@ class SearchEngineTests(FunctionalTest):
     @tag('slow')
     def test_user_can_search_with_many_words(self):
         # Make set up for robjects page.
-        user, proj = self.project_set_up_and_get_robject_page()
+        proj, user = self.default_set_up_for_robjects_pages()
 
         # Create sample robjects.
         robj_1 = Robject.objects.create(
