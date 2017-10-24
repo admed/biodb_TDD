@@ -26,7 +26,7 @@ class TagDeleteTestCase(FunctionalTest):
         # He is still on home page of biodb.
         current_url = self.browser.current_url
         expected_url = self.live_server_url + \
-        f"/accounts/login/?next=/projects/{proj.name}/tags/{tag.id}/delete/"
+            f"/accounts/login/?next=/projects/{proj.name}/tags/{tag.id}/delete/"
         self.assertEqual(current_url, expected_url)
 
     def test_user_without_project_visit_permission_tries_to_get_tagupdate(self):
@@ -40,7 +40,7 @@ class TagDeleteTestCase(FunctionalTest):
         # He is still on home page of biodb.
         current_url = self.browser.current_url
         expected_url = self.live_server_url + \
-        f"/accounts/login/?next=/projects/{proj.name}/tags/{tag.id}/delete/"
+            f"/accounts/login/?next=/projects/{proj.name}/tags/{tag.id}/delete/"
         self.assertEqual(current_url, expected_url)
 
     def test_user_checks_tag_section_header_and_return_link(self):
@@ -50,6 +50,7 @@ class TagDeleteTestCase(FunctionalTest):
         tag = Tag.objects.create(name="tag", project=proj)
         # ASSIGN PERMISSION TO PROJECT
         assign_perm("projects.can_visit_project", usr, proj)
+        assign_perm("projects.can_modify_project", usr, proj)
         # User gets tag delete page.
         self.get_tag_delete(proj, tag)
         # He seas header Update Tag.
@@ -69,6 +70,7 @@ class TagDeleteTestCase(FunctionalTest):
         tag = Tag.objects.create(name="tag", project=proj)
         # ASSIGN PERMISSION TO PROJECT
         assign_perm("projects.can_visit_project", usr, proj)
+        assign_perm("projects.can_modify_project", usr, proj)
         # User gets tag delete page.
         self.get_tag_delete(proj, tag)
         # type correct tag name in name form.

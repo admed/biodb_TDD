@@ -10,6 +10,7 @@ from django_tables2 import SingleTableView
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect
 from biodb import settings
+from biodb.mixins import LoginPermissionRequiredMixin
 # from samples.forms import RobjectSelectFrom
 
 

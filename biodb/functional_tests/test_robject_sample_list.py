@@ -67,7 +67,8 @@ class TestUserVisitsSampleList(FunctionalTest):
         self.get_sample_list(proj, robj)
         # He sees perrmision denied error.
         error = self.browser.find_element_by_css_selector("h1")
-        self.assertEqual(error.text, "403 Forbidden")
+        self.assertEqual(
+            error.text, "User doesn't have permission: can visit project")
 
     def test_user_discovers_table_and_previous_page_link(self):
         # CREATE SAMPLE PROJECT AND USER

@@ -34,7 +34,8 @@ class TagListTestCase(FunctionalTest):
         self.get_tag_list(proj)
         # He sees perrmision denied error.
         error = self.browser.find_element_by_css_selector("h1")
-        self.assertEqual(error.text, "403 Forbidden")
+        self.assertEqual(
+            error.text, "User doesn't have permission: can visit project")
 
     def test_user_checks_tag_section_header_and_return_link(self):
         # CREATE SAMPLE PROJECT AND USER

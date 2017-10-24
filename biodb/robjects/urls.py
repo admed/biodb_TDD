@@ -7,12 +7,13 @@ from robjects.views import RobjectSamplesList
 from robjects.views import RobjectEditView
 from robjects.views import ExportExcelView
 from robjects.views import RobjectPDFeView
+from robjects.views import RobjectListView
 
 app_name = 'robjects'
 urlpatterns = [
     url(r"^search/$",
         SearchRobjectsView.as_view(), name="search_robjects"),
-    url(r"^$", robjects_list_view, name="robjects_list"),
+    url(r"^$", RobjectListView.as_view(), name="robjects_list"),
     url(r"^create/$", RobjectCreateView.as_view(), name="robject_create"),
     url(r"^delete/$", RobjectDeleteView.as_view(), name="robject_delete"),
     url(r"^excel-raport/$", ExportExcelView.as_view(), name="raport_excel"),

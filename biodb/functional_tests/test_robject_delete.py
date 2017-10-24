@@ -33,7 +33,7 @@ class RobjectDeleteTestCase(FunctionalTest):
 
     def test_annonymous_user_goes_to_confirmation_page(self):
         self.annonymous_testing_helper(
-            self.ROBJECT_DELETE_URL, self.ROBJECT_LIST_URL)
+            self.ROBJECT_DELETE_URL)
 
     def test_user_without_both_permissions_goes_to_confirmation_page(self):
         # SET UP
@@ -47,7 +47,7 @@ class RobjectDeleteTestCase(FunctionalTest):
         # He gets permission denied message.
         error = self.browser.find_element_by_css_selector("h1")
         self.assertEqual(
-            error.text, "User doesn't have permission to access this page.")
+            error.text, "User doesn't have permission: can modify project")
 
     def test_user_with_visit_permission_only_goes_to_confirmation_page(self):
         # SET UP
@@ -62,7 +62,7 @@ class RobjectDeleteTestCase(FunctionalTest):
         # He gets permission denied message.
         error = self.browser.find_element_by_css_selector("h1")
         self.assertEqual(
-            error.text, "User doesn't have permission to access this page.")
+            error.text, "User doesn't have permission: can modify project")
 
     def test_user_with_delete_permission_only_goes_to_confirmation_page(self):
         # SET UP
@@ -77,11 +77,12 @@ class RobjectDeleteTestCase(FunctionalTest):
         # He gets permission denied message.
         error = self.browser.find_element_by_css_selector("h1")
         self.assertEqual(
-            error.text, "User doesn't have permission to access this page.")
+            error.text, "User doesn't have permission: can visit project")
 
     def test_user_can_delete_single_robject(self):
         # SET UP
         proj, user = self.set_up_robject_list()
+        assign_perm("can_modify_project", user, proj)
         assign_perm("can_delete_robjects", user, proj)
         robj = Robject.objects.create(project=proj, name="sample_robj")
 
@@ -126,6 +127,7 @@ class RobjectDeleteTestCase(FunctionalTest):
     def test_user_try_to_delete_multiple_objects(self):
         # SET UP
         proj, user = self.set_up_robject_list()
+        assign_perm("can_modify_project", user, proj)
         assign_perm("can_delete_robjects", user, proj)
         robj_1 = Robject.objects.create(project=proj, name="sample_robj_1")
         robj_2 = Robject.objects.create(project=proj, name="sample_robj_2")
@@ -159,6 +161,7 @@ class RobjectDeleteTestCase(FunctionalTest):
     def test_user_clicks_delete_button_without_select_any_robjects(self):
         # SET UP
         proj, user = self.set_up_robject_list()
+        assign_perm("can_modify_project", user, proj)
         assign_perm("can_delete_robjects", user, proj)
         robj_1 = Robject.objects.create(project=proj, name="robj_1")
         robj_2 = Robject.objects.create(project=proj, name="robj_2")
@@ -243,6 +246,7 @@ class RobjectDeleteTestCase(FunctionalTest):
     def test_user_wants_to_delete_robjects_but_resign_before_confirm(self):
         # SET UP
         proj, user = self.set_up_robject_list()
+        assign_perm("can_modify_project", user, proj)
         assign_perm("can_delete_robjects", user, proj)
         robj_1 = Robject.objects.create(project=proj, name="robj_1")
 
