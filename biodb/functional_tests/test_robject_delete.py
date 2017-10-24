@@ -32,8 +32,7 @@ class RobjectDeleteTestCase(FunctionalTest):
                 "td:first-child input[type='checkbox']")
 
     def test_annonymous_user_goes_to_confirmation_page(self):
-        self.annonymous_testing_helper(
-            self.ROBJECT_DELETE_URL)
+        self.annonymous_testing_helper(self.ROBJECT_DELETE_URL)
 
     def test_user_without_both_permissions_goes_to_confirmation_page(self):
         # SET UP

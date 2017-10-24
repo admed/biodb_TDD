@@ -28,6 +28,7 @@ from django.core.urlresolvers import Resolver404
 from django.contrib import messages
 from django.utils.translation import ugettext as _
 from tools.history import generate_versions
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 
 

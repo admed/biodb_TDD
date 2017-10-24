@@ -178,16 +178,14 @@ class FunctionalTest(StaticLiveServerTestCase):
     def default_url_robject_list(self):
         return self.live_server_url + reverse("projects:robjects:robjects_list", kwargs={"project_name": "project_1"})
 
-    def annonymous_testing_helper(self, requested_url, after_login_url=None):
+    def annonymous_testing_helper(self, requested_url):
         # SET UP
         proj = Project.objects.create(name="project_1")
 
-        if not after_login_url:
-            after_login_url = requested_url
-
         # KEEP ONLY PATH FROM URL
-        after_login_url = urlparse(after_login_url).path
+        requested_path = urlparse(requested_url).path
 
+        print(requested_path)
         # Annonymous user goes to requested page
         self.browser.get(requested_url)
 
@@ -195,7 +193,7 @@ class FunctionalTest(StaticLiveServerTestCase):
         self.assertEqual(
             self.browser.current_url,
             self.live_server_url +
-            reverse("login") + "?next=" + after_login_url
+            reverse("login") + "?next=" + requested_path
         )
 
     def permission_view_testing_helper(self, requested_url):

@@ -33,18 +33,15 @@ class FunctionalTest(TestCase):
 
         return user, proj
 
-    def annonymous_testing_helper(self, requested_url, after_login_url=None):
+    def annonymous_testing_helper(self, requested_url):
         """ Helper method to use in annonymous redirections tests.
         """
         proj = Project.objects.create(name="project_1")
         response = self.client.get(requested_url)
 
-        if not after_login_url:
-            after_login_url = requested_url
-
         self.assertRedirects(
             response,
-            reverse("login") + f"?next={after_login_url}")
+            reverse("login") + f"?next={requested_url}")
 
     def permission_testing_helper(self, url, error_message, preassigned_perms=[]):
         """ Helper method to use in perrmissions tests.
@@ -53,7 +50,7 @@ class FunctionalTest(TestCase):
                 url: address of requested view
                 error_message: message you expect to see when permission
                     valuation fails
-                preassigned_perms: list of permissions already attached to user 
+                preassigned_perms: list of permissions already attached to user
         """
         user = self.default_set_up_for_projects_pages()
         proj = Project.objects.create(name="project_1")
