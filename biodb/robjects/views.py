@@ -312,30 +312,11 @@ class RobjectSamplesList(LoginPermissionRequiredMixin, SampleListView):
 class RobjectDeleteView(LoginPermissionRequiredMixin, DeleteView):
     model = Robject
     context_object_name = "robjects"
-    permissions_required = ["can_visit_project",
-                            "can_modify_project", "can_delete_robjects"]
+    permissions_required = ["can_visit_project", "can_modify_project"]
 
     def get_permission_object(self):
         project = Project.objects.get(name=self.kwargs['project_name'])
         return project
-
-    def get(self, request, *args, **kwargs):
-        if request.user.is_authenticated():
-            permission_obj = Project.objects.get(
-                name=self.kwargs["project_name"])
-            has_visit_permission = request.user.has_perm(
-                "projects.can_visit_project", permission_obj)
-            has_robject_delete_permission = request.user.has_perm(
-                "projects.can_delete_robjects", permission_obj)
-            if has_visit_permission and has_robject_delete_permission:
-                return super().get(request, *args, **kwargs)
-            else:
-                return HttpResponseForbidden("<h1>User doesn't have permission to access this page.</h1>")
-        else:
-            redirect_url = reverse("projects:robjects:robjects_list", kwargs={
-                "project_name": self.kwargs["project_name"]
-            })
-            return redirect(reverse("login") + f"?next={redirect_url}")
 
     def get_object(self):
         ids = self.request.GET.values()

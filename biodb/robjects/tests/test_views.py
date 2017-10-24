@@ -742,7 +742,6 @@ class RobjectDeleteTestCase(FunctionalTest):
     def default_set_up_for_robject_delete(self):
         user, proj = self.default_set_up_for_robjects_pages()
         assign_perm("can_modify_project", user, proj)
-        assign_perm("can_delete_robjects", user, proj)
         return proj
 
     def test_annonymous_user_is_redirect_to_login_page(self):
@@ -756,17 +755,16 @@ class RobjectDeleteTestCase(FunctionalTest):
         self.assertEqual(f"<h1>User doesn't have permission: can visit project</h1>",
                          response.content.decode("utf-8"))
 
-    def test_view_refuse_access_to_users_without_robject_delete_permission(self):
+    def test_view_refuse_access_to_users_without_project_modify_permission(self):
         self.permission_testing_helper(
             self.ROBJECT_DELETE_URL,
-            preassigned_perms=["projects.can_visit_project",
-                               "projects.can_modify_project"],
-            error_message="User doesn't have permission: can delete robjects")
+            preassigned_perms=["projects.can_visit_project"],
+            error_message="User doesn't have permission: can modify project")
 
     def test_view_refuse_access_to_users_without_project_visit_permission(self):
         user = self.default_set_up_for_projects_pages()
         proj = Project.objects.create(name="project_1")
-        assign_perm("projects.can_delete_robjects", user, proj)
+        assign_perm("projects.can_modify_project", user, proj)
         response = self.client.get(self.ROBJECT_DELETE_URL)
         self.assertEqual(response.status_code, 403)
         self.assertEqual(f"<h1>User doesn't have permission: can visit project</h1>",
@@ -916,6 +914,7 @@ class RobjectsPdfTestCase(FunctionalTest):
         # understood, and accepted
         self.assertEqual(response.status_code, 200)
 
+
 class RobjectHistoryViewTest(FunctionalTest):
     def test_anonymous_user_visit_page(self):
         proj = Project.objects.create(name="Project_1")
@@ -975,7 +974,7 @@ class RobjectHistoryViewTest(FunctionalTest):
         self.assertEqual(version_created.version_id, 1)
         self.assertEqual(version_created.modify_type, 'Created')
         self.assertCountEqual(version_created.exclude, ["id", "create_date",
-                                                  "modify_date"])
+                                                        "modify_date"])
         # check differ fields
         vcreated_diff_objects = version_created.get_diff_objects()
         self.assertEqual(vcreated_diff_objects, [])
@@ -983,7 +982,7 @@ class RobjectHistoryViewTest(FunctionalTest):
         self.assertEqual(version_changed.version_id, 2)
         self.assertEqual(version_changed.modify_type, 'Changed')
         self.assertCountEqual(version_changed.exclude, ["id", "create_date",
-                                                  "modify_date"])
+                                                        "modify_date"])
         # check differ fields
         vchanged_diff_objects = version_changed.get_diff_objects()
         self.assertEqual(len(vchanged_diff_objects), 1)

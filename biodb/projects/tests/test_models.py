@@ -40,12 +40,6 @@ class ProjectModelTestCase(TestCase):
             ("can_modify_project", "User can modify project elements."),
             Project._meta.permissions)
 
-    def test_Project_has_can_delete_robjects_permission(self):
-        self.assertIn(
-            ("can_delete_robjects", "User can delete robjects within project."),
-            Project._meta.permissions
-        )
-
 
 class TagModelTestCase(TestCase):
     def test_fields_classes(self):

@@ -63,10 +63,10 @@ class RobjectDeleteTestCase(FunctionalTest):
         self.assertEqual(
             error.text, "User doesn't have permission: can modify project")
 
-    def test_user_with_delete_permission_only_goes_to_confirmation_page(self):
+    def test_user_with_modify_permission_only_goes_to_confirmation_page(self):
         # SET UP
         proj, user = self.set_up_robject_list(assign_visit_perm=False)
-        assign_perm("projects.can_delete_robjects", user, proj)
+        assign_perm("projects.can_modify_project", user, proj)
         robj = Robject.objects.create(project=proj, name="sample_robj")
 
         # User goes to 'sample_robj' delete confirmation page.
@@ -82,7 +82,7 @@ class RobjectDeleteTestCase(FunctionalTest):
         # SET UP
         proj, user = self.set_up_robject_list()
         assign_perm("can_modify_project", user, proj)
-        assign_perm("can_delete_robjects", user, proj)
+        assign_perm("can_modify_project", user, proj)
         robj = Robject.objects.create(project=proj, name="sample_robj")
 
         # User goes to robject list page.
@@ -127,7 +127,7 @@ class RobjectDeleteTestCase(FunctionalTest):
         # SET UP
         proj, user = self.set_up_robject_list()
         assign_perm("can_modify_project", user, proj)
-        assign_perm("can_delete_robjects", user, proj)
+        assign_perm("can_modify_project", user, proj)
         robj_1 = Robject.objects.create(project=proj, name="sample_robj_1")
         robj_2 = Robject.objects.create(project=proj, name="sample_robj_2")
 
@@ -161,7 +161,7 @@ class RobjectDeleteTestCase(FunctionalTest):
         # SET UP
         proj, user = self.set_up_robject_list()
         assign_perm("can_modify_project", user, proj)
-        assign_perm("can_delete_robjects", user, proj)
+        assign_perm("can_modify_project", user, proj)
         robj_1 = Robject.objects.create(project=proj, name="robj_1")
         robj_2 = Robject.objects.create(project=proj, name="robj_2")
 
@@ -189,7 +189,7 @@ class RobjectDeleteTestCase(FunctionalTest):
     def test_user_select_all_rows_when_none_is_selected(self):
         # SET UP
         proj, user = self.set_up_robject_list()
-        assign_perm("can_delete_robjects", user, proj)
+        assign_perm("can_modify_project", user, proj)
         robj_1 = Robject.objects.create(project=proj, name="robj_1")
         robj_2 = Robject.objects.create(project=proj, name="robj_2")
         robj_3 = Robject.objects.create(project=proj, name="robj_3")
@@ -216,7 +216,7 @@ class RobjectDeleteTestCase(FunctionalTest):
     def test_user_select_all_when_some_rows_are_selected(self):
         # SET UP
         proj, user = self.set_up_robject_list()
-        assign_perm("can_delete_robjects", user, proj)
+        assign_perm("can_modify_project", user, proj)
         robj_1 = Robject.objects.create(project=proj, name="robj_1")
         robj_2 = Robject.objects.create(project=proj, name="robj_2")
         robj_3 = Robject.objects.create(project=proj, name="robj_3")
@@ -246,7 +246,6 @@ class RobjectDeleteTestCase(FunctionalTest):
         # SET UP
         proj, user = self.set_up_robject_list()
         assign_perm("can_modify_project", user, proj)
-        assign_perm("can_delete_robjects", user, proj)
         robj_1 = Robject.objects.create(project=proj, name="robj_1")
 
         # User gets to robj_1 delete confirmation page.
