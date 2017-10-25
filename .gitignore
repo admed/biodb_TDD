@@ -61,3 +61,6 @@ files/
 *LOCAL*
 *REMOTE*
 *.save
+
+# favicon
+favicon.ico

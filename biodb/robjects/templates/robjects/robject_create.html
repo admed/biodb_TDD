@@ -1,17 +1,10 @@
+{% extends "biodb/base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <title></title>
-  </head>
-  <body>
-    <form class="" action="" method="post">
-      {% csrf_token %}
-      {{ form }}
-      <button name="button">Submit</button>
-      <script src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
-      {{ form.media }}
-    </form>
-  </body>
-</html>
+{% block content %}
+  <form class="" action="" method="post">
+    {% csrf_token %}
+    {{ form }}
+    <button name="button">Submit</button>
+    {{ form.media }}
+  </form>
+{% endblock %}

@@ -848,7 +848,7 @@ class RobjectsPdfTestCase(FunctionalTest):
             f"/projects/{proj.name}/robjects/PDF-raport/", {robj.name: robj.id})
         self.assertTemplateUsed(response, "robjects/robject_raport_pdf.html")
 
-    def test_user_generfates_pdf(self):
+    def test_user_generates_pdf(self):
         # logged user goes to biodb to export a excel file
         user, proj = self.default_set_up_for_robjects_pages()
         robj = Robject.objects.create(
@@ -863,7 +863,7 @@ class RobjectsPdfTestCase(FunctionalTest):
         pdf_file = BytesIO(response.content)
         self.assertIsNotNone(pdf_file)
         # open and read pdf file
-        read_pdf = PyPDF2.PdfFileReader(pdf_file)
+        read_pdf = PyPDF2.PdfFileReader(pdf_file, strict=False)
         number_of_pages = read_pdf.getNumPages()
         page = read_pdf.getPage(0)
         page_content = page.extractText()
@@ -894,7 +894,7 @@ class RobjectsPdfTestCase(FunctionalTest):
         pdf_file = BytesIO(response.content)
         self.assertIsNotNone(pdf_file)
         # He opens and reads file.
-        read_pdf = PyPDF2.PdfFileReader(pdf_file)
+        read_pdf = PyPDF2.PdfFileReader(pdf_file, strict=False)
         # He count numbers of pages.
         number_of_pages = read_pdf.getNumPages()
         # He seas two pages, one for every robjects.
