@@ -68,3 +68,22 @@ class FunctionalTest(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 403)
         self.assertEqual(f"<h1>{error_message}</h1>", response.content.decode("utf-8"))
+
+    def not_matching_url_slug_helper(self, requested_url):
+        match = resolve(requested_url)
+        kwargs = match.kwargs
+        self.default_set_up_for_projects_pages()
+
+        for name in kwargs:
+            amend_kwargs = dict(kwargs)
+            if name == "project_name":
+                amend_kwargs[name] = "random_project"
+            else:
+                amend_kwargs[name] = 123456789
+            new_path = reverse(match.app_name + ":" +
+                               match.url_name, kwargs=amend_kwargs)
+            response = self.client.get(new_path)
+            self.assertIn("<h1>Not Found</h1>", response.content)
+            self.assertIn(
+                f"<p>The requested URL {new_path} was not found on this server.</p>",
+                response.content)
