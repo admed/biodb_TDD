@@ -6,11 +6,12 @@ import time
 from django.contrib.auth.models import User
 from django.db.utils import IntegrityError
 from projects.models import Project
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, resolve
 from guardian.shortcuts import assign_perm
 from django.test import override_settings
 from urllib.parse import urlparse
 from robjects.models import Robject
+from urllib.parse import urlparse
 
 
 @override_settings(DEBUG=False)
@@ -62,6 +63,16 @@ class FunctionalTest(StaticLiveServerTestCase):
     def ROBJECT_HISTORY_URL(self):
         return self.live_server_url + reverse("projects:robjects:robject_history",
                                               kwargs={"project_name": "project_1", "robject_id": 1})
+
+    @property
+    def TAG_CREATE_URL(self):
+        return self.live_server_url + reverse("projects:tag_create", kwargs={
+            "project_name": "project_1"})
+
+    @property
+    def ROBJECT_EDIT_URL(self):
+        return reverse("projects:robjects:robject_edit",
+                       kwargs={"project_name": "project_1", "robject_id": 1})
 
     def setUp(self):
         self.browser = webdriver.Chrome()
@@ -215,3 +226,24 @@ class FunctionalTest(StaticLiveServerTestCase):
 
         self.assertEqual(
             h1.text, "User doesn't have permission: can visit project")
+
+    def not_matching_url_slug_helper(self, requested_url):
+        match = resolve(urlparse(requested_url).path)
+        kwargs = match.kwargs
+        self.default_set_up_for_projects_pages()
+
+        for name in kwargs:
+            amend_kwargs = dict(kwargs)
+            if name == "project_name":
+                amend_kwargs[name] = "random_project"
+            else:
+                amend_kwargs[name] = 123456789
+            new_path = reverse(match.app_name + ":" +
+                               match.url_name, kwargs=amend_kwargs)
+            self.browser.get(self.live_server_url + new_path)
+            error_header = self.browser.find_element_by_css_selector("h1")
+            error_text = self.browser.find_element_by_css_selector("p")
+            self.assertEqual(error_header.text, "Not Found")
+            self.assertEqual(
+                error_text.text,
+                f"The requested URL {new_path} was not found on this server.")

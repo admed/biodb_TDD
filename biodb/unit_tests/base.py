@@ -4,6 +4,7 @@ from projects.models import Project
 from robjects.models import Robject
 from django.core.urlresolvers import reverse
 from guardian.shortcuts import assign_perm
+import urlparse
 
 
 class FunctionalTest(TestCase):
@@ -23,6 +24,9 @@ class FunctionalTest(TestCase):
     ROBJECT_HISTORY_URL = reverse(
         "projects:robjects:robject_history",
         kwargs={"project_name": "project_1", "robject_id": 1})
+
+    TAG_CREATE_URL = reverse("projects:tag_create", kwargs={
+                             "project_name": "project_1"})
 
     def default_set_up_for_projects_pages(self):
         user = User.objects.create_user(
