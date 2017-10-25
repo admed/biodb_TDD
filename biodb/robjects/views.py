@@ -339,7 +339,7 @@ class RobjectEditView(RobjectCreateView, UpdateView):
 
 
 @method_decorator(login_required, name='dispatch')
-class RobjectHistoryView(DetailView):
+class RobjectHistoryView(LoginPermissionRequiredMixin, DetailView):
     """View to show historical records of robject.
 
     Views show in table all changes made on object.
@@ -347,6 +347,11 @@ class RobjectHistoryView(DetailView):
     """
     model = Robject
     template_name = "robjects/robject_history.html"
+    permissions_required = ["can_visit_project"]
+
+    def get_permission_object(self):
+        p = Project.objects.get(name=self.kwargs["project_name"])
+        return p
 
     def get_context_data(self, **kwargs):
         """Add CustomHistory objects as versions to context."""

@@ -925,6 +925,10 @@ class RobjectHistoryViewTest(FunctionalTest):
             f'/accounts/login/?next=/projects/{proj.name}/robjects/{robject.pk}/history/',
             response.url)
 
+    def test_view_permission_is_required_to_visit_page(self):
+        self.permission_testing_helper(
+            self.ROBJECT_HISTORY_URL, "User doesn't have permission: can visit project")
+
     def test_logged_user_canrender_template_on_get(self):
         user, proj = self.default_set_up_for_robjects_pages()
         robject = Robject.objects.create(name="Robject_1", project=proj)

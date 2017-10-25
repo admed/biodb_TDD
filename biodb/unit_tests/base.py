@@ -20,6 +20,10 @@ class FunctionalTest(TestCase):
     ROBJECT_EXCEL_URL = reverse("projects:robjects:raport_excel", kwargs={
         "project_name": "project_1"})
 
+    ROBJECT_HISTORY_URL = reverse(
+        "projects:robjects:robject_history",
+        kwargs={"project_name": "project_1", "pk": 1})
+
     def default_set_up_for_projects_pages(self):
         user = User.objects.create_user(
             username="USERNAME", password="PASSWORD")
@@ -54,6 +58,7 @@ class FunctionalTest(TestCase):
         """
         user = self.default_set_up_for_projects_pages()
         proj = Project.objects.create(name="project_1")
+        robj = Robject.objects.create(name="robject_1", project=proj)
         for perm in preassigned_perms:
             assign_perm(perm, user, proj)
         response = self.client.get(url)

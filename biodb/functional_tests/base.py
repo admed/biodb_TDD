@@ -10,6 +10,7 @@ from django.core.urlresolvers import reverse
 from guardian.shortcuts import assign_perm
 from django.test import override_settings
 from urllib.parse import urlparse
+from robjects.models import Robject
 
 
 @override_settings(DEBUG=False)
@@ -56,6 +57,11 @@ class FunctionalTest(StaticLiveServerTestCase):
     def ROBJECT_SEARCH_URL(self):
         return self.live_server_url + reverse("projects:robjects:search_robjects",
                                               kwargs={"project_name": "project_1"})
+
+    @property
+    def ROBJECT_HISTORY_URL(self):
+        return self.live_server_url + reverse("projects:robjects:robject_history",
+                                              kwargs={"project_name": "project_1", "pk": 1})
 
     def setUp(self):
         self.browser = webdriver.Chrome()
@@ -185,7 +191,6 @@ class FunctionalTest(StaticLiveServerTestCase):
         # KEEP ONLY PATH FROM URL
         requested_path = urlparse(requested_url).path
 
-        print(requested_path)
         # Annonymous user goes to requested page
         self.browser.get(requested_url)
 
@@ -198,10 +203,13 @@ class FunctionalTest(StaticLiveServerTestCase):
 
     def permission_view_testing_helper(self, requested_url):
         proj = Project.objects.create(name="project_1")
-        user = User.objects.create(username="USERNAME", password="PASSWORD")
-        self.login_user(user)
+        user = User.objects.create_user(
+            username="USERNAME", password="PASSWORD")
+        robj = Robject.objects.create(name="robject_1", project=proj)
+        self.login_user("USERNAME", "PASSWORD")
 
         self.browser.get(requested_url)
+        time.sleep(15)
         h1 = self.browser.find_element_by_css_selector("h1")
 
         self.assertFalse(user.has_perm("projects.can_visit_project", proj))

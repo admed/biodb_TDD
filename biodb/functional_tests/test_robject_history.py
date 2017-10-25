@@ -5,13 +5,18 @@ from robjects.models import Robject
 
 @tag('slow')
 class RobjectHistoryTestCase(FunctionalTest):
+    reset_sequences = True
+
     def get_robject_history_url(self, proj, robj):
         """Method returning History url of robject"""
         self.browser.get(self.live_server_url +
                          f"/projects/{proj.name}/robjects/{robj.pk}/history/")
 
     def test_annonymous_user_visit_history_page(self):
-        pass
+        self.annonymous_testing_helper(self.ROBJECT_HISTORY_URL)
+
+    def test_user_request_history_page_without_project_visit_permission(self):
+        self.permission_view_testing_helper(self.ROBJECT_HISTORY_URL)
 
     def test_user_visit_history_for_created_robject(self):
         # login a user and create a project
@@ -170,6 +175,7 @@ class RobjectHistoryTestCase(FunctionalTest):
         # check the number of divs
         self.assertEqual(len(changes_col), 10)
 
+
 def test_user_visit_history_for_edited_robject__multiple_editions(self):
     # login a user and create a project
     user, proj = self.project_set_up_using_default_data(
@@ -178,15 +184,15 @@ def test_user_visit_history_for_edited_robject__multiple_editions(self):
     robject = Robject.objects.create(name='robject_1', project=proj,
                                      create_by=user)
     # robject edited multiple times
-        # first
+    # first
     robject.name = "newname1"
     robject.modify_by = user
     robject.save()
-        # second
+    # second
     robject.name = "newname2"
     robject.modify_by = user
     robject.save()
-        # third
+    # third
     robject.name = "newname3"
     robject.modify_by = user
     robject.save()
