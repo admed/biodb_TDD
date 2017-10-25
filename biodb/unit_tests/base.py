@@ -22,7 +22,7 @@ class FunctionalTest(TestCase):
 
     ROBJECT_HISTORY_URL = reverse(
         "projects:robjects:robject_history",
-        kwargs={"project_name": "project_1", "pk": 1})
+        kwargs={"project_name": "project_1", "robject_id": 1})
 
     def default_set_up_for_projects_pages(self):
         user = User.objects.create_user(

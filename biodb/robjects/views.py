@@ -348,6 +348,7 @@ class RobjectHistoryView(LoginPermissionRequiredMixin, DetailView):
     model = Robject
     template_name = "robjects/robject_history.html"
     permissions_required = ["can_visit_project"]
+    pk_url_kwarg = "robject_id"
 
     def get_permission_object(self):
         p = Project.objects.get(name=self.kwargs["project_name"])

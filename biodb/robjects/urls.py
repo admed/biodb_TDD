@@ -22,7 +22,7 @@ urlpatterns = [
     url(r"^tags-create/$", TagCreateView.as_view(), name="tags_create"),
     url(r'^(?P<robject_id>[0-9]+)/samples/$',
         RobjectSamplesList.as_view(), name='robject_samples'),
-    url(r"^(?P<pk>\d+)/history/$", RobjectHistoryView.as_view(),
+    url(r"^(?P<robject_id>\d+)/history/$", RobjectHistoryView.as_view(),
         name="robject_history"),
     url(r'^(?P<robject_id>[0-9]+)/edit/$',
         RobjectEditView.as_view(), name="robject_edit")

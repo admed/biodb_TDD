@@ -61,7 +61,7 @@ class FunctionalTest(StaticLiveServerTestCase):
     @property
     def ROBJECT_HISTORY_URL(self):
         return self.live_server_url + reverse("projects:robjects:robject_history",
-                                              kwargs={"project_name": "project_1", "pk": 1})
+                                              kwargs={"project_name": "project_1", "robject_id": 1})
 
     def setUp(self):
         self.browser = webdriver.Chrome()
@@ -209,10 +209,9 @@ class FunctionalTest(StaticLiveServerTestCase):
         self.login_user("USERNAME", "PASSWORD")
 
         self.browser.get(requested_url)
-        time.sleep(15)
         h1 = self.browser.find_element_by_css_selector("h1")
 
         self.assertFalse(user.has_perm("projects.can_visit_project", proj))
 
         self.assertEqual(
-            h1.text, "User doesn't have permission to view this project.")
+            h1.text, "User doesn't have permission: can visit project")
