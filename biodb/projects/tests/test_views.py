@@ -4,6 +4,7 @@ from guardian.shortcuts import assign_perm
 
 
 class ProjectListViewTestCase(FunctionalTest):
+
     def test_renders_given_template(self):
         self.default_set_up_for_projects_pages()
         response = self.client.get("/projects/")
@@ -28,6 +29,9 @@ class ProjectListViewTestCase(FunctionalTest):
 
 
 class TagListViewTestCase(FunctionalTest):
+    def test_view_returns_404_when_slug_not_match(self):
+        self.not_matching_url_slug_helper(self.TAG_LIST_URL)
+
     def test_anonymous_user_is_redirected_to_login_page(self):
         proj = Project.objects.create(name='Project_1')
         response = self.client.get(f"/projects/{proj.name}/tags/")
@@ -91,6 +95,9 @@ class TagListViewTestCase(FunctionalTest):
 
 
 class TagCreateViewTest(FunctionalTest):
+    def test_view_returns_404_when_slug_not_match(self):
+        self.not_matching_url_slug_helper(self.TAG_CREATE_URL)
+
     def test_anonymous_user_is_redirected_to_login_page(self):
         proj = Project.objects.create(name='Project_1')
         response = self.client.get(f"/projects/{proj.name}/tags/create/")
@@ -130,6 +137,9 @@ class TagCreateViewTest(FunctionalTest):
 
 
 class TagUpdateViewTestCase(FunctionalTest):
+    def test_view_returns_404_when_slug_not_match(self):
+        self.not_matching_url_slug_helper(self.TAG_EDIT_URL)
+
     def test_anonymous_user_is_redirected_to_login_page(self):
         proj = Project.objects.create(name='Project_1')
         tag1 = Tag.objects.create(name="t1", project=proj)
@@ -158,6 +168,9 @@ class TagUpdateViewTestCase(FunctionalTest):
 
 
 class TagDeleteViewTestCase(FunctionalTest):
+    def test_view_returns_404_when_slug_not_match(self):
+        self.not_matching_url_slug_helper(self.TAG_DELETE_URL)
+
     def test_anonymous_user_is_redirected_to_login_page(self):
         proj = Project.objects.create(name='Project_1')
         tag1 = Tag.objects.create(name="t1", project=proj)

@@ -2,31 +2,45 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 from projects.models import Project
 from robjects.models import Robject
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, resolve
 from guardian.shortcuts import assign_perm
-import urlparse
 
 
 class FunctionalTest(TestCase):
     # DEFAULT SHORTCUT URLS
+    LOGIN_URL = reverse("login")
+    PROJECT_LIST_URL = reverse("projects:projects_list")
     ROBJECT_LIST_URL = reverse("projects:robjects:robjects_list", kwargs={
                                "project_name": "project_1"})
     ROBJECT_DELETE_URL = reverse("projects:robjects:robject_delete", kwargs={
                                  "project_name": "project_1"})
+    ROBJECT_EXCEL_URL = reverse("projects:robjects:raport_excel", kwargs={
+        "project_name": "project_1"})
+    ROBJECT_SEARCH_URL = reverse("projects:robjects:search_robjects",
+                                 kwargs={"project_name": "project_1"})
+    ROBJECT_HISTORY_URL = reverse(
+        "projects:robjects:robject_history",
+        kwargs={"project_name": "project_1", "robject_id": 1})
     ROBJECT_EDIT_URL = reverse("projects:robjects:robject_edit", kwargs={
         "project_name": "project_1",
         "robject_id": 1
     })
-
-    ROBJECT_EXCEL_URL = reverse("projects:robjects:raport_excel", kwargs={
-        "project_name": "project_1"})
-
-    ROBJECT_HISTORY_URL = reverse(
-        "projects:robjects:robject_history",
-        kwargs={"project_name": "project_1", "robject_id": 1})
-
+    ROBJECT_CREATE_URL = reverse("projects:robjects:robject_create",
+                                 kwargs={"project_name": "project_1"})
+    ROBJECT_PDF_URL = reverse("projects:robjects:pdf_raport",
+                              kwargs={"project_name": "project_1"})
     TAG_CREATE_URL = reverse("projects:tag_create", kwargs={
                              "project_name": "project_1"})
+    TAG_EDIT_URL = reverse("projects:tag_update",
+                           kwargs={"project_name": "project_1", "tag_id": 1})
+    TAG_DELETE_URL = reverse("projects:tag_delete",
+                             kwargs={"project_name": "project_1", "tag_id": 1})
+    TAG_LIST_URL = reverse("projects:tag_list",
+                           kwargs={"project_name": "project_1"})
+    SAMPLE_LIST_URL = reverse("projects:samples:sample_list",
+                              kwargs={"project_name": "project_1"})
+    SAMPLE_DETAILS_URL = reverse("projects:samples:sample_details",
+                                 kwargs={"project_name": "project_1", "sample_id": 1})
 
     def default_set_up_for_projects_pages(self):
         user = User.objects.create_user(
@@ -97,7 +111,7 @@ class FunctionalTest(TestCase):
             new_path = reverse(match.app_name + ":" +
                                match.url_name, kwargs=amend_kwargs)
             response = self.client.get(new_path)
-            self.assertIn("<h1>Not Found</h1>", response.content)
+            self.assertIn("<h1>Not Found</h1>", str(response.content))
             self.assertIn(
                 f"<p>The requested URL {new_path} was not found on this server.</p>",
-                response.content)
+                str(response.content))

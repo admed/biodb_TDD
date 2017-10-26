@@ -11,6 +11,9 @@ from guardian.shortcuts import assign_perm
 
 
 class SampleListViewTest(FunctionalTest):
+    def test_view_returns_404_when_slug_not_match(self):
+        self.not_matching_url_slug_helper(self.SAMPLE_LIST_URL)
+
     def test_anonymous_user_gets_samples_page(self):
         Project.objects.create(name="PROJECT_1")
         response = self.client.get("/projects/PROJECT_1/samples/")
@@ -67,6 +70,9 @@ class SampleListViewTest(FunctionalTest):
 
 
 class SampleDetailViewTest(FunctionalTest):
+    def test_view_returns_404_when_slug_not_match(self):
+        self.not_matching_url_slug_helper(self.SAMPLE_DETAILS_URL)
+
     def create_sample_data(self):
         user, proj = self.default_set_up_for_robjects_pages()
         robj = Robject.objects.create(name='Robject', project=proj)

@@ -22,6 +22,9 @@ import datetime
 
 
 class Robjects_export_to_excel_view_test(FunctionalTest):
+    def test_view_returns_404_when_slug_not_match(self):
+        self.not_matching_url_slug_helper(self.ROBJECT_EXCEL_URL)
+
     def test_annonymous_request(self):
         self.annonymous_testing_helper(self.ROBJECT_EXCEL_URL)
 
@@ -261,6 +264,9 @@ class Robjects_export_to_excel_view_test(FunctionalTest):
 
 
 class RobjectSamplesListTest(FunctionalTest):
+    def test_view_returns_404_when_slug_not_match(self):
+        self.not_matching_url_slug_helper(self.SAMPLE_LIST_URL)
+
     def test_anonymous_user_gets_samples_page(self):
         proj = Project.objects.create(name="PROJECT_1")
         Robject.objects.create(name="Robject_1", project=proj)
@@ -303,6 +309,9 @@ class RobjectSamplesListTest(FunctionalTest):
 
 
 class RObjectsListViewTests(FunctionalTest):
+    def test_view_returns_404_when_slug_not_match(self):
+        self.not_matching_url_slug_helper(self.ROBJECT_LIST_URL)
+
     def test_anonymous_user_gets_robjects_page(self):
         Project.objects.create(name="PROJECT_1")
         response = self.client.get("/projects/PROJECT_1/robjects/")
@@ -327,6 +336,9 @@ class RObjectsListViewTests(FunctionalTest):
 
 
 class SearchRobjectsViewTests(FunctionalTest):
+    def test_view_returns_404_when_slug_not_match(self):
+        self.not_matching_url_slug_helper(self.ROBJECT_SEARCH_URL)
+
     def test_view_renders_robjects_page_template(self):
         user, proj = self.default_set_up_for_robjects_pages()
 
@@ -484,6 +496,9 @@ class RobjectCreateViewTestCase(FunctionalTest):
         form = response.context["form"]
 
         return form
+
+    def test_view_returns_404_when_slug_not_match(self):
+        self.not_matching_url_slug_helper(self.ROBJECT_CREATE_URL)
 
     def test_renders_template(self):
         user, proj = self.default_set_up_for_robjects_pages()
@@ -739,6 +754,9 @@ class TagCreateViewTestCase(FunctionalTest):
 
 
 class RobjectDeleteTestCase(FunctionalTest):
+    def test_view_returns_404_when_slug_not_match(self):
+        self.not_matching_url_slug_helper(self.ROBJECT_DELETE_URL)
+
     def default_set_up_for_robject_delete(self):
         user, proj = self.default_set_up_for_robjects_pages()
         assign_perm("can_modify_project", user, proj)
@@ -796,6 +814,9 @@ class RobjectDeleteTestCase(FunctionalTest):
 
 
 class RobjectEditView(FunctionalTest):
+    def test_view_returns_404_when_slug_not_match(self):
+        self.not_matching_url_slug_helper(self.ROBJECT_EDIT_URL)
+
     def test_view_render_bounded_form(self):
         user, proj = self.default_set_up_for_robjects_pages()
         assign_perm("can_modify_project", user, proj)
@@ -832,6 +853,9 @@ class RobjectEditView(FunctionalTest):
 
 
 class RobjectsPdfTestCase(FunctionalTest):
+    def test_view_returns_404_when_slug_not_match(self):
+        self.not_matching_url_slug_helper(self.ROBJECT_PDF_URL)
+
     def test_anonymous_user_gets_robject_raport_page(self):
         proj = Project.objects.create(name="PROJECT_1")
         Robject.objects.create(name="Robject_1", project=proj)
@@ -916,6 +940,9 @@ class RobjectsPdfTestCase(FunctionalTest):
 
 
 class RobjectHistoryViewTest(FunctionalTest):
+    def test_view_returns_404_when_slug_not_match(self):
+        self.not_matching_url_slug_helper(self.ROBJECT_HISTORY_URL)
+
     def test_anonymous_user_visit_page(self):
         proj = Project.objects.create(name="Project_1")
         robject = Robject.objects.create(name="Robject_1", project=proj)
