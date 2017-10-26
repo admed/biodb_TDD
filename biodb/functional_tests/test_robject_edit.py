@@ -12,6 +12,7 @@ from selenium.webdriver.common.keys import Keys
 
 
 class RobjectEditView(FunctionalTest):
+
     def set_up_robject_edit(self):
         self.DEFAULT_PROJECT = Project.objects.create(name="project_1")
         self.DEFAULT_USER = User.objects.create_user(
@@ -154,6 +155,12 @@ class RobjectEditView(FunctionalTest):
         robject_tags = [tag.name for tag in r.tags.all()]
         for tag in tags:
             self.assertIn(tag, robject_tags)
+
+    def test_user_enter_wrong_slug_in_url(self):
+        self.not_matching_url_slug_helper(self.ROBJECT_EDIT_URL)
+
+    def test_annonymous_user_goes_to_confirmation_page(self):
+        self.annonymous_testing_helper(self.ROBJECT_EDIT_URL)
 
     def test_user_sees_filled_fields_inside_form(self):
         self.set_up_robject_edit()

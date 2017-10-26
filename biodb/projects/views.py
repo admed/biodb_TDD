@@ -30,7 +30,7 @@ class TagsListView(LoginPermissionRequiredMixin, ListView):
     permissions_required = ["can_visit_project"]
 
     def get_permission_object(self):
-        project = Project.objects.get(name=self.kwargs['project_name'])
+        project = get_object_or_404(Project, name=self.kwargs['project_name'])
         return project
 
     def get_queryset(self):
@@ -86,7 +86,7 @@ class TagUpdateView(LoginPermissionRequiredMixin, UpdateView):
     permissions_required = ["can_visit_project", "can_modify_project"]
 
     def get_permission_object(self):
-        project = Project.objects.get(name=self.kwargs['project_name'])
+        project = get_object_or_404(Project, name=self.kwargs['project_name'])
         return project
 
 
@@ -111,5 +111,5 @@ class TagDeleteView(LoginPermissionRequiredMixin, DeleteView):
             return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
 
     def get_permission_object(self):
-        project = Project.objects.get(name=self.kwargs['project_name'])
+        project = get_object_or_404(Project, name=self.kwargs['project_name'])
         return project

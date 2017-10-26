@@ -22,6 +22,9 @@ class TestUserVisitsSampleDetails(FunctionalTest):
         samp = Sample.objects.create(code='sample_1', robject=robj)
         return(usr, proj, robj, samp)
 
+    def test_user_enter_wrong_slug_in_url(self):
+        self.not_matching_url_slug_helper(self.SAMPLE_DETAILS_URL)
+
     def test_annonymous_user_visits_samples_details(self):
         # CREATE SAMPLE PROJECT BASIC INFORMATIONS.
         proj = Project.objects.create(name="project_1")

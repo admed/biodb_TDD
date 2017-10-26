@@ -4,6 +4,9 @@ from robjects.models import Robject
 
 
 class UserVisitRobjectsPage(FunctionalTest):
+    def test_user_enter_wrong_slug_in_url(self):
+        self.not_matching_url_slug_helper(self.ROBJECT_LIST_URL)
+
     @tag('slow')
     def test_annonymous_user_visit_robjects_page(self):
         self.annonymous_testing_helper(self.ROBJECT_LIST_URL)

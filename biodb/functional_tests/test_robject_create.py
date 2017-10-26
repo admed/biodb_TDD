@@ -12,7 +12,6 @@ import datetime
 from django.utils import timezone
 
 
-@override_settings(DEBUG=True)
 class RobjectCreateTestCase(FunctionalTest):
     def get_robject_create_url(self):
         return self.live_server_url + reverse("projects:robjects:robject_create", kwargs={"project_name": "project_1"})
@@ -99,6 +98,9 @@ class RobjectCreateTestCase(FunctionalTest):
             reverse("projects:robjects:robjects_list",
                     kwargs={"project_name": "project_1"})
         )
+
+    def test_user_enter_wrong_slug_in_url(self):
+        self.not_matching_url_slug_helper(self.ROBJECT_CREATE_URL)
 
     def test_user_fill_full_form_with_multiple_names_tags_and_files(self):
         proj, user = self.set_project_and_user()

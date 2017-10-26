@@ -15,6 +15,9 @@ class TagCreateTestCase(FunctionalTest):
         self.browser.get(self.live_server_url +
                          f"/projects/{proj.name}/tags/create/")
 
+    def test_user_enter_wrong_slug_in_url(self):
+        self.not_matching_url_slug_helper(self.TAG_CREATE_URL)
+
     def test_annonymous_user_visits_tags_list(self):
         # CREATE SAMPLE RPOJECT.
         proj = Project.objects.create(name="project_1")

@@ -69,6 +69,9 @@ class SearchEngineTests(FunctionalTest):
             query=author_query,
             robject_kwargs={"author": author, "name": "robject_1"})
 
+    def test_user_enter_wrong_slug_in_url(self):
+        self.not_matching_url_slug_helper(self.ROBJECT_SEARCH_URL)
+
     @tag('slow')
     def test_user_perform_search_based_on_whole_robj_name_and_find_robject(self):
         project, user = self.default_set_up_for_robjects_pages()

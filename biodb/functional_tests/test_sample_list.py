@@ -46,6 +46,9 @@ class TestUserVisitsSampleList(FunctionalTest):
             self.live_server_url + f"/projects/{proj.name}/samples/{sample.id}/update/"
         )
 
+    def test_user_enter_wrong_slug_in_url(self):
+        self.not_matching_url_slug_helper(self.SAMPLE_LIST_URL)
+
     def test_annonymous_user_visits_samples_list(self):
         # Create sample robjects basic informations.
         proj = Project.objects.create(name="project_1")

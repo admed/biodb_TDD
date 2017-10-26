@@ -11,6 +11,7 @@ from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect
 from biodb import settings
 from biodb.mixins import LoginPermissionRequiredMixin
+from django.shortcuts import get_object_or_404
 # from samples.forms import RobjectSelectFrom
 
 
@@ -31,7 +32,7 @@ class SampleListView(SingleTableView, ListView):
             return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
 
     def get_permission_object(self):
-        project = Project.objects.get(name=self.kwargs['project_name'])
+        project = get_object_or_404(Project, name=self.kwargs['project_name'])
         return project
 
     def get(self, request, project_name, *args, **kwargs):
@@ -69,7 +70,7 @@ class SampleDetailView(DetailView):
     pk_url_kwarg = "sample_id"
 
     def get_permission_object(self):
-        project = Project.objects.get(name=self.kwargs['project_name'])
+        project = get_object_or_404(Project, name=self.kwargs['project_name'])
         return project
 
     def dispatch(self, request, *args, **kwargs):

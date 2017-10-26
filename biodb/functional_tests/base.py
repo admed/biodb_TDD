@@ -65,14 +65,50 @@ class FunctionalTest(StaticLiveServerTestCase):
                                               kwargs={"project_name": "project_1", "robject_id": 1})
 
     @property
+    def ROBJECT_EDIT_URL(self):
+        return self.live_server_url + reverse("projects:robjects:robject_edit",
+                                              kwargs={"project_name": "project_1", "robject_id": 1})
+
+    @property
+    def ROBJECT_CREATE_URL(self):
+        return self.live_server_url + reverse("projects:robjects:robject_create",
+                                              kwargs={"project_name": "project_1"})
+
+    @property
+    def ROBJECT_PDF_URL(self):
+        return self.live_server_url + reverse("projects:robjects:pdf_raport",
+                                              kwargs={"project_name": "project_1"})
+
+    @property
     def TAG_CREATE_URL(self):
         return self.live_server_url + reverse("projects:tag_create", kwargs={
             "project_name": "project_1"})
 
     @property
-    def ROBJECT_EDIT_URL(self):
-        return reverse("projects:robjects:robject_edit",
-                       kwargs={"project_name": "project_1", "robject_id": 1})
+    def TAG_EDIT_URL(self):
+        return self.live_server_url + reverse("projects:tag_update",
+                                              kwargs={"project_name": "project_1", "tag_id": 1})
+
+    @property
+    def TAG_DELETE_URL(self):
+        return self.live_server_url + reverse("projects:tag_delete",
+                                              kwargs={"project_name": "project_1", "tag_id": 1})
+
+    @property
+    def TAG_LIST_URL(self):
+        return self.live_server_url + \
+            reverse("projects:tag_list",
+                    kwargs={"project_name": "project_1"})
+
+    @property
+    def SAMPLE_LIST_URL(self):
+        return self.live_server_url + reverse("projects:samples:sample_list",
+                                              kwargs={"project_name": "project_1"})
+
+    @property
+    def SAMPLE_DETAILS_URL(self):
+        return self.live_server_url + reverse("projects:samples:sample_details",
+                                              kwargs={"project_name": "project_1", "sample_id": 1})
 
     def setUp(self):
         self.browser = webdriver.Chrome()
@@ -256,8 +292,10 @@ class FunctionalTest(StaticLiveServerTestCase):
                                match.url_name, kwargs=amend_kwargs)
 
             self.browser.get(self.live_server_url + new_path)
-            error_header = self.browser.find_element_by_css_selector("h1")
-            error_text = self.browser.find_element_by_css_selector("p")
+            error_header = self.wait_for(
+                lambda: self.browser.find_element_by_css_selector("h1"))
+            error_text = self.wait_for(
+                lambda: self.browser.find_element_by_css_selector("p"))
             self.assertEqual(error_header.text, "Not Found")
             self.assertEqual(
                 error_text.text,

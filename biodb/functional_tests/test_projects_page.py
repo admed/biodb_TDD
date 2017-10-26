@@ -13,15 +13,13 @@ class ProjectsPageTestCase(FunctionalTest):
         # project names are create randomly to prove that names in template
         # comes from db
         self.project_1 = Project.objects.create(
-            name="project_" + str(rd.randint(0, 100)))
+            name="project_" + str(rd.randint(2, 100)))
         self.project_2 = Project.objects.create(
-            name="project_" + str(rd.randint(0, 100)))
+            name="project_" + str(rd.randint(2, 100)))
 
     @tag('slow')
     def test_user_look_around_projects_page(self):
         # Create and log in user.
-        usr = User.objects.create_user(
-            username="USERNAME", password="PASSWORD")
         self.login_user(username="USERNAME", password="PASSWORD")
         # User visits projects page of BioDB app. He sees unordered list of
         # links with projects names.

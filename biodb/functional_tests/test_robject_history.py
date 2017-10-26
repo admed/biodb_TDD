@@ -7,10 +7,18 @@ from robjects.models import Robject
 class RobjectHistoryTestCase(FunctionalTest):
     reset_sequences = True
 
+    @property
+    def DEFAULT_URL(self):
+        return self.live_server_url + reverse("projects:robjects:robject_history",
+                                              kwargs={"project_name": "project_1", "robject_id": 1})
+
     def get_robject_history_url(self, proj, robj):
         """Method returning History url of robject"""
         self.browser.get(self.live_server_url +
                          f"/projects/{proj.name}/robjects/{robj.pk}/history/")
+
+    def test_user_enter_wrong_slug_in_url(self):
+        self.not_matching_url_slug_helper(self.ROBJECT_HISTORY_URL)
 
     def test_annonymous_user_visit_history_page(self):
         self.annonymous_testing_helper(self.ROBJECT_HISTORY_URL)

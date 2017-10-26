@@ -13,6 +13,9 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 
 class UserGeneratePDFRaport(FunctionalTest):
+    def test_user_enter_wrong_slug_in_url(self):
+        self.not_matching_url_slug_helper(self.ROBJECT_PDF_URL)
+
     def test_annonymous_user_visits_pdf_page(self):
         # CREATE SAMPLE PROJECT.
         proj = Project.objects.create(name="project_1")

@@ -29,6 +29,7 @@ from django.contrib import messages
 from django.utils.translation import ugettext as _
 from tools.history import generate_versions
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404
 # Create your views here.
 
 
@@ -57,7 +58,7 @@ class RobjectListView(LoginPermissionRequiredMixin, ListView):
         return context
 
     def get_permission_object(self):
-        project = Project.objects.get(name=self.kwargs["project_name"])
+        project = get_object_or_404(Project, name=self.kwargs["project_name"])
         return project
 
 
@@ -67,7 +68,7 @@ class ExportExcelView(LoginPermissionRequiredMixin, ExportViewMixin, View):
     permissions_required = ["can_visit_project"]
 
     def get_permission_object(self):
-        project = Project.objects.get(name=self.kwargs['project_name'])
+        project = get_object_or_404(Project, name=self.kwargs['project_name'])
         return project
 
     def get(self, request, project_name, *args, **kwargs):
@@ -94,7 +95,7 @@ class RobjectPDFeView(LoginPermissionRequiredMixin, View, ExportViewMixin):
     permissions_required = ["can_visit_project"]
 
     def get_permission_object(self):
-        project = Project.objects.get(name=self.kwargs['project_name'])
+        project = get_object_or_404(Project, name=self.kwargs['project_name'])
         return project
 
     def get(self, request, project_name, *args, **kwargs):
@@ -113,7 +114,7 @@ class SearchRobjectsView(LoginPermissionRequiredMixin, View):
     permissions_required = ["can_visit_project"]
 
     def get_permission_object(self):
-        project = Project.objects.get(name=self.kwargs['project_name'])
+        project = get_object_or_404(Project, name=self.kwargs['project_name'])
         return project
 
     def get(self, request, project_name):
@@ -232,7 +233,7 @@ class RobjectCreateView(LoginPermissionRequiredMixin, CreateView):
         return reverse("projects:robjects:robjects_list", kwargs={"project_name": self.kwargs["project_name"]})
 
     def get_permission_object(self):
-        project = Project.objects.get(name=self.kwargs["project_name"])
+        project = get_object_or_404(Project, name=self.kwargs["project_name"])
         return project
 
     def get(self, request, *args, **kwargs):
@@ -315,7 +316,7 @@ class RobjectDeleteView(LoginPermissionRequiredMixin, DeleteView):
     permissions_required = ["can_visit_project", "can_modify_project"]
 
     def get_permission_object(self):
-        project = Project.objects.get(name=self.kwargs['project_name'])
+        project = get_object_or_404(Project, name=self.kwargs['project_name'])
         return project
 
     def get_object(self):
@@ -351,7 +352,7 @@ class RobjectHistoryView(LoginPermissionRequiredMixin, DetailView):
     pk_url_kwarg = "robject_id"
 
     def get_permission_object(self):
-        p = Project.objects.get(name=self.kwargs["project_name"])
+        p = get_object_or_404(Project, name=self.kwargs["project_name"])
         return p
 
     def get_context_data(self, **kwargs):
