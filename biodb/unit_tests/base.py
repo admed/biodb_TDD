@@ -70,16 +70,30 @@ class FunctionalTest(TestCase):
         self.assertEqual(f"<h1>{error_message}</h1>", response.content.decode("utf-8"))
 
     def not_matching_url_slug_helper(self, requested_url):
+        """ Function tests all variations of valid urls with not matching slugs
+
+            Function tests all variations of urls. Single variation has all
+            slugs matching except one.
+
+            Example:
+            Following urls will be tested (robject edit urls):
+            1) /projects/<not_matching_project_name>/robjects/1/edit/
+            2) /projects/project_1/robjects/<not_matching_robject_id>/edit/
+        """
+        # get ResolverMatch object
         match = resolve(requested_url)
+        # get slug labels (project_name, robject_id etc.)
         kwargs = match.kwargs
         self.default_set_up_for_projects_pages()
 
         for name in kwargs:
+            # create copy of kwargs dict
             amend_kwargs = dict(kwargs)
             if name == "project_name":
                 amend_kwargs[name] = "random_project"
             else:
                 amend_kwargs[name] = 123456789
+            # create url with one slug not match
             new_path = reverse(match.app_name + ":" +
                                match.url_name, kwargs=amend_kwargs)
             response = self.client.get(new_path)
