@@ -42,13 +42,7 @@ class TestUserVisitsSampleDetails(FunctionalTest):
         self.assertEqual(current_url, expected_url)
 
     def test_user_without_project_permission_wants_to_vist_sample_detail_page(self):
-        # CREATE SAMPLE DATA.
-        usr, proj, robj, samp = self.create_sample_data()
-        # User want to visit sample detail page.
-        self.browser.get(self.live_server_url +
-                         f"/projects/{proj.name}/samples/{samp.id}/")
-        error = self.browser.find_element_by_css_selector("h1")
-        self.assertEqual(error.text, "403 Forbidden")
+        self.permission_view_testing_helper(self.SAMPLE_DETAILS_URL)
 
     def test_user_with_permission_seas_single_sample_detail_page_and_checks_static_elements(self):
         # CREATE SAMPLE DATA.

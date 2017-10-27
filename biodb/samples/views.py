@@ -64,24 +64,15 @@ class SampleListView(SingleTableView, ListView):
         return context
 
 
-class SampleDetailView(DetailView):
+class SampleDetailView(LoginPermissionRequiredMixin, DetailView):
     model = Sample
     template_name = 'samples/sample_details.html'
     pk_url_kwarg = "sample_id"
+    permissions_required = ["can_visit_project"]
 
     def get_permission_object(self):
         project = get_object_or_404(Project, name=self.kwargs['project_name'])
         return project
-
-    def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated():
-            permission_obj = self.get_permission_object()
-            if request.user.has_perm("projects.can_visit_project", permission_obj):
-                return super().dispatch(request, *args, **kwargs)
-            else:
-                raise PermissionDenied
-        else:
-            return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
 
     def get(self, request, *args, **kwargs):
         """A base view for displaying a list of objects."""

@@ -89,14 +89,8 @@ class SampleDetailViewTest(FunctionalTest):
                              f'/accounts/login/?next=/projects/{proj.name}/samples/{samp.id}/')
 
     def test_user_without_permision_seas_permission_denied(self):
-        user = self.default_set_up_for_projects_pages()
-        proj = Project.objects.create(name="project_1")
-        robj = Robject.objects.create(project=proj, name="robject_1")
-        samp = Sample.objects.create(code="sample_1", robject=robj)
-        response = self.client.get(f"/projects/{proj.name}/samples/{samp.id}/")
-        self.assertEqual(response.status_code, 403)
-        self.assertEqual("<h1>403 Forbidden</h1>",
-                         response.content.decode("utf-8"))
+        self.permission_testing_helper(
+            self.SAMPLE_DETAILS_URL, self.VISIT_PERMISSION_ERROR)
 
     def test_render_template_on_get(self):
         user, proj, robj, samp = self.create_sample_data()
