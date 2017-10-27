@@ -3,7 +3,7 @@ from django.db import IntegrityError
 from django.db import models
 from django.test import TestCase
 from projects.models import Project
-from projects.models import Tag
+from robjects.models import Tag
 
 
 class ProjectModelTestCase(TestCase):

@@ -1,4 +1,5 @@
-from projects.models import Project, Tag
+from projects.models import Project
+from robjects.models import Tag
 from unit_tests.base import FunctionalTest
 from guardian.shortcuts import assign_perm
 

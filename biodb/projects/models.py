@@ -52,15 +52,3 @@ class RelatedModelsCustomManager(models.Manager):
         """ Method specifies CQC as a default QS class to use inside models
         """
         return RelatedModelsCustomQuerysetClass(self.model, using=self._db)
-
-
-class Tag(models.Model):
-    name = models.CharField(max_length=100, unique=True)
-    project = models.ForeignKey(to=Project, related_name="tags", null=True)
-    objects = RelatedModelsCustomManager()
-
-    def __str__(self):
-        return self.name
-
-    def get_absolute_url(self):
-        return reverse("projects:tag_list", kwargs={"project_name": self.project.name})

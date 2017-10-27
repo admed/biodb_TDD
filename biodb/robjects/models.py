@@ -1,9 +1,10 @@
 from django.db import models
-from projects.models import Project, Tag
+from projects.models import Project
 from django.contrib.auth.models import User
 from ckeditor.fields import RichTextField
 from projects.models import RelatedModelsCustomManager
 from simple_history.models import HistoricalRecords
+from django.core.urlresolvers import reverse
 # Create your models here.
 
 
@@ -18,7 +19,7 @@ class Robject(models.Model):
         null=True, blank=True, auto_now_add=True)
     modify_by = models.ForeignKey(to=User, null=True, blank=True)
     modify_date = models.DateTimeField(null=True, auto_now=True)
-    tags = models.ManyToManyField(Tag, related_name="robjects", blank=True)
+    tags = models.ManyToManyField("Tag", related_name="robjects", blank=True)
     names = models.ManyToManyField("Name", related_name="robjects", blank=True)
     notes = RichTextField(blank=True)
     ref_seq = RichTextField(blank=True)
@@ -46,7 +47,6 @@ class Robject(models.Model):
         fields_dict = {field.verbose_name: getattr(
             instance, field.name) for field in instance._meta.get_fields() if field.name in fields}
         return sorted(fields_dict.items())
-
 
     def get_general_fields(self):
         '''
@@ -102,10 +102,21 @@ class Robject(models.Model):
         self.modify_by = value
 
 
-
 class Name(models.Model):
     name = models.CharField(max_length=100, unique=True)
     objects = RelatedModelsCustomManager()
 
     def __str__(self):
         return self.name
+
+
+class Tag(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    project = models.ForeignKey(to=Project, related_name="tags", null=True)
+    objects = RelatedModelsCustomManager()
+
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse("projects:tag_list", kwargs={"project_name": self.project.name})

@@ -10,7 +10,8 @@ from django.core.exceptions import PermissionDenied
 from django.shortcuts import render
 from django.views.generic import DetailView
 from django.views.generic import View, CreateView, DeleteView, UpdateView, ListView
-from projects.models import Project, Tag
+from projects.models import Project
+from robjects.models import Tag
 from projects.mixins import ExportViewMixin
 from robjects.models import Robject, Name
 from django import forms

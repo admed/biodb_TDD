@@ -11,7 +11,7 @@ from django.views.generic import ListView
 from django.views.generic import CreateView
 from django.views.generic.edit import UpdateView
 from django.views.generic.edit import DeleteView
-from projects.models import Tag
+from robjects.models import Tag
 from django.shortcuts import redirect
 from biodb import settings
 from django.core.urlresolvers import reverse

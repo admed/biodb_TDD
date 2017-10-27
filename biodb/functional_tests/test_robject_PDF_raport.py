@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.test import tag
 from functional_tests.base import FunctionalTest
 from projects.models import Project
-from projects.models import Tag
+from robjects.models import Tag
 from robjects.models import Robject
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
