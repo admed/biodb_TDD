@@ -18,6 +18,10 @@ class ProjectsPageTestCase(FunctionalTest):
             name="project_" + str(rd.randint(2, 100)))
 
     @tag('slow')
+    def test_login_required(self):
+        self.annonymous_testing_helper(self.PROJECT_LIST_URL)
+
+    @tag('slow')
     def test_user_look_around_projects_page(self):
         # Create and log in user.
         self.login_user(username="USERNAME", password="PASSWORD")
