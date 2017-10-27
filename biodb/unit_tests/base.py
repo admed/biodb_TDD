@@ -7,6 +7,9 @@ from guardian.shortcuts import assign_perm
 
 
 class FunctionalTest(TestCase):
+    # PERMISSIONS ERRORS
+    VISIT_PERMISSION_ERROR = "User doesn't have permission: can visit project"
+
     # DEFAULT SHORTCUT URLS
     LOGIN_URL = reverse("login")
     PROJECT_LIST_URL = reverse("projects:projects_list")

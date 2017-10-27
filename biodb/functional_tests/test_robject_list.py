@@ -12,6 +12,10 @@ class UserVisitRobjectsPage(FunctionalTest):
         self.annonymous_testing_helper(self.ROBJECT_LIST_URL)
 
     @tag('slow')
+    def test_user_without_visit_perm_visit_robjects_page(self):
+        self.permission_view_testing_helper(self.ROBJECT_LIST_URL)
+
+    @tag('slow')
     def test_logged_user_visit_robjects_page___no_robjects_exists(self):
         proj, usr = self.default_set_up_for_robjects_pages()
 

@@ -313,9 +313,11 @@ class RObjectsListViewTests(FunctionalTest):
         self.not_matching_url_slug_helper(self.ROBJECT_LIST_URL)
 
     def test_anonymous_user_gets_robjects_page(self):
-        Project.objects.create(name="PROJECT_1")
-        response = self.client.get("/projects/PROJECT_1/robjects/")
-        self.assertEqual(response.status_code, 302)
+        self.annonymous_testing_helper(requested_url=self.ROBJECT_LIST_URL)
+
+    def test_visit_permission(self):
+        self.permission_testing_helper(
+            url=self.ROBJECT_LIST_URL, error_message=self.VISIT_PERMISSION_ERROR)
 
     def test_render_template_on_get(self):
         user, proj = self.default_set_up_for_robjects_pages()
@@ -336,6 +338,10 @@ class RObjectsListViewTests(FunctionalTest):
 
 
 class SearchRobjectsViewTests(FunctionalTest):
+    def test_visit_permission(self):
+        self.permission_testing_helper(
+            self.ROBJECT_SEARCH_URL, error_message=self.VISIT_PERMISSION_ERROR)
+
     def test_view_returns_404_when_slug_not_match(self):
         self.not_matching_url_slug_helper(self.ROBJECT_SEARCH_URL)
 
