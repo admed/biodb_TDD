@@ -870,6 +870,10 @@ class RobjectsPdfTestCase(FunctionalTest):
         self.assertEqual(response.status_code, 302)
         self.assertIn('/accounts/login/?next=', response.url)
 
+    def test_visit_permission_required(self):
+        self.permission_testing_helper(
+            self.ROBJECT_PDF_URL, self.VISIT_PERMISSION_ERROR)
+
     def test_render_template_on_get(self):
         user, proj = self.default_set_up_for_robjects_pages()
         robj = Robject.objects.create(name="rob", project=proj)
