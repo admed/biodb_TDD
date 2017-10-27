@@ -61,14 +61,7 @@ class TestUserVisitsSampleList(FunctionalTest):
         self.assertEqual(current_url, expected_url)
 
     def test_user_without_project_visit_permission_tries_to_get_sample_list(self):
-        # CREATE SAMPLE PROJECT AND USER
-        usr, proj = self.project_set_up_using_default_data()
-
-        # User gets sample list. He doesn't have project visit permission.
-        self.get_sample_list(proj)
-        # He sees perrmision denied error.
-        error = self.browser.find_element_by_css_selector("h1")
-        self.assertEqual(error.text, "403 Forbidden")
+        self.permission_view_testing_helper(self.SAMPLE_LIST_URL)
 
     def test_user_discovers_table_and_previous_page_link(self):
         # CREATE SAMPLE PROJECT AND USER

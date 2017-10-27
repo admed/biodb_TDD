@@ -294,7 +294,7 @@ class TagCreateView(CreatePopupMixin, CreateView):
         return super().form_valid(form)
 
 
-class RobjectSamplesList(LoginPermissionRequiredMixin, SampleListView):
+class RobjectSamplesList(SampleListView):
     permissions_required = ["can_visit_project"]
 
     def get_queryset(self):

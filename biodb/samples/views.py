@@ -16,20 +16,11 @@ from django.shortcuts import get_object_or_404
 
 
 # @method_decorator(login_required, name='dispatch')
-class SampleListView(SingleTableView, ListView):
+class SampleListView(LoginPermissionRequiredMixin, SingleTableView, ListView):
     model = Sample
     template_name = "samples/samples_list.html"
     table_class = SampleTable
-
-    def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated():
-            permission_obj = self.get_permission_object()
-            if request.user.has_perm("projects.can_visit_project", permission_obj):
-                return super().dispatch(request, *args, **kwargs)
-            else:
-                raise PermissionDenied
-        else:
-            return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
+    permissions_required = ["can_visit_project"]
 
     def get_permission_object(self):
         project = get_object_or_404(Project, name=self.kwargs['project_name'])

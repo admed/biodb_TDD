@@ -11,6 +11,10 @@ from guardian.shortcuts import assign_perm
 
 
 class SampleListViewTest(FunctionalTest):
+    def test_visit_permission(self):
+        self.permission_testing_helper(
+            self.SAMPLE_LIST_URL, self.VISIT_PERMISSION_ERROR)
+
     def test_view_returns_404_when_slug_not_match(self):
         self.not_matching_url_slug_helper(self.SAMPLE_LIST_URL)
 
