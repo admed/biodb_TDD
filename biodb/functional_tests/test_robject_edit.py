@@ -1,8 +1,8 @@
 from functional_tests.base import FunctionalTest
 from guardian.shortcuts import assign_perm
 from django.core.urlresolvers import reverse
-from projects.models import Project, Tag
-from robjects.models import Robject, Name
+from projects.models import Project
+from robjects.models import Robject, Name, Tag
 from django.contrib.auth.models import User
 from datetime import datetime
 from datetime import timedelta

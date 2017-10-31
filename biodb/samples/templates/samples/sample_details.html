@@ -1,24 +1,24 @@
 {% extends "biodb/base.html" %} {% block content %} {% load render_table from django_tables2 %} {% load static %}
 
 <h1>
-  {{ sample.code }}
+  {{ object.code }}
 </h1>
 <ul class="sample-details">
 
-<li class="name">Robject name : {{ sample.robject.name }}</li>
-<li class="owner">Owner : {{ sample.owner }}</li>
-<li class="create_date">Create date : {{ sample.create_date }}</li>
-<li class="modify_date">Modify date : {{ sample.modify_date }}</li>
-<li class="modify_by">Modify by : {{ sample.modify_by }}</li>
-<li class="notes">Notes : {{ sample.notes }}</li>
-<li class="form">Form : {{ sample.form }}</li>
-<li class="source">Source :  {{ sample.source }}</li>
-<li class="status">Status : {{ sample.get_status_display }}</li>
+<li class="name">Robject name : {{ object.robject.name }}</li>
+<li class="owner">Owner : {{ object.owner }}</li>
+<li class="create_date">Create date : {{ object.create_date }}</li>
+<li class="modify_date">Modify date : {{ object.modify_date }}</li>
+<li class="modify_by">Modify by : {{ object.modify_by }}</li>
+<li class="notes">Notes : {{ object.notes }}</li>
+<li class="form">Form : {{ object.form }}</li>
+<li class="source">Source :  {{ object.source }}</li>
+<li class="status">Status : {{ object.get_status_display }}</li>
 
 </ul>
 
 
 
-<a class="link_back" href="{% url 'projects:samples:sample_list' sample.robject.project.name %}">Back to sample table</a>
+<a class="link_back" href="{% url 'projects:samples:sample_list' object.robject.project.name %}">Back to sample table</a>
 
 {% endblock %}
