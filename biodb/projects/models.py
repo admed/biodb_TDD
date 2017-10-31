@@ -1,7 +1,6 @@
 import string
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.core.urlresolvers import reverse
 # Create your models here.
 
 
@@ -45,8 +44,7 @@ class RelatedModelsCustomQuerysetClass(models.QuerySet):
 
 
 class RelatedModelsCustomManager(models.Manager):
-    """ Custom manager for related models (like Tag, Name)
-    """
+    """Custom manager for related models (like Tag, Name)"""
 
     def get_queryset(self):
         """ Method specifies CQC as a default QS class to use inside models
