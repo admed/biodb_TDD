@@ -1,30 +1,13 @@
-import re
-from django.contrib.auth.decorators import login_required
-from bs4 import BeautifulSoup
 from datetime import datetime
-from django.core.exceptions import PermissionDenied
-from django.db.models import CharField
-from biodb.mixins import LoginRequiredMixin
+from bs4 import BeautifulSoup
+
 from django.conf import settings
-from django.contrib.auth.decorators import login_required
-from django.db.models import ForeignKey
-from django.db.models import TextField
-from django.db.models import Q
-from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse
-from django.shortcuts import render
 from django.template.loader import get_template
-from django.utils.decorators import method_decorator
-from django.views.generic import DetailView
-from django.views.generic import ListView
-from django.views.generic import View
+
 from openpyxl import Workbook
-from projects.models import Project
-from robjects.models import Robject
-from robjects.models import Tag
 from weasyprint import CSS
 from weasyprint import HTML
-from django.http.response import HttpResponseRedirect
 
 
 class ExportViewMixin(object):
@@ -34,7 +17,8 @@ class ExportViewMixin(object):
     pdf_css_name = None
     css_sufix = None
 
-    def get_model_fields(self, is_relation=False, one_to_one=False, many_to_one=False, exclude_fields=None):
+    def get_model_fields(self, is_relation=False, one_to_one=False,
+                         many_to_one=False, exclude_fields=None):
         """
         Return list of fields names
         Attrs:
@@ -47,7 +31,7 @@ class ExportViewMixin(object):
                 if field.one_to_one:
                     if one_to_one:
                         model_fields.append(field.name)
-                elif (field.many_to_one and field.related_model):
+                elif field.many_to_one and field.related_model:
                     if many_to_one:
                         model_fields.append(field.name)
                 elif field.is_relation:
@@ -68,10 +52,10 @@ class ExportViewMixin(object):
                 only_text = BeautifulSoup(
                     str(field_value), 'html.parser').text
                 return only_text.strip()
-            else:
-                return field
+            return field
 
-    def export_to_excel(self, queryset, is_relation=False, one_to_one=False, many_to_one=False, exclude_fields=None):
+    def export_to_excel(self, queryset, is_relation=False, one_to_one=False,
+                        many_to_one=False, exclude_fields=None):
         """ Function handle export to excel view"""
 
         # create workbook

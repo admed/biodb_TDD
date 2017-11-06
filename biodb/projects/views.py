@@ -1,23 +1,20 @@
-from django.views.generic.list import ListView
-from projects.models import Project
-from django.core.exceptions import PermissionDenied
-from biodb.mixins import LoginRequiredMixin
-from django.http import HttpResponse
-from django.contrib.auth.decorators import login_required
-from django.core.exceptions import PermissionDenied
-from django.views.generic import View
-from django.views.generic import TemplateView
-from django.views.generic import ListView
-from django.views.generic import CreateView
-from django.views.generic.edit import UpdateView
-from django.views.generic.edit import DeleteView
-from robjects.models import Tag
-from django.shortcuts import redirect
 from biodb import settings
-from django.core.urlresolvers import reverse
 from biodb.mixins import LoginPermissionRequiredMixin
+from biodb.mixins import LoginRequiredMixin
+
+from django.http import Http404
+from django.core.exceptions import PermissionDenied
+from django.core.urlresolvers import reverse
+from django.views.generic import CreateView
+from django.views.generic import ListView
+from django.views.generic.edit import DeleteView
+from django.views.generic.edit import UpdateView
 from django.shortcuts import get_object_or_404
+from django.shortcuts import redirect
 # Create your views here.
+from robjects.models import Tag
+
+from projects.models import Project
 
 
 class ProjectListView(LoginRequiredMixin, ListView):
@@ -97,7 +94,8 @@ class TagDeleteView(LoginPermissionRequiredMixin, DeleteView):
     permissions_required = ["can_visit_project", "can_modify_project"]
 
     def get_success_url(self):
-        return reverse("projects:tag_list", kwargs={"project_name": self.kwargs['project_name']})
+        return reverse("projects:tag_list",
+                       kwargs={"project_name": self.kwargs['project_name']})
 
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated():

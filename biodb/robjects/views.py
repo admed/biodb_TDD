@@ -1,36 +1,44 @@
 """Views for robject search."""
 import re
-from biodb.mixins import LoginRequiredMixin, LoginPermissionRequiredMixin
+from biodb.mixins import LoginPermissionRequiredMixin
+
+from django_addanother.views import CreatePopupMixin
+from django_addanother.widgets import AddAnotherWidgetWrapper
+
+from django import forms
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
+from django.core.urlresolvers import resolve
+from django.core.urlresolvers import reverse
+from django.core.urlresolvers import Resolver404
 from django.db.models import CharField
 from django.db.models import ForeignKey
-from django.db.models import TextField
 from django.db.models import Q
+from django.db.models import TextField
 from django.http import Http404
-from django.core.exceptions import PermissionDenied
-from django.shortcuts import render
-from django.views.generic import DetailView
-from django.views.generic import View, CreateView, DeleteView, UpdateView, ListView
-from projects.models import Project
-from robjects.models import Tag
-from projects.mixins import ExportViewMixin
-from robjects.models import Robject, Name
-from django import forms
-from django_addanother.widgets import AddAnotherWidgetWrapper
-from django.core.urlresolvers import reverse, resolve
-from django.shortcuts import redirect
-from django_addanother.views import CreatePopupMixin
-from django.utils.decorators import method_decorator
-from guardian.mixins import LoginRequiredMixin as GuardianLoginRequiredMixin
-from guardian.mixins import PermissionRequiredMixin
-from biodb import settings
-from django.http import HttpResponseBadRequest, HttpResponse, HttpResponseForbidden
-from samples.views import SampleListView
-from django.core.urlresolvers import Resolver404
-from django.contrib import messages
-from django.utils.translation import ugettext as _
-from tools.history import generate_versions
-from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseBadRequest
 from django.shortcuts import get_object_or_404
+from django.shortcuts import redirect
+from django.shortcuts import render
+from django.utils.decorators import method_decorator
+from django.utils.translation import ugettext as _
+from django.views.generic import CreateView
+from django.views.generic import DeleteView
+from django.views.generic import DetailView
+from django.views.generic import ListView
+from django.views.generic import UpdateView
+from django.views.generic import View
+
+from projects.mixins import ExportViewMixin
+from projects.models import Project
+
+from robjects.models import Tag
+from robjects.models import Robject
+from robjects.models import Name
+
+from samples.views import SampleListView
+from tools.history import generate_versions
 # Create your views here.
 
 
@@ -53,8 +61,8 @@ class RobjectListView(LoginPermissionRequiredMixin, ListView):
         qs = Robject.objects.filter(project=project)
         return qs
 
-    def get_context_data(self):
-        context = super().get_context_data()
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
         context["project_name"] = self.kwargs["project_name"]
         return context
 
@@ -102,13 +110,12 @@ class RobjectPDFeView(LoginPermissionRequiredMixin, View, ExportViewMixin):
     def get(self, request, project_name, *args, **kwargs):
         self.object_list = Robject.objects.filter(pk__in=request.GET.values())
         if not self.object_list:
-            raise Http404(_("Empty list and '%(class_name)s.allow_empty' is False.") % {
-                'class_name': self.__class__.__name__,
-            })
+            class_name = self.__class__.__name__
+            raise Http404(_(f"""Empty list and {class_name}s.allow_empty'
+                            is False."""))
         return self.export_to_pdf(self.object_list)
 
 
-# TODO: Add multipleObjectMixin to inherit by this class??
 class SearchRobjectsView(LoginPermissionRequiredMixin, View):
     """View to show filtered list of objects."""
     model = Robject
@@ -219,19 +226,22 @@ class RobjectCreateView(LoginPermissionRequiredMixin, CreateView):
                 "names": AddAnotherWidgetWrapper(
                     widget=forms.SelectMultiple,
                     add_related_url=reverse(
-                        "projects:robjects:names_create", kwargs={"project_name": self.kwargs["project_name"]})
+                        "projects:robjects:names_create",
+                        kwargs={"project_name": self.kwargs["project_name"]})
                 ),
                 "tags":  AddAnotherWidgetWrapper(
                     widget=forms.SelectMultiple,
                     add_related_url=reverse(
-                        "projects:robjects:tags_create", kwargs={"project_name": self.kwargs["project_name"]})
+                        "projects:robjects:tags_create",
+                        kwargs={"project_name": self.kwargs["project_name"]})
                 ),
                 'project': forms.HiddenInput()
             })
         return form
 
     def get_success_url(self):
-        return reverse("projects:robjects:robjects_list", kwargs={"project_name": self.kwargs["project_name"]})
+        return reverse("projects:robjects:robjects_list",
+                       kwargs={"project_name": self.kwargs["project_name"]})
 
     def get_permission_object(self):
         project = get_object_or_404(Project, name=self.kwargs["project_name"])
@@ -303,7 +313,7 @@ class RobjectSamplesList(SampleListView):
         Overwrite orginal qs and add filtering by robject
         """
         # original queryset
-        project_name = self.kwargs['project_name']
+        # project_name = self.kwargs['project_name']
         robject_id = self.kwargs['robject_id']
         qs = super(RobjectSamplesList, self).get_queryset()
 
@@ -320,7 +330,7 @@ class RobjectDeleteView(LoginPermissionRequiredMixin, DeleteView):
         project = get_object_or_404(Project, name=self.kwargs['project_name'])
         return project
 
-    def get_object(self):
+    def get_object(self, queryset=None):
         ids = self.request.GET.values()
         qs = self.model.objects.filter(pk__in=ids)
         return qs
@@ -353,8 +363,8 @@ class RobjectHistoryView(LoginPermissionRequiredMixin, DetailView):
     pk_url_kwarg = "robject_id"
 
     def get_permission_object(self):
-        p = get_object_or_404(Project, name=self.kwargs["project_name"])
-        return p
+        project = get_object_or_404(Project, name=self.kwargs["project_name"])
+        return project
 
     def get_context_data(self, **kwargs):
         """Add CustomHistory objects as versions to context."""

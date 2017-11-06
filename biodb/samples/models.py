@@ -32,8 +32,7 @@ class Sample(models.Model):
                       (COMPLETED, 'Completed'),
                       (CANCELED, 'Canceled'),
                       (ON_HOLD, 'ON_HOLD'),
-                      (LIBRARY, 'Library')
-                      )
+                      (LIBRARY, 'Library'))
 
     code = models.CharField(max_length=100, blank=True)
     robject = models.ForeignKey(to=Robject, null=True)
@@ -51,14 +50,16 @@ class Sample(models.Model):
         return "Sample " + str(self.id)
 
     @staticmethod
-    def get_fields(instance, fields=[]):
+    def get_fields(instance, fields=None):
         """
         Return dictionary with object fields:
             {field.verbose_name: field class, ...}
 
         Attrs:
         """
+        if not fields:
+            fields = []
         fields_dict = {field.verbose_name: getattr(
             instance, field.name) for field in instance._meta.get_fields()
-            if field.name in fields}
+                       if field.name in fields}
         return sorted(fields_dict.items())

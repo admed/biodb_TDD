@@ -106,7 +106,7 @@ class SampleDetailViewTest(FunctionalTest):
         user, proj, robj, samp = self.create_sample_data()
         assign_perm("projects.can_visit_project", user, proj)
         response = self.client.get(f"/projects/{proj.name}/samples/{samp.id}/")
-        self.assertEqual(samp, response.context["sample"])
+        self.assertEqual(samp, response.context["object"])
 
     def test_view_filter_sample_get_in_context(self):
         user = self.default_set_up_for_projects_pages()
@@ -121,9 +121,9 @@ class SampleDetailViewTest(FunctionalTest):
         samp2 = Sample.objects.create(code="samp_2", robject=robj2)
 
         response = self.client.get(f"/projects/{proj1.name}/samples/{samp1.id}/")
-        responsed_sample = response.context['sample']
+        responsed_sample = response.context['object']
         self.assertEqual(responsed_sample.code, "samp1")
 
         response = self.client.get(f"/projects/{proj1.name}/samples/{samp2.id}/")
-        responsed_sample = response.context['sample']
+        responsed_sample = response.context['object']
         self.assertEqual(responsed_sample.code, "samp_2")

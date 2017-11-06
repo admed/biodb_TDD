@@ -6,7 +6,7 @@ class SampleTable(tables.Table):
     edit_entries = tables.TemplateColumn(
         '<a href="/projects/{{record.robject.project.name}}/samples/{{record.id}}/update/">Edit</a>')
     robject = tables.TemplateColumn(
-    '<a href="/projects/{{record.robject.project.name}}/samples/{{record.id}}/detail/">{{ record.robject }}</a>')
+        '<a href="/projects/{{record.robject.project.name}}/samples/{{record.id}}/detail/">{{ record.robject }}</a>')
 
     class Meta:
         model = Sample
