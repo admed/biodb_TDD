@@ -51,7 +51,7 @@ class FunctionalTest(TestCase):
         self.client.login(username="USERNAME", password="PASSWORD")
         return user
 
-    def default_set_up_for_robjects_pages(self):
+    def default_set_up_for_visit_robjects_pages(self):
         user = self.default_set_up_for_projects_pages()
         proj = Project.objects.create(name="project_1")
         assign_perm("projects.can_visit_project", user, proj)
@@ -86,7 +86,7 @@ class FunctionalTest(TestCase):
         self.assertEqual(response.status_code, 403)
         self.assertEqual(f"<h1>{error_message}</h1>", response.content.decode("utf-8"))
 
-    def not_matching_url_slug_helper(self, requested_url):
+    def not_matching_url_kwarg_helper(self, requested_url):
         """ Function tests all variations of valid urls with not matching slugs
 
             Function tests all variations of urls. Single variation has all

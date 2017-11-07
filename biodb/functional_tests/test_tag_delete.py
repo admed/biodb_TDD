@@ -16,7 +16,7 @@ class TagDeleteTestCase(FunctionalTest):
                          f"/projects/{proj.name}/tags/{tag.id}/delete/")
 
     def test_user_enter_wrong_slug_in_url(self):
-        self.not_matching_url_slug_helper(self.TAG_DELETE_URL)
+        self.not_matching_url_kwarg_helper(self.TAG_DELETE_URL)
 
     def test_annonymous_user_visits_tags_delete(self):
         # CREATE SAMPLE RPOJECT.

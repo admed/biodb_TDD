@@ -16,7 +16,7 @@ class SampleListViewTest(FunctionalTest):
             self.SAMPLE_LIST_URL, self.VISIT_PERMISSION_ERROR)
 
     def test_view_returns_404_when_slug_not_match(self):
-        self.not_matching_url_slug_helper(self.SAMPLE_LIST_URL)
+        self.not_matching_url_kwarg_helper(self.SAMPLE_LIST_URL)
 
     def test_anonymous_user_gets_samples_page(self):
         Project.objects.create(name="PROJECT_1")
@@ -29,14 +29,14 @@ class SampleListViewTest(FunctionalTest):
         self.assertIn('/accounts/login/?next=', response.url)
 
     def test_render_template_on_get(self):
-        user, proj = self.default_set_up_for_robjects_pages()
+        user, proj = self.default_set_up_for_visit_robjects_pages()
         assign_perm("projects.can_visit_project", user, proj)
         samp = Sample(code='1a2b3c')
         response = self.client.get(f"/projects/{proj.name}/samples/")
         self.assertTemplateUsed(response, "samples/samples_list.html")
 
     def test_view_get_list_of_samples_and_pass_it_to_context(self):
-        user, proj = self.default_set_up_for_robjects_pages()
+        user, proj = self.default_set_up_for_visit_robjects_pages()
         assign_perm("projects.can_visit_project", user, proj)
 
         robj = Robject.objects.create(name='robject', project=proj)
@@ -51,7 +51,7 @@ class SampleListViewTest(FunctionalTest):
         self.assertIn(samp3, response.context["sample_list"])
 
     def test_function_used(self):
-        user, proj = self.default_set_up_for_robjects_pages()
+        user, proj = self.default_set_up_for_visit_robjects_pages()
         assign_perm("projects.can_visit_project", user, proj)
 
         robj = Robject.objects.create(name='robject', project=proj)
@@ -63,7 +63,7 @@ class SampleListViewTest(FunctionalTest):
                          SampleListView.as_view().__name__)
 
     def test_context_data(self):
-        user, proj = self.default_set_up_for_robjects_pages()
+        user, proj = self.default_set_up_for_visit_robjects_pages()
         assign_perm("projects.can_visit_project", user, proj)
 
         robj = Robject.objects.create(name='robject', project=proj)
@@ -75,10 +75,10 @@ class SampleListViewTest(FunctionalTest):
 
 class SampleDetailViewTest(FunctionalTest):
     def test_view_returns_404_when_slug_not_match(self):
-        self.not_matching_url_slug_helper(self.SAMPLE_DETAILS_URL)
+        self.not_matching_url_kwarg_helper(self.SAMPLE_DETAILS_URL)
 
     def create_sample_data(self):
-        user, proj = self.default_set_up_for_robjects_pages()
+        user, proj = self.default_set_up_for_visit_robjects_pages()
         robj = Robject.objects.create(name='Robject', project=proj)
         samp = Sample.objects.create(code='code', robject=robj)
         return(user, proj, robj, samp)

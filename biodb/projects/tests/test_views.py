@@ -30,7 +30,7 @@ class ProjectListViewTestCase(FunctionalTest):
 
 class TagListViewTestCase(FunctionalTest):
     def test_view_returns_404_when_slug_not_match(self):
-        self.not_matching_url_slug_helper(self.TAG_LIST_URL)
+        self.not_matching_url_kwarg_helper(self.TAG_LIST_URL)
 
     def test_anonymous_user_is_redirected_to_login_page(self):
         proj = Project.objects.create(name='Project_1')
@@ -96,7 +96,7 @@ class TagListViewTestCase(FunctionalTest):
 
 class TagCreateViewTest(FunctionalTest):
     def test_view_returns_404_when_slug_not_match(self):
-        self.not_matching_url_slug_helper(self.TAG_CREATE_URL)
+        self.not_matching_url_kwarg_helper(self.TAG_CREATE_URL)
 
     def test_anonymous_user_is_redirected_to_login_page(self):
         proj = Project.objects.create(name='Project_1')
@@ -138,7 +138,7 @@ class TagCreateViewTest(FunctionalTest):
 
 class TagUpdateViewTestCase(FunctionalTest):
     def test_view_returns_404_when_slug_not_match(self):
-        self.not_matching_url_slug_helper(self.TAG_EDIT_URL)
+        self.not_matching_url_kwarg_helper(self.TAG_EDIT_URL)
 
     def test_anonymous_user_is_redirected_to_login_page(self):
         proj = Project.objects.create(name='Project_1')
@@ -169,7 +169,7 @@ class TagUpdateViewTestCase(FunctionalTest):
 
 class TagDeleteViewTestCase(FunctionalTest):
     def test_view_returns_404_when_slug_not_match(self):
-        self.not_matching_url_slug_helper(self.TAG_DELETE_URL)
+        self.not_matching_url_kwarg_helper(self.TAG_DELETE_URL)
 
     def test_anonymous_user_is_redirected_to_login_page(self):
         proj = Project.objects.create(name='Project_1')

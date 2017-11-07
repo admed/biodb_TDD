@@ -300,3 +300,11 @@ class FunctionalTest(StaticLiveServerTestCase):
             self.assertEqual(
                 error_text.text,
                 f"The requested URL {new_path} was not found on this server.")
+
+    def get_by_css(self, css):
+        return self.browser.find_element_by_css_selector(css)
+
+    def default_set_up_for_modify_robjects_pages(self):
+        proj, user = self.default_set_up_for_visit_robjects_pages()
+        assign_perm("can_modify_project", user, proj)
+        return proj, user

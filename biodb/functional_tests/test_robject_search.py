@@ -43,7 +43,7 @@ class SearchEngineTests(FunctionalTest):
     @tag('slow')
     def create_sample_robject_then_search_for_him_using_query(self, query,
                                                               robject_kwargs):
-        proj, user = self.default_set_up_for_robjects_pages()
+        proj, user = self.default_set_up_for_visit_robjects_pages()
 
         # Create sample robject.
         # User goes to robjects page.
@@ -75,11 +75,11 @@ class SearchEngineTests(FunctionalTest):
 
     @tag('slow')
     def test_user_enter_wrong_slug_in_url(self):
-        self.not_matching_url_slug_helper(self.ROBJECT_SEARCH_URL)
+        self.not_matching_url_kwarg_helper(self.ROBJECT_SEARCH_URL)
 
     @tag('slow')
     def test_user_perform_search_based_on_whole_robj_name_and_find_robject(self):
-        project, user = self.default_set_up_for_robjects_pages()
+        project, user = self.default_set_up_for_visit_robjects_pages()
 
         # Create sample robjects.
         Robject.objects.create(name="robject_1", project=project, id=1)
@@ -110,7 +110,7 @@ class SearchEngineTests(FunctionalTest):
     @tag('slow')
     def test_user_search_for_one_robject_using_name_fragment(self):
         # Default setup for robjects page.
-        proj, user = self.default_set_up_for_robjects_pages()
+        proj, user = self.default_set_up_for_visit_robjects_pages()
 
         # Create sample robjects.
         Robject.objects.create(name="robject_1", project=proj)
@@ -139,7 +139,7 @@ class SearchEngineTests(FunctionalTest):
     @tag('slow')
     def test_user_search_for_multiple_robjects_using_name_fragment(self):
         # Make set up for robjects page.
-        proj, user = self.default_set_up_for_robjects_pages()
+        proj, user = self.default_set_up_for_visit_robjects_pages()
 
         # Create sample robjects.
         Robject.objects.create(name="robject_1", project=proj)
@@ -179,7 +179,7 @@ class SearchEngineTests(FunctionalTest):
         # results.
 
         # Make set up for robjects page.
-        proj, usr = self.default_set_up_for_robjects_pages()
+        proj, usr = self.default_set_up_for_visit_robjects_pages()
 
         # Create sample robject.
         robj = Robject.objects.create(name="RoBjEcT_1", project=proj)
@@ -227,7 +227,7 @@ class SearchEngineTests(FunctionalTest):
     @tag('slow')
     def test_user_can_display_all_robjects_leaving_search_input_empty(self):
         # Make set up for robjects page.
-        proj, user = self.default_set_up_for_robjects_pages()
+        proj, user = self.default_set_up_for_visit_robjects_pages()
 
         # Create sample robjects.
         robj_1 = Robject.objects.create(name="robj_1", project=proj)
@@ -255,7 +255,7 @@ class SearchEngineTests(FunctionalTest):
     @tag('slow')
     def test_user_cant_search_robjects_from_outside_project(self):
         # Make set up for robjects page.
-        proj, user = self.default_set_up_for_robjects_pages()
+        proj, user = self.default_set_up_for_visit_robjects_pages()
 
         # Create new project and attach robject to it.
         other_proj = Project.objects.create(name="other_proj")
@@ -277,7 +277,7 @@ class SearchEngineTests(FunctionalTest):
     @tag('slow')
     def test_user_can_search_with_many_words(self):
         # Make set up for robjects page.
-        proj, user = self.default_set_up_for_robjects_pages()
+        proj, user = self.default_set_up_for_visit_robjects_pages()
 
         # Create sample robjects.
         robj_1 = Robject.objects.create(
