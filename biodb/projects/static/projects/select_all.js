@@ -5,5 +5,5 @@ $(function() {
     } else {
       $(".robject").prop("checked", false);
     }
-  })
+  });
 })
