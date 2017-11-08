@@ -21,6 +21,7 @@ from django.http import HttpResponseBadRequest
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.shortcuts import render
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
 from django.views.generic import CreateView
@@ -113,7 +114,11 @@ class RobjectPDFeView(LoginPermissionRequiredMixin, View, ExportViewMixin):
             class_name = self.__class__.__name__
             raise Http404(_(f"""Empty list and {class_name}s.allow_empty'
                             is False."""))
-        return self.export_to_pdf(self.object_list)
+        if 'request' not in kwargs:
+            kwargs['request'] = request
+        if 'create_date' not in kwargs:
+            kwargs['create_date'] = timezone.now()
+        return self.export_to_pdf(self.object_list, **kwargs)
 
 
 class SearchRobjectsView(LoginPermissionRequiredMixin, View):

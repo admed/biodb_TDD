@@ -29,7 +29,7 @@
         }
         @bottom-left {
             font-size: 70%;
-            content: "Created by: {{ user }}, {{ object.create_date }}";
+            content: "Created: {{ create_date }} by {{ request.user | capfirst}}";
             color: gray;
         }
     }
