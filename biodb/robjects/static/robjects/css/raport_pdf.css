@@ -1,12 +1,12 @@
 html, body {
-  font: 12pt/1.25 Fontin, serif !important;
+  font: 12pt/1.25 Fontin, serif;
   -weasy-hyphens: auto
 }
 
 body {
   text-align: justify;
-  padding: 0 !important;
-  background: none !important;
+  padding: 0;
+  background: none;
 }
 
 hr.navbar {
@@ -14,14 +14,14 @@ hr.navbar {
 }
 
 h1 {
-  page-break-before: auto !important;
+  page-break-before: auto;
   -weasy-bookmark-level: none;
-  margin-top: 0 !important;
+  margin-top: 0;
 }
 
 h1, h2, h3, h4 {
   text-align: left;
-  font-family: inherit !important;
+  font-family: inherit;
   font-size: 20px
 }
 
