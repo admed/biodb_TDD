@@ -1,20 +1,21 @@
+from django.core.urlresolvers import reverse
+from django.test import tag
+from django.utils import timezone
 from functional_tests.base import FunctionalTest
 from projects.models import Project
-from django.core.urlresolvers import reverse
 import time
 from guardian.shortcuts import assign_perm
-from django.test import override_settings
-import os
 from robjects.models import Robject, Name, Tag
-from unittest import skip
 from selenium.common.exceptions import NoSuchElementException
 import datetime
-from django.utils import timezone
 
 
+@tag('slow')
 class RobjectCreateTestCase(FunctionalTest):
     def get_robject_create_url(self):
-        return self.live_server_url + reverse("projects:robjects:robject_create", kwargs={"project_name": "project_1"})
+        return self.live_server_url +\
+            reverse("projects:robjects:robject_create",
+                    kwargs={"project_name": "project_1"})
 
     # TODO: check if below method is accurate and relevant
     def get_robject_form_url(self, proj):
@@ -73,8 +74,8 @@ class RobjectCreateTestCase(FunctionalTest):
             "body").send_keys(text)
         self.switch_to_main()
 
-    def set_project_and_user(self, project_name="project_1", username="USERNAME",
-                             password="PASSWORD"):
+    def set_project_and_user(self, project_name="project_1",
+                             username="USERNAME", password="PASSWORD"):
         proj = Project.objects.create(name=project_name)
         user = self.login_user(username, password)
         assign_perm("can_visit_project", user, proj)
@@ -324,7 +325,7 @@ class RobjectCreateTestCase(FunctionalTest):
         proj, user = self.set_project_and_user()
 
         # CREATE PREEXISTING TAG
-        preexisting_tag = Tag.objects.create(name="pre_tag", project=proj)
+        Tag.objects.create(name="pre_tag", project=proj)
 
         # User want to create new robject. He goes to robject form page.
         self.get_robject_create_page()
@@ -400,8 +401,8 @@ class RobjectCreateTestCase(FunctionalTest):
         self.assertEqual(self.browser.current_url,
                          self.get_robject_create_url())
 
-        el = self.browser.find_element_by_css_selector(
-            "#id_name:focus:required:invalid")
+        # el = self.browser.find_element_by_css_selector(
+        #     "#id_name:focus:required:invalid")
 
         # All previously filled fields remains filled.
         self.assertEqual(
@@ -423,7 +424,7 @@ class RobjectCreateTestCase(FunctionalTest):
         proj_dif = Project.objects.create(name="proj_diff")
 
         # CREATE RANDOM ROBJECT
-        robj = Robject.objects.create(name="taken_name", project=proj_dif)
+        Robject.objects.create(name="taken_name", project=proj_dif)
 
         # User want to create new robject. He goes to robject form page.
         self.get_robject_create_page()

@@ -1,16 +1,13 @@
+from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
+from django.test import tag
 from functional_tests.base import FunctionalTest
 from guardian.shortcuts import assign_perm
-from django.core.urlresolvers import reverse
 from projects.models import Project
 from robjects.models import Robject, Name, Tag
-from django.contrib.auth.models import User
-from datetime import datetime
-from datetime import timedelta
-import time
-from django.utils import timezone
-from selenium.webdriver.common.keys import Keys
 
 
+@tag('slow')
 class RobjectEditView(FunctionalTest):
 
     def set_up_robject_edit(self):
@@ -143,7 +140,11 @@ class RobjectEditView(FunctionalTest):
             f"//option[contains(text(), '{username}')]")
         author_option.click()
 
-    def confirm_robject_fields(self, data, names=[], tags=[]):
+    def confirm_robject_fields(self, data, names=None, tags=None):
+        if not names:
+            names = []
+        if not tags:
+            tags = []
         r = Robject.objects.last()
         for key, value in data.items():
             self.assertEqual(getattr(r, key), value)
@@ -153,8 +154,8 @@ class RobjectEditView(FunctionalTest):
             self.assertIn(name, robject_names)
 
         robject_tags = [tag.name for tag in r.tags.all()]
-        for tag in tags:
-            self.assertIn(tag, robject_tags)
+        for tag_object in tags:
+            self.assertIn(tag_object, robject_tags)
 
     def test_user_enter_wrong_slug_in_url(self):
         self.not_matching_url_slug_helper(self.ROBJECT_EDIT_URL)

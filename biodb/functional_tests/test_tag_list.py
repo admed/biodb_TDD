@@ -1,15 +1,12 @@
-import time
-from datetime import datetime
-from django.contrib.auth.models import User
-from django.test import tag
+from django.test import tag as tag_decorator
 from functional_tests.base import FunctionalTest
 from projects.models import Project
 from robjects.models import Tag
-from robjects.models import Robject
 from selenium.common.exceptions import NoSuchElementException
 from guardian.shortcuts import assign_perm
 
 
+@tag_decorator('slow')
 class TagListTestCase(FunctionalTest):
     def get_tag_list(self, proj):
         self.browser.get(self.live_server_url +
@@ -49,7 +46,7 @@ class TagListTestCase(FunctionalTest):
         self.get_tag_list(proj)
         # He seas header of the list 'Tag'
         header = self.browser.find_element_by_css_selector('h1')
-        self.assertEquals(header.text, "Tags:")
+        self.assertEqual(header.text, "Tags:")
         # He seas to come back to robjects list of project
         link = self.browser.find_element_by_css_selector("a.link_back")
         self.assertEqual(link.text, "Return back to project robjects page")
@@ -89,7 +86,7 @@ class TagListTestCase(FunctionalTest):
         # ASSIGN PERMISSION TO PROJECTS
         assign_perm("projects.can_visit_project", usr, proj)
         # CREATE TAGS TO PROJECTS
-        tag = Tag.objects.create(name='tag_1', project=proj)
+        Tag.objects.create(name='tag_1', project=proj)
         self.get_tag_list(proj)
         # User seas list of tags.
         list_of_tags = self.browser.find_elements_by_css_selector('li')
@@ -107,10 +104,10 @@ class TagListTestCase(FunctionalTest):
         assign_perm("projects.can_visit_project", usr, proj1)
         assign_perm("projects.can_visit_project", usr, proj2)
         # CREATE TAGS TO PROJECTS
-        tag1 = Tag.objects.create(name='t_1', project=proj1)
-        tag2 = Tag.objects.create(name='t_2', project=proj2)
-        tag3 = Tag.objects.create(name='t_3', project=proj2)
-        tag4 = Tag.objects.create(name='t_4', project=proj1)
+        Tag.objects.create(name='t_1', project=proj1)
+        Tag.objects.create(name='t_2', project=proj2)
+        Tag.objects.create(name='t_3', project=proj2)
+        Tag.objects.create(name='t_4', project=proj1)
         # User gets tag list page.
         self.get_tag_list(proj1)
         # User seas list of tags.

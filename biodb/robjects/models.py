@@ -39,11 +39,13 @@ class Robject(models.Model):
         unique_together = ("name", "project")
 
     @staticmethod
-    def get_fields(instance, fields=[]):
+    def get_fields(instance, fields=None):
         """
         Return dictionary with object fields: {field.verbose_name: field class, ...}
         Attrs:
         """
+        if not fields:
+            fields = []
         fields_dict = {field.verbose_name: getattr(
             instance, field.name) for field in instance._meta.get_fields() if field.name in fields}
         return sorted(fields_dict.items())

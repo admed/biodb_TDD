@@ -1,15 +1,11 @@
-import time
-from datetime import datetime
-from django.contrib.auth.models import User
-from django.test import tag
+from django.test import tag as tag_decorator
 from functional_tests.base import FunctionalTest
 from projects.models import Project
 from robjects.models import Tag
-from robjects.models import Robject
-from selenium.common.exceptions import NoSuchElementException
 from guardian.shortcuts import assign_perm
 
 
+@tag_decorator('slow')
 class TagUpdateTestCase(FunctionalTest):
     def get_tag_update(self, proj, tag):
         self.browser.get(self.live_server_url +
@@ -40,7 +36,7 @@ class TagUpdateTestCase(FunctionalTest):
         self.get_tag_update(proj, tag)
         # time.sleep(10)
         # He sees perrmision denied error.
-        error = self.browser.find_element_by_css_selector("h1")
+        self.browser.find_element_by_css_selector("h1")
         # self.assertEqual(error.text, "403 Forbidden")
 
     def test_user_checks_tag_section_header_and_return_link(self):
@@ -55,7 +51,7 @@ class TagUpdateTestCase(FunctionalTest):
         self.get_tag_update(proj, tag)
         # He seas header Update Tag.
         header = self.browser.find_element_by_css_selector('h1')
-        self.assertEquals(header.text, "Update Tag:")
+        self.assertEqual(header.text, "Update Tag:")
         # He seas to come back to tag list of project.
         link = self.browser.find_element_by_css_selector("a.link_back")
         self.assertEqual(link.text, "Return back to project tag list")

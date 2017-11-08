@@ -1,27 +1,24 @@
-import random as rd
 from django.contrib.auth.models import User
 from django.test import tag
 from functional_tests.base import FunctionalTest
 from projects.models import Project
-# import time
+from secrets import choice
 
 
+@tag('slow')
 class ProjectsPageTestCase(FunctionalTest):
-    @tag('slow')
     def setUp(self):
         super(ProjectsPageTestCase, self).setUp()
         # project names are create randomly to prove that names in template
         # comes from db
         self.project_1 = Project.objects.create(
-            name="project_" + str(rd.randint(2, 100)))
+            name="project_" + str(choice(range(2, 100))))
         self.project_2 = Project.objects.create(
-            name="project_" + str(rd.randint(2, 100)))
+            name="project_" + str(choice(range(2, 100))))
 
-    @tag('slow')
     def test_login_required(self):
         self.annonymous_testing_helper(self.PROJECT_LIST_URL)
 
-    @tag('slow')
     def test_user_look_around_projects_page(self):
         # Create and log in user.
         self.login_user(username="USERNAME", password="PASSWORD")
@@ -34,10 +31,9 @@ class ProjectsPageTestCase(FunctionalTest):
         self.assertIn(self.project_1.name, [p.text for p in projects])
         self.assertIn(self.project_2.name, [p.text for p in projects])
 
-    @tag('slow')
     def test_user_goes_to_certain_project(self):
         # Create and log in user.
-        usr = User.objects.create_user(
+        User.objects.create_user(
             username="USERNAME", password="PASSWORD")
         self.login_user(username="USERNAME", password="PASSWORD")
         # User visits projects page of BioDB app. He clicks one of projects

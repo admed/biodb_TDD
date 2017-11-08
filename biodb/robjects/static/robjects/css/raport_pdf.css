@@ -1,4 +1,4 @@
-<style>html, body {
+html, body {
   font: 12pt/1.25 Fontin, serif !important;
   -weasy-hyphens: auto
 }
@@ -37,7 +37,7 @@ table {
 
 caption, h3 {
   font-size: 14px;
-  padding: : 8px;
+  padding: 8px;
   line-height: 1.8;
   font-weight: bold;
   border-bottom: solid 1px;

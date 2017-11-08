@@ -61,14 +61,14 @@ class FunctionalTest(TestCase):
     def annonymous_testing_helper(self, requested_url):
         """ Helper method to use in annonymous redirections tests.
         """
-        proj = Project.objects.create(name="project_1")
+        Project.objects.create(name="project_1")
         response = self.client.get(requested_url)
 
         self.assertRedirects(
             response,
             reverse("login") + f"?next={requested_url}")
 
-    def permission_testing_helper(self, url, error_message, preassigned_perms=[]):
+    def permission_testing_helper(self, url, error_message, preassigned_perms=None):
         """ Helper method to use in perrmissions tests.
 
             Args:
@@ -77,9 +77,11 @@ class FunctionalTest(TestCase):
                     valuation fails
                 preassigned_perms: list of permissions already attached to user
         """
+        if not preassigned_perms:
+            preassigned_perms = []
         user = self.default_set_up_for_projects_pages()
         proj = Project.objects.create(name="project_1")
-        robj = Robject.objects.create(name="robject_1", project=proj)
+        Robject.objects.create(name="robject_1", project=proj)
         for perm in preassigned_perms:
             assign_perm(perm, user, proj)
         response = self.client.get(url)
