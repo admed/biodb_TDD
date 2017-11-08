@@ -1,8 +1,8 @@
-from django.test import TestCase, RequestFactory
-from biodb.mixins import LoginRequiredMixin
-from django.views.generic import View
-from django.contrib.auth.models import User, AnonymousUser
-from django.core.exceptions import PermissionDenied
+# from django.test import TestCase, RequestFactory
+# from biodb.mixins import LoginRequiredMixin
+# from django.views.generic import View
+# from django.contrib.auth.models import User, AnonymousUser
+# from django.core.exceptions import PermissionDenied
 
 # ZASTANOWIĆ SIĘ CZY NIE ZREZYGNOWAĆ Z TEGO ZBIORU TESTÓW.
 # TESTY TU ZAWARTE TESTUJĄ IMPLEMENTACJĘ A NIE DZIAŁANIE, WIĘC SĄ ŹLE

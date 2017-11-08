@@ -15,10 +15,6 @@ from robjects.views import NameCreateView, TagCreateView
 from biodb import settings
 from guardian.shortcuts import assign_perm
 from tools.history import CustomHistory
-from io import BytesIO
-from openpyxl import load_workbook
-from unittest.mock import patch, call
-import datetime
 
 
 class Robjects_export_to_excel_view_test(FunctionalTest):
@@ -278,7 +274,7 @@ class RobjectSamplesListTest(FunctionalTest):
         user, proj = self.default_set_up_for_robjects_pages()
         robj = Robject.objects.create(name="rob")
         assign_perm("projects.can_visit_project", user, proj)
-        samp = Sample(code='1a2b3c')
+        Sample.objects.create(code='1a2b3c')
         response = self.client.get(f"/projects/{proj.name}/robjects/{robj.id}/samples/")
         self.assertTemplateUsed(response, "samples/samples_list.html")
 
@@ -632,8 +628,7 @@ class RobjectCreateViewTestCase(FunctionalTest):
     def test_view_assign_create_by_to_new_robject(self):
         user, proj = self.default_set_up_for_robjects_pages()
         assign_perm("projects.can_modify_project", user, proj)
-        response = self.client.post(
-            self.get_robject_create_url(proj), {"name": "test"})
+        self.client.post(self.get_robject_create_url(proj), {"name": "test"})
         r = Robject.objects.last()
         self.assertEqual(r.create_by, user)
 
@@ -772,7 +767,7 @@ class RobjectDeleteTestCase(FunctionalTest):
         self.annonymous_testing_helper(self.ROBJECT_DELETE_URL)
 
     def test_view_refuse_access_to_users_without_both_permissions(self):
-        user = self.default_set_up_for_projects_pages()
+        self.default_set_up_for_projects_pages()
         proj = Project.objects.create(name="project_1")
         response = self.client.get(self.ROBJECT_DELETE_URL)
         self.assertEqual(response.status_code, 403)

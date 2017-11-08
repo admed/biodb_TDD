@@ -169,7 +169,7 @@ class LogoutViewTests(TestCase):
     def test_view_logs_out_user(self):
         u = User.objects.create_user(username="USERNAME", password="PASSWORD")
         self.client.login(username="USERNAME", password="PASSWORD")
-        response = self.client.get("/accounts/logout/")
+        self.client.get("/accounts/logout/")
         session_user = auth.get_user(self.client)
         self.assertNotEqual(session_user, u)
         self.assertIsInstance(session_user, AnonymousUser)

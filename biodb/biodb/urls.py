@@ -1,9 +1,6 @@
 from django.conf.urls import include, url
 from django.contrib import admin
 from biodb import views
-from django.http import HttpResponse
-from django.shortcuts import render
-from projects.views import ProjectListView
 from django.conf import settings
 
 
