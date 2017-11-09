@@ -44,7 +44,7 @@ class TagListTestCase(FunctionalTest):
         assign_perm("projects.can_visit_project", usr, proj)
         # User gets sample list.
         self.get_tag_list(proj)
-        # He seas header of the list 'Tag'
+        # He sees header of the list 'Tag'
         header = self.browser.find_element_by_css_selector('h1')
         self.assertEqual(header.text, "Tags:")
         # He seas to come back to robjects list of project

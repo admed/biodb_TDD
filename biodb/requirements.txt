@@ -10,3 +10,4 @@ beautifulsoup4
 # problems with cairocffi 0.7 and 0.8 to install weasyprint
 cairocffi==0.6
 weasyprint
+django-bootstrap-breadcrumbs>=0.8.2
