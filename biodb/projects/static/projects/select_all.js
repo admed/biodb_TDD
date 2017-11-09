@@ -6,4 +6,4 @@ $(function() {
       $(".robject").prop("checked", false);
     }
   });
-})
+});

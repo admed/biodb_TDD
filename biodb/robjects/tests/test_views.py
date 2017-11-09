@@ -299,7 +299,7 @@ class RobjectSamplesListTest(FunctionalTest):
 
         robj = Robject.objects.create(name='robject', project=proj)
 
-        samp1 = Sample.objects.create(code='1a1a', robject=robj)
+        Sample.objects.create(code='1a1a', robject=robj)
         response = self.client.get(f"/projects/{proj.name}/robjects/{robj.id}/samples/")
         self.assertEqual(proj, response.context['project'])
 
@@ -326,7 +326,7 @@ class RObjectsListViewTests(FunctionalTest):
 
         robj1 = Robject.objects.create(author=user, project=proj)
         robj2 = Robject.objects.create(author=user, project=proj)
-        robj3 = Robject.objects.create(author=user, project=proj)
+        Robject.objects.create(author=user, project=proj)
         response = self.client.get(f"/projects/{proj.name}/robjects/")
 
         self.assertIn(robj1, response.context["robject_list"])
@@ -351,8 +351,8 @@ class SearchRobjectsViewTests(FunctionalTest):
     def test_view_gets_valid_query_on_get__view_pass_qs_to_template(self):
         user, proj = self.default_set_up_for_robjects_pages()
 
-        robject_1 = Robject.objects.create(name="robject_1", project=proj)
-        robject_2 = Robject.objects.create(name="robject_2", project=proj)
+        Robject.objects.create(name="robject_1", project=proj)
+        Robject.objects.create(name="robject_2", project=proj)
 
         response = self.client.get(
             f"/projects/{proj.name}/robjects/search/", {"query": "robject_1"})
@@ -370,8 +370,8 @@ class SearchRobjectsViewTests(FunctionalTest):
     def test_view_can_perform_search_basing_on_part_of_robject_name(self):
         user, proj = self.default_set_up_for_robjects_pages()
 
-        robject_1 = Robject.objects.create(name="robject_1", project=proj)
-        robject_2 = Robject.objects.create(name="robject_2", project=proj)
+        Robject.objects.create(name="robject_1", project=proj)
+        Robject.objects.create(name="robject_2", project=proj)
 
         response = self.client.get(
             f"/projects/{proj.name}/robjects/search/", {"query": "object_1"})  # part!
@@ -457,8 +457,8 @@ class SearchRobjectsViewTests(FunctionalTest):
     def test_empty_query_will_display_all_robjects(self):
         user, proj = self.default_set_up_for_robjects_pages()
 
-        robj_1 = Robject.objects.create(project=proj)
-        robj_2 = Robject.objects.create(project=proj)
+        Robject.objects.create(project=proj)
+        Robject.objects.create(project=proj)
 
         resp = self.client.get(
             f"/projects/{proj.name}/robjects/search/", {"query": ""})
@@ -635,8 +635,7 @@ class RobjectCreateViewTestCase(FunctionalTest):
     def test_view_assign_modify_by_to_new_robject(self):
         user, proj = self.default_set_up_for_robjects_pages()
         assign_perm("projects.can_modify_project", user, proj)
-        response = self.client.post(
-            self.get_robject_create_url(proj), {"name": "test"})
+        self.client.post(self.get_robject_create_url(proj), {"name": "test"})
         r = Robject.objects.last()
         self.assertEqual(r.modify_by, user)
 
@@ -768,7 +767,7 @@ class RobjectDeleteTestCase(FunctionalTest):
 
     def test_view_refuse_access_to_users_without_both_permissions(self):
         self.default_set_up_for_projects_pages()
-        proj = Project.objects.create(name="project_1")
+        Project.objects.create(name="project_1")
         response = self.client.get(self.ROBJECT_DELETE_URL)
         self.assertEqual(response.status_code, 403)
         self.assertEqual(f"<h1>User doesn't have permission: can visit project</h1>",
@@ -821,7 +820,7 @@ class RobjectEditView(FunctionalTest):
     def test_view_render_bounded_form(self):
         user, proj = self.default_set_up_for_robjects_pages()
         assign_perm("can_modify_project", user, proj)
-        r = Robject.objects.create(project=proj, name="ROBJECT_NAME")
+        Robject.objects.create(project=proj, name="ROBJECT_NAME")
         response = self.client.get(self.ROBJECT_EDIT_URL)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
@@ -829,22 +828,21 @@ class RobjectEditView(FunctionalTest):
 
     def test_view_updates_modify_by(self):
         user, proj = self.default_set_up_for_robjects_pages()
-        r = Robject.objects.create(
+        Robject.objects.create(
             project=proj, name="ROBJECT_NAME", create_by=user, modify_by=user)
         new_user = User.objects.create_user(
             username="new_user", password="new_password")
         assign_perm("can_visit_project", new_user, proj)
         assign_perm("can_modify_project", new_user, proj)
         self.client.login(username="new_user", password="new_password")
-        response = self.client.post(
-            self.ROBJECT_EDIT_URL, {"name": "new_name"})
+        self.client.post(self.ROBJECT_EDIT_URL, {"name": "new_name"})
         self.assertEqual(Robject.objects.last().create_by.username, "USERNAME")
         self.assertEqual(Robject.objects.last().modify_by.username, "new_user")
 
     def test_view_redirects_on_post(self):
         user, proj = self.default_set_up_for_robjects_pages()
         assign_perm("can_modify_project", user, proj)
-        r = Robject.objects.create(
+        Robject.objects.create(
             project=proj, name="ROBJECT_NAME", create_by=user, modify_by=user)
         response = self.client.post(
             self.ROBJECT_EDIT_URL, {"name": "new_name"})
@@ -893,7 +891,7 @@ class RobjectsPdfTestCase(FunctionalTest):
         self.assertIsNotNone(pdf_file)
         # open and read pdf file
         read_pdf = PyPDF2.PdfFileReader(pdf_file, strict=False)
-        number_of_pages = read_pdf.getNumPages()
+        # number_of_pages = read_pdf.getNumPages()
         page = read_pdf.getPage(0)
         page_content = page.extractText()
         # chcek if robjects name is in page content
