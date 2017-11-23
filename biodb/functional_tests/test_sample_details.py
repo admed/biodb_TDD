@@ -23,7 +23,7 @@ class TestUserVisitsSampleDetails(FunctionalTest):
         return(usr, proj, robj, samp)
 
     def test_user_enter_wrong_slug_in_url(self):
-        self.not_matching_url_kwarg_helper(self.SAMPLE_DETAILS_URL)
+        self.not_matching_url_slug_helper(self.SAMPLE_DETAILS_URL)
 
     def test_annonymous_user_visits_samples_details(self):
         # CREATE SAMPLE PROJECT BASIC INFORMATIONS.

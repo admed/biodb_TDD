@@ -100,7 +100,7 @@ class RobjectCreateTestCase(FunctionalTest):
         )
 
     def test_user_enter_wrong_slug_in_url(self):
-        self.not_matching_url_kwarg_helper(self.ROBJECT_CREATE_URL)
+        self.not_matching_url_slug_helper(self.ROBJECT_CREATE_URL)
 
     def test_user_fill_full_form_with_multiple_names_tags_and_files(self):
         proj, user = self.set_project_and_user()

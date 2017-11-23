@@ -17,7 +17,7 @@ from selenium.common.exceptions import NoSuchElementException
 @tag('slow')
 class UserGeneratesExcel(FunctionalTest):
     def test_user_enter_wrong_slug_in_url(self):
-        self.not_matching_url_kwarg_helper(self.ROBJECT_EXCEL_URL)
+        self.not_matching_url_slug_helper(self.ROBJECT_EXCEL_URL)
 
     def test_annonumus_user_visits_robject_excel_page(self):
         self.annonymous_testing_helper(requested_url=self.ROBJECT_EXCEL_URL)

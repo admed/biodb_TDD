@@ -22,7 +22,7 @@ class StaticFilesTests(FunctionalTest):
 
     @tag('slow')
     def test_robjects_list(self):
-        proj, usr = self.default_set_up_for_visit_robjects_pages()
+        proj, usr = self.default_set_up_for_robjects_pages()
 
         # create robject inside project
         Robject.objects.create(project=proj, author=usr)

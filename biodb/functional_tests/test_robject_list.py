@@ -5,7 +5,7 @@ from robjects.models import Robject
 
 class UserVisitRobjectsPage(FunctionalTest):
     def test_user_enter_wrong_slug_in_url(self):
-        self.not_matching_url_kwarg_helper(self.ROBJECT_LIST_URL)
+        self.not_matching_url_slug_helper(self.ROBJECT_LIST_URL)
 
     @tag('slow')
     def test_annonymous_user_visit_robjects_page(self):
@@ -17,7 +17,7 @@ class UserVisitRobjectsPage(FunctionalTest):
 
     @tag('slow')
     def test_logged_user_visit_robjects_page___no_robjects_exists(self):
-        proj, usr = self.default_set_up_for_visit_robjects_pages()
+        proj, usr = self.default_set_up_for_robjects_pages()
 
         # Logged user visit robjects page. He sees robjects table. Table has
         # several columns: robject id, robject name, robject create date,
@@ -42,7 +42,7 @@ class UserVisitRobjectsPage(FunctionalTest):
 
     @tag('slow')
     def test_logged_user_visit_robjects_page___robjects_exists_in_project(self):
-        proj, usr = self.default_set_up_for_visit_robjects_pages()
+        proj, usr = self.default_set_up_for_robjects_pages()
 
         # Create sample robjects.
         robj1 = Robject.objects.create(

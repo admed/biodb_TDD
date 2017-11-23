@@ -157,7 +157,7 @@ class RobjectEditView(FunctionalTest):
             self.assertIn(tag, robject_tags)
 
     def test_user_enter_wrong_slug_in_url(self):
-        self.not_matching_url_kwarg_helper(self.ROBJECT_EDIT_URL)
+        self.not_matching_url_slug_helper(self.ROBJECT_EDIT_URL)
 
     def test_annonymous_user_goes_to_confirmation_page(self):
         self.annonymous_testing_helper(self.ROBJECT_EDIT_URL)

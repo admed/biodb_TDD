@@ -305,6 +305,6 @@ class FunctionalTest(StaticLiveServerTestCase):
         return self.browser.find_element_by_css_selector(css)
 
     def default_set_up_for_modify_robjects_pages(self):
-        proj, user = self.default_set_up_for_visit_robjects_pages()
+        proj, user = self.default_set_up_for_robjects_pages()
         assign_perm("can_modify_project", user, proj)
         return proj, user

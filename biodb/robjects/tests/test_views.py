@@ -268,7 +268,7 @@ class RobjectSamplesListTest(FunctionalTest):
         self.not_matching_url_kwarg_helper(self.SAMPLE_LIST_URL)
 
     def test_anonymous_user_gets_samples_page(self):
-        proj = Project.objects.create(name="PROJECT_1")
+        proj = Project.objects.create(name="project_1")
         Robject.objects.create(name="Robject_1", project=proj)
         response = self.client.get(self.SAMPLE_LIST_URL)
         self.assertEqual(response.status_code, 302)
