@@ -26,10 +26,6 @@ class TagsListView(LoginPermissionRequiredMixin, ListView):
     template_name = 'projects/tags_list.html'
     permissions_required = ["can_visit_project"]
 
-    def get_permission_object(self):
-        project = get_object_or_404(Project, name=self.kwargs['project_name'])
-        return project
-
     def get_queryset(self):
         """
         Overwrite orginal qs and add filtering by project_name
@@ -52,12 +48,6 @@ class TagCreateView(LoginPermissionRequiredMixin, CreateView):
     template_name = 'projects/tag_create.html'
     fields = ['name']
     permissions_required = ["can_visit_project", "can_modify_project"]
-
-    def get_permission_object(self):
-        project = get_object_or_404(
-            Project, name=self.kwargs['project_name'])
-        # project = Project.objects.get(name=self.kwargs['project_name'])
-        return project
 
     def get_context_data(self, **kwargs):
         context = super(TagCreateView, self).get_context_data(**kwargs)
@@ -82,10 +72,6 @@ class TagUpdateView(LoginPermissionRequiredMixin, UpdateView):
     template_name = "projects/tag_update.html"
     permissions_required = ["can_visit_project", "can_modify_project"]
 
-    def get_permission_object(self):
-        project = get_object_or_404(Project, name=self.kwargs['project_name'])
-        return project
-
 
 class TagDeleteView(LoginPermissionRequiredMixin, DeleteView):
     model = Tag
@@ -107,7 +93,3 @@ class TagDeleteView(LoginPermissionRequiredMixin, DeleteView):
                 raise PermissionDenied
         else:
             return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
-
-    def get_permission_object(self):
-        project = get_object_or_404(Project, name=self.kwargs['project_name'])
-        return project

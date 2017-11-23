@@ -29,10 +29,6 @@ class SampleListView(LoginPermissionRequiredMixin, SingleTableView, ListView):
         request.session['_succes_url'] = self.request.build_absolute_uri()
         return super(SampleListView, self).dispatch(request, *args, **kwargs)
 
-    def get_permission_object(self):
-        project = self.project
-        return project
-
     def get_queryset(self):
         """
         Overwrite orginal qs and add filtering by robject
@@ -53,7 +49,3 @@ class SampleDetailView(LoginPermissionRequiredMixin, DetailView):
     template_name = 'samples/sample_details.html'
     pk_url_kwarg = "sample_id"
     permissions_required = ["can_visit_project"]
-
-    def get_permission_object(self):
-        project = get_object_or_404(Project, name=self.kwargs['project_name'])
-        return project
