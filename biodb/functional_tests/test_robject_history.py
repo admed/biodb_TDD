@@ -1,3 +1,4 @@
+from django.core.urlresolvers import reverse
 from django.test import tag
 from functional_tests.base import FunctionalTest
 from robjects.models import Robject

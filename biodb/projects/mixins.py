@@ -90,7 +90,7 @@ class ExportViewMixin(object):
         output['Content-Disposition'] = 'attachment; filename=' + file_name
         return output
 
-    def export_to_pdf(self, queryset):
+    def export_to_pdf(self, queryset, **kwargs):
         ''' View generates pdf view based on models template name and
             model fields.
             In model define:
@@ -100,9 +100,8 @@ class ExportViewMixin(object):
         # create template from file
         html_template = get_template(self.pdf_template_name)
         # get single element list robjects
-
-        rendered_html = html_template.render(
-            {'robjects': queryset}).encode(encoding="UTF-8")
+        kwargs['robjects'] = queryset
+        rendered_html = html_template.render(kwargs).encode(encoding="UTF-8")
         # generate pdf from rendered html
         pdf_file = HTML(string=rendered_html).write_pdf(
             stylesheets=[CSS(settings.BASE_DIR + self.css_sufix +

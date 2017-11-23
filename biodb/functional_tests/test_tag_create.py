@@ -1,15 +1,10 @@
-import time
-from datetime import datetime
-from django.contrib.auth.models import User
 from django.test import tag
 from functional_tests.base import FunctionalTest
 from projects.models import Project
-from robjects.models import Tag
-from robjects.models import Robject
-from selenium.common.exceptions import NoSuchElementException
 from guardian.shortcuts import assign_perm
 
 
+@tag('slow')
 class TagCreateTestCase(FunctionalTest):
     def get_tag_create(self, proj):
         self.browser.get(self.live_server_url +
@@ -49,10 +44,10 @@ class TagCreateTestCase(FunctionalTest):
         self.get_tag_create(proj)
         # He seas satble element of page
         header = self.browser.find_element_by_css_selector("h1")
-        self.assertEquals(header.text, "Create Tag:")
+        self.assertEqual(header.text, "Create Tag:")
         # He seas form to input name of tag.
         form = self.browser.find_element_by_css_selector("p")
-        self.assertEquals(form.text, "Name:")
+        self.assertEqual(form.text, "Name:")
         # He seas link back to sample page.
         link = self.browser.find_element_by_css_selector("a.link_back")
         self.assertEqual(link.text, "Return back to projects tag page")
@@ -75,7 +70,7 @@ class TagCreateTestCase(FunctionalTest):
             "input[type='submit']").click()
         # He seas tag created in tag list.
         tags_list = self.browser.find_elements_by_css_selector("li")
-        self.assertEquals(len(tags_list), 1)
+        self.assertEqual(len(tags_list), 1)
 
     def test_user_wants_to_create_tag_for_not_existing_project(self):
         # CREATE SAMPLE PROJECT AND USER

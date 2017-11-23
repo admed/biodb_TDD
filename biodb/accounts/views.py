@@ -1,14 +1,13 @@
 from django.shortcuts import render
-from django.views.generic import View, FormView
+from django.views.generic import FormView
 from accounts.forms import SignUpForm, LoginForm
 from django.shortcuts import redirect
 from django.core.mail import mail_admins
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponse
-from django.core.exceptions import PermissionDenied
+from django.contrib.auth import authenticate
+from django.contrib.auth import login
+from django.contrib.auth import logout
 from django.core.urlresolvers import reverse
-# Create your views here.
 
 
 class LoginView(FormView):
@@ -22,11 +21,10 @@ class LoginView(FormView):
         if user is not None and user.is_active:
             login(self.request, user)
             return redirect(reverse("projects:projects_list"))
-        else:
-            form.add_error(None, "Invalid username or password.")
-            context = self.get_context_data(**kwargs)
-            context["form"] = form
-            return render(self.request, self.template_name, context)
+        form.add_error(None, "Invalid username or password.")
+        context = self.get_context_data(**kwargs)
+        context["form"] = form
+        return render(self.request, self.template_name, context)
 
 
 class SignUpView(FormView):

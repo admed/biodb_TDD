@@ -1,4 +1,3 @@
-from django.core.exceptions import PermissionDenied, ImproperlyConfigured
 from django.http import HttpResponseForbidden
 from django.shortcuts import redirect
 from biodb import settings
@@ -22,5 +21,4 @@ class LoginPermissionRequiredMixin(object):
                     return HttpResponseForbidden(
                         f"<h1>User doesn't have permission: {_permission}</h1>")
             return super().dispatch(request, *args, **kwargs)
-        else:
-            return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
+        return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))

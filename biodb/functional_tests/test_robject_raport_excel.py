@@ -1,16 +1,6 @@
-from django.contrib.auth.models import User
 from functional_tests.base import FunctionalTest
-from projects.models import Project
 from robjects.models import Robject
-from robjects.models import Tag
-from django.contrib.auth.models import User
 from django.test import tag
-from selenium import webdriver
-from selenium.common.exceptions import WebDriverException
-from selenium.common.exceptions import TimeoutException
-from selenium.webdriver.support.ui import WebDriverWait as wait
-import time
-from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import NoSuchElementException
 
 
@@ -26,7 +16,7 @@ class UserGeneratesExcel(FunctionalTest):
         # CREATE SAMPLE PROJECT AND USER
         usr, proj = self.project_set_up_using_default_data()
         # CREATE SAMPLE ROBJECT.
-        robj = Robject.objects.create(name='robject', project=proj)
+        Robject.objects.create(name='robject', project=proj)
         self.browser.get(self.live_server_url +
                          f"/projects/{proj.name}/robjects/excel-raport/")
         error = self.browser.find_element_by_css_selector("h1")

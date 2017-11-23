@@ -1,6 +1,5 @@
-from django.conf.urls import include, url
+from django.conf.urls import url
 from accounts import views
-from django.contrib.auth import logout
 
 urlpatterns = [
     # Examples:

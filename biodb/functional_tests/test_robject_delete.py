@@ -1,12 +1,11 @@
+from django.test import tag
 from functional_tests.base import FunctionalTest
-from projects.models import Project
 from robjects.models import Robject
-from django.contrib.auth.models import User
-import time
 from guardian.shortcuts import assign_perm
 from selenium.common.exceptions import NoSuchElementException
 
 
+@tag('slow')
 class RobjectDeleteTestCase(FunctionalTest):
     def test_user_notice_checkbox_column_in_robject_table(self):
         # SET UP
@@ -96,8 +95,8 @@ class RobjectDeleteTestCase(FunctionalTest):
             f".row.{robj.name} .checkbox").click()
         self.browser.find_element_by_css_selector(".delete-button").click()
 
-        # User is redirect to robject delete confirmation page. He sees GET data
-        # in url that following the format ?<robject-name>=<robject-id>.
+        # User is redirect to robject delete confirmation page. He sees GET
+        # data in url that following the format ?<robject-name>=<robject-id>.
         self.assertEqual(
             self.browser.current_url,
             self.ROBJECT_DELETE_URL + f"?{robj.name}={robj.id}"
@@ -154,9 +153,11 @@ class RobjectDeleteTestCase(FunctionalTest):
         )
         self.browser.find_element_by_css_selector(".confirm-delete").click()
 
-        # He is redirected to robject list page and he sees no robjects in table.
+        # He is redirected to robject list page and he sees no robjects in
+        # table.
         self.assertEqual(self.browser.current_url,
-                         self.live_server_url + f"/projects/{proj.name}/robjects/")
+                         self.live_server_url +
+                         f"/projects/{proj.name}/robjects/")
         rows = self.browser.find_elements_by_css_selector(".row")
         self.assertEqual(len(rows), 0)
 
@@ -165,8 +166,8 @@ class RobjectDeleteTestCase(FunctionalTest):
         proj, user = self.set_up_robject_list()
         assign_perm("can_modify_project", user, proj)
         assign_perm("can_modify_project", user, proj)
-        robj_1 = Robject.objects.create(project=proj, name="robj_1")
-        robj_2 = Robject.objects.create(project=proj, name="robj_2")
+        Robject.objects.create(project=proj, name="robj_1")
+        Robject.objects.create(project=proj, name="robj_2")
 
         # User goes to robjects page.
         self.browser.get(self.live_server_url +
@@ -193,9 +194,9 @@ class RobjectDeleteTestCase(FunctionalTest):
         # SET UP
         proj, user = self.set_up_robject_list()
         assign_perm("can_modify_project", user, proj)
-        robj_1 = Robject.objects.create(project=proj, name="robj_1")
-        robj_2 = Robject.objects.create(project=proj, name="robj_2")
-        robj_3 = Robject.objects.create(project=proj, name="robj_3")
+        Robject.objects.create(project=proj, name="robj_1")
+        Robject.objects.create(project=proj, name="robj_2")
+        Robject.objects.create(project=proj, name="robj_3")
 
         # User goes to robjects page.
         self.browser.get(self.live_server_url +
@@ -220,9 +221,9 @@ class RobjectDeleteTestCase(FunctionalTest):
         # SET UP
         proj, user = self.set_up_robject_list()
         assign_perm("can_modify_project", user, proj)
-        robj_1 = Robject.objects.create(project=proj, name="robj_1")
-        robj_2 = Robject.objects.create(project=proj, name="robj_2")
-        robj_3 = Robject.objects.create(project=proj, name="robj_3")
+        Robject.objects.create(project=proj, name="robj_1")
+        Robject.objects.create(project=proj, name="robj_2")
+        Robject.objects.create(project=proj, name="robj_3")
 
         # User goes to robjects page.
         self.browser.get(self.live_server_url +
@@ -249,7 +250,8 @@ class RobjectDeleteTestCase(FunctionalTest):
         # SET UP
         proj, user = self.set_up_robject_list()
         assign_perm("can_modify_project", user, proj)
-        robj_1 = Robject.objects.create(project=proj, name="robj_1")
+        # create an robject
+        Robject.objects.create(project=proj, name="robj_1")
 
         # User gets to robj_1 delete confirmation page.
         self.browser.get(self.ROBJECT_DELETE_URL + "?robj_1=1")

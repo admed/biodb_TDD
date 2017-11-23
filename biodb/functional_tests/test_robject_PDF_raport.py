@@ -1,17 +1,10 @@
-import time
-from datetime import datetime
-from django.contrib.auth.models import User
 from django.test import tag
 from functional_tests.base import FunctionalTest
 from projects.models import Project
-from robjects.models import Tag
 from robjects.models import Robject
-from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException
-from guardian.shortcuts import assign_perm
-from selenium.webdriver.support.ui import WebDriverWait
 
 
+@tag('slow')
 class UserGeneratePDFRaport(FunctionalTest):
     def test_user_enter_wrong_slug_in_url(self):
         self.not_matching_url_slug_helper(self.ROBJECT_PDF_URL)
@@ -32,7 +25,7 @@ class UserGeneratePDFRaport(FunctionalTest):
         # CREATE SAMPLE PROJECT AND USER
         usr, proj = self.project_set_up_using_default_data()
         # CREATE SAMPLE ROBJECT.
-        robj = Robject.objects.create(name='robject', project=proj)
+        Robject.objects.create(name='robject', project=proj)
         self.browser.get(self.live_server_url +
                          f"/projects/{proj.name}/robjects/PDF-raport/")
         error = self.browser.find_element_by_css_selector("h1")

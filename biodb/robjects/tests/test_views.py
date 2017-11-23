@@ -15,10 +15,6 @@ from robjects.views import NameCreateView, TagCreateView
 from biodb import settings
 from guardian.shortcuts import assign_perm
 from tools.history import CustomHistory
-from io import BytesIO
-from openpyxl import load_workbook
-from unittest.mock import patch, call
-import datetime
 
 
 class Robjects_export_to_excel_view_test(FunctionalTest):
@@ -278,7 +274,7 @@ class RobjectSamplesListTest(FunctionalTest):
         user, proj = self.default_set_up_for_visit_robjects_pages()
         robj = Robject.objects.create(name="rob")
         assign_perm("projects.can_visit_project", user, proj)
-        samp = Sample(code='1a2b3c')
+        Sample(code='1a2b3c')
         response = self.client.get(self.SAMPLE_LIST_URL)
         self.assertTemplateUsed(response, "samples/samples_list.html")
 
@@ -303,7 +299,7 @@ class RobjectSamplesListTest(FunctionalTest):
 
         robj = Robject.objects.create(name='robject', project=proj)
 
-        samp1 = Sample.objects.create(code='1a1a', robject=robj)
+        Sample.objects.create(code='1a1a', robject=robj)
         response = self.client.get(self.SAMPLE_LIST_URL)
         self.assertEqual(proj, response.context['project'])
 
@@ -330,7 +326,7 @@ class RObjectsListViewTests(FunctionalTest):
 
         robj1 = Robject.objects.create(author=user, project=proj)
         robj2 = Robject.objects.create(author=user, project=proj)
-        robj3 = Robject.objects.create(author=user, project=proj)
+        Robject.objects.create(author=user, project=proj)
         response = self.client.get(self.ROBJECT_LIST_URL)
 
         self.assertIn(robj1, response.context["robject_list"])
@@ -355,8 +351,8 @@ class SearchRobjectsViewTests(FunctionalTest):
     def test_view_gets_valid_query_on_get__view_pass_qs_to_template(self):
         user, proj = self.default_set_up_for_visit_robjects_pages()
 
-        robject_1 = Robject.objects.create(name="robject_1", project=proj)
-        robject_2 = Robject.objects.create(name="robject_2", project=proj)
+        Robject.objects.create(name="robject_1", project=proj)
+        Robject.objects.create(name="robject_2", project=proj)
 
         response = self.client.get(
             self.ROBJECT_SEARCH_URL, {"query": "robject_1"})
@@ -366,7 +362,7 @@ class SearchRobjectsViewTests(FunctionalTest):
             response.context["robject_list"], map(repr, queryset))
 
     def test_annonymous_user_has_no_access_to_search_view(self):
-        proj = Project.objects.create(name="project_1")
+        Project.objects.create(name="project_1")
         requested_url = self.ROBJECT_SEARCH_URL
         resp = self.client.get(requested_url)
         self.assertRedirects(resp, reverse("login") + f"?next={requested_url}")
@@ -374,8 +370,8 @@ class SearchRobjectsViewTests(FunctionalTest):
     def test_view_can_perform_search_basing_on_part_of_robject_name(self):
         user, proj = self.default_set_up_for_visit_robjects_pages()
 
-        robject_1 = Robject.objects.create(name="robject_1", project=proj)
-        robject_2 = Robject.objects.create(name="robject_2", project=proj)
+        Robject.objects.create(name="robject_1", project=proj)
+        Robject.objects.create(name="robject_2", project=proj)
 
         response = self.client.get(
             self.ROBJECT_SEARCH_URL, {"query": "object_1"})  # part!
@@ -461,8 +457,8 @@ class SearchRobjectsViewTests(FunctionalTest):
     def test_empty_query_will_display_all_robjects(self):
         user, proj = self.default_set_up_for_visit_robjects_pages()
 
-        robj_1 = Robject.objects.create(project=proj)
-        robj_2 = Robject.objects.create(project=proj)
+        Robject.objects.create(project=proj)
+        Robject.objects.create(project=proj)
 
         resp = self.client.get(
             self.ROBJECT_SEARCH_URL, {"query": ""})
@@ -632,16 +628,14 @@ class RobjectCreateViewTestCase(FunctionalTest):
     def test_view_assign_create_by_to_new_robject(self):
         user, proj = self.default_set_up_for_visit_robjects_pages()
         assign_perm("projects.can_modify_project", user, proj)
-        response = self.client.post(
-            self.get_robject_create_url(proj), {"name": "test"})
+        self.client.post(self.get_robject_create_url(proj), {"name": "test"})
         r = Robject.objects.last()
         self.assertEqual(r.create_by, user)
 
     def test_view_assign_modify_by_to_new_robject(self):
         user, proj = self.default_set_up_for_visit_robjects_pages()
         assign_perm("projects.can_modify_project", user, proj)
-        response = self.client.post(
-            self.get_robject_create_url(proj), {"name": "test"})
+        self.client.post(self.get_robject_create_url(proj), {"name": "test"})
         r = Robject.objects.last()
         self.assertEqual(r.modify_by, user)
 
@@ -772,8 +766,8 @@ class RobjectDeleteTestCase(FunctionalTest):
         self.annonymous_testing_helper(self.ROBJECT_DELETE_URL)
 
     def test_view_refuse_access_to_users_without_both_permissions(self):
-        user = self.default_set_up_for_projects_pages()
-        proj = Project.objects.create(name="project_1")
+        self.default_set_up_for_projects_pages()
+        Project.objects.create(name="project_1")
         response = self.client.get(self.ROBJECT_DELETE_URL)
         self.assertEqual(response.status_code, 403)
         self.assertEqual(f"<h1>User doesn't have permission: can visit project</h1>",
@@ -826,7 +820,7 @@ class RobjectEditView(FunctionalTest):
     def test_view_render_bounded_form(self):
         user, proj = self.default_set_up_for_visit_robjects_pages()
         assign_perm("can_modify_project", user, proj)
-        r = Robject.objects.create(project=proj, name="ROBJECT_NAME")
+        Robject.objects.create(project=proj, name="ROBJECT_NAME")
         response = self.client.get(self.ROBJECT_EDIT_URL)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
@@ -834,22 +828,21 @@ class RobjectEditView(FunctionalTest):
 
     def test_view_updates_modify_by(self):
         user, proj = self.default_set_up_for_visit_robjects_pages()
-        r = Robject.objects.create(
+        Robject.objects.create(
             project=proj, name="ROBJECT_NAME", create_by=user, modify_by=user)
         new_user = User.objects.create_user(
             username="new_user", password="new_password")
         assign_perm("can_visit_project", new_user, proj)
         assign_perm("can_modify_project", new_user, proj)
         self.client.login(username="new_user", password="new_password")
-        response = self.client.post(
-            self.ROBJECT_EDIT_URL, {"name": "new_name"})
+        self.client.post(self.ROBJECT_EDIT_URL, {"name": "new_name"})
         self.assertEqual(Robject.objects.last().create_by.username, "USERNAME")
         self.assertEqual(Robject.objects.last().modify_by.username, "new_user")
 
     def test_view_redirects_on_post(self):
         user, proj = self.default_set_up_for_visit_robjects_pages()
         assign_perm("can_modify_project", user, proj)
-        r = Robject.objects.create(
+        Robject.objects.create(
             project=proj, name="ROBJECT_NAME", create_by=user, modify_by=user)
         response = self.client.post(
             self.ROBJECT_EDIT_URL, {"name": "new_name"})
@@ -955,7 +948,7 @@ class RobjectHistoryViewTest(FunctionalTest):
 
     def test_anonymous_user_visit_page(self):
         proj = Project.objects.create(name="Project_1")
-        robject = Robject.objects.create(name="Robject_1", project=proj)
+        Robject.objects.create(name="Robject_1", project=proj)
         response = self.client.get(self.ROBJECT_HISTORY_URL)
         self.assertEqual(response.status_code, 302)
         self.assertIn(
@@ -968,7 +961,7 @@ class RobjectHistoryViewTest(FunctionalTest):
 
     def test_logged_user_canrender_template_on_get(self):
         user, proj = self.default_set_up_for_visit_robjects_pages()
-        robject = Robject.objects.create(name="Robject_1", project=proj)
+        Robject.objects.create(name="Robject_1", project=proj)
         response = self.client.get(
             self.ROBJECT_HISTORY_URL)
         self.assertTemplateUsed(response, "robjects/robject_history.html")

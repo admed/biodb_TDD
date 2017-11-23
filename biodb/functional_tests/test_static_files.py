@@ -1,13 +1,11 @@
-from django.contrib.auth.models import User
 from django.test import tag
-
 from functional_tests.base import FunctionalTest
-from projects.models import Project
 from robjects.models import Robject
 
 
+@tag('slow')
 class StaticFilesTests(FunctionalTest):
-    @tag('slow')
+
     def test_login_page(self):
         # User goes to login page.
         self.browser.get(self.live_server_url)
@@ -20,7 +18,6 @@ class StaticFilesTests(FunctionalTest):
             delta=10
         )
 
-    @tag('slow')
     def test_robjects_list(self):
         proj, usr = self.default_set_up_for_robjects_pages()
 

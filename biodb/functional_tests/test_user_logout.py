@@ -4,12 +4,13 @@ from functional_tests.base import FunctionalTest
 from selenium.common.exceptions import NoSuchElementException
 
 
+@tag('slow')
 class UserLogoutTests(FunctionalTest):
-    @tag('slow')
+
     def test_logged_user_logs_out(self):
         # Create active user.
 
-        usr = User.objects.create_user(username="UNAME", password="PASSWORD")
+        User.objects.create_user(username="UNAME", password="PASSWORD")
 
         # Login active user.
 
@@ -30,7 +31,6 @@ class UserLogoutTests(FunctionalTest):
 
         self.annonymous_testing_helper(self.PROJECT_LIST_URL)
 
-    @tag('slow')
     def test_annonymous_user_cant_find_logout_button(self):
         # Annonymous user goes to page he has access to. He looks for logout
         # button but he cant find it.
@@ -42,7 +42,6 @@ class UserLogoutTests(FunctionalTest):
         with self.assertRaises(NoSuchElementException):
             self.browser.find_element_by_id("logout_button")
 
-    @tag('slow')
     def test_annonymous_user_cant_get_to_logout_url(self):
         # Annonymous user wants to visit logout url. He is automatically
         # redirect to login page.

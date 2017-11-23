@@ -1,15 +1,11 @@
-import time
-from datetime import datetime
-from django.contrib.auth.models import User
-from django.test import tag
+from django.test import tag as tag_decorator
 from functional_tests.base import FunctionalTest
 from projects.models import Project
 from robjects.models import Tag
-from robjects.models import Robject
-from selenium.common.exceptions import NoSuchElementException
 from guardian.shortcuts import assign_perm
 
 
+@tag_decorator('slow')
 class TagDeleteTestCase(FunctionalTest):
     def get_tag_delete(self, proj, tag):
         self.browser.get(self.live_server_url +
@@ -58,7 +54,7 @@ class TagDeleteTestCase(FunctionalTest):
         self.get_tag_delete(proj, tag)
         # He seas header Update Tag.
         header = self.browser.find_element_by_css_selector('p')
-        self.assertEquals(header.text, "Are you sure you want to delete tag?")
+        self.assertEqual(header.text, "Are you sure you want to delete tag?")
         # He seas to come back to tag list of project.
         link = self.browser.find_element_by_css_selector("a.link_back")
         self.assertEqual(link.text, "Return back to project tag page")

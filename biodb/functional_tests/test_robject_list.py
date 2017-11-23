@@ -3,19 +3,17 @@ from django.test import tag
 from robjects.models import Robject
 
 
+@tag('slow')
 class UserVisitRobjectsPage(FunctionalTest):
     def test_user_enter_wrong_slug_in_url(self):
         self.not_matching_url_slug_helper(self.ROBJECT_LIST_URL)
 
-    @tag('slow')
     def test_annonymous_user_visit_robjects_page(self):
         self.annonymous_testing_helper(self.ROBJECT_LIST_URL)
 
-    @tag('slow')
     def test_user_without_visit_perm_visit_robjects_page(self):
         self.permission_view_testing_helper(self.ROBJECT_LIST_URL)
 
-    @tag('slow')
     def test_logged_user_visit_robjects_page___no_robjects_exists(self):
         proj, usr = self.default_set_up_for_robjects_pages()
 
@@ -40,7 +38,6 @@ class UserVisitRobjectsPage(FunctionalTest):
             ".row.robject")
         self.assertEqual(len(robject_rows), 0)
 
-    @tag('slow')
     def test_logged_user_visit_robjects_page___robjects_exists_in_project(self):
         proj, usr = self.default_set_up_for_robjects_pages()
 

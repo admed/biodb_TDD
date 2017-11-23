@@ -1,16 +1,12 @@
-import time
-from datetime import datetime
-from django.contrib.auth.models import User
 from django.test import tag
 from functional_tests.base import FunctionalTest
 from projects.models import Project
 from robjects.models import Robject
 from samples.models import Sample
-from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException
 from guardian.shortcuts import assign_perm
 
 
+@tag('slow')
 class TestUserVisitsSampleList(FunctionalTest):
     def get_sample_list(self, proj):
         sample_list_url = f"/projects/{proj.name}/samples/"
@@ -26,7 +22,8 @@ class TestUserVisitsSampleList(FunctionalTest):
         table = self.browser.find_element_by_css_selector('table')
         rows = table.find_elements_by_css_selector(".row.sample")
         self.assertEqual(len(rows), 1)
-        # He looks for data in every cell in row and copare it with sample data.
+        # He looks for data in every cell in row and copare it with
+        # sample data.
         cells = rows[0].find_elements_by_css_selector("td")
         self.assertEqual(cells[0].text, str(sample.id))
         self.assertEqual(cells[1].text, sample.code)
@@ -75,8 +72,9 @@ class TestUserVisitsSampleList(FunctionalTest):
         # Modify by, Notes, Form, Source, Status, Edit Entries
         table = self.browser.find_element_by_css_selector('table')
         headers = table.find_elements_by_css_selector('th')
-        header_names = ["Id", "Code", "Robject", "Owner", "Create date", "Modify date",
-                        "Modify by", "Notes", "Form", "Source", "Status", "Edit"]
+        header_names = ["Id", "Code", "Robject", "Owner", "Create date",
+                        "Modify date", "Modify by", "Notes", "Form", "Source",
+                        "Status", "Edit"]
         self.assertEqual(len(headers), len(header_names))
         for header, expected_header_name in zip(headers, header_names):
             self.assertEqual(header.text, expected_header_name)
@@ -138,7 +136,8 @@ class TestUserVisitsSampleList(FunctionalTest):
         # He sees table and single row.
         rows = self.get_rows_from_table()
         self.assertEqual(len(rows), 1)
-        # He looks for data in every cell in row and copare it with sample data.
+        # He looks for data in every cell in row and copare it with
+        # sample data.
         self.assert_cells_content_in_row(proj, sample)
 
     def test_user_sees_multiple_samples_in_table_for_certain_project(self):
@@ -150,16 +149,17 @@ class TestUserVisitsSampleList(FunctionalTest):
         robject_1 = Robject.objects.create(name='robject_1', project=proj1)
         robject_2 = Robject.objects.create(name='robject_2', project=proj2)
         # CRETE SAMPLE SAMPLES
-        sampl1 = Sample.objects.create(code='Sample1', robject=robject_1)
-        sampl2 = Sample.objects.create(code="Sample2", robject=robject_2)
-        sampl3 = Sample.objects.create(code="Sample3", robject=robject_1)
-        sampl4 = Sample.objects.create(code="Sample4", robject=robject_2)
+        Sample.objects.create(code='Sample1', robject=robject_1)
+        Sample.objects.create(code="Sample2", robject=robject_2)
+        Sample.objects.create(code="Sample3", robject=robject_1)
+        Sample.objects.create(code="Sample4", robject=robject_2)
 
         # ASSIGN PERMISSION TO USER
         assign_perm("projects.can_visit_project", usr, proj1)
         # User gets sample list.
         self.get_sample_list(proj1)
-        # User know that there is two samples for one project and two samples for other.
+        # User know that there is two samples for one project and two samples
+        # for other.
         # He checks that table contains appropiate samples for current project.
         rows = self.get_rows_from_table()
         self.assertEqual(len(rows), 2)
@@ -178,7 +178,7 @@ class TestUserVisitsSampleList(FunctionalTest):
         # ASSIGN PERMISSION TO USER
         assign_perm("projects.can_visit_project", usr, proj1)
         # User gets sample list.
-        response = self.get_sample_list(proj1)
+        self.get_sample_list(proj1)
         # User clicks on sample_code.
         link = self.browser.find_element_by_css_selector("a.sample-details")
         link.click()

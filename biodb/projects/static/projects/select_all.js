@@ -1,8 +1,9 @@
 $(function() {
   $(".select-all").click(function() {
-    if (this.checked)
+    if (this.checked) {
       $(".robject").prop("checked", true);
-    else
+    } else {
       $(".robject").prop("checked", false);
-  })
-})
+    }
+  });
+});

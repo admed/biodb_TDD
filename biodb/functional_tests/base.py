@@ -1,17 +1,14 @@
-import os
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
 import time
 from django.contrib.auth.models import User
-from django.db.utils import IntegrityError
 from projects.models import Project
 from django.core.urlresolvers import reverse, resolve
 from guardian.shortcuts import assign_perm
 from django.test import override_settings
 from urllib.parse import urlparse
 from robjects.models import Robject
-from urllib.parse import urlparse
 
 
 @override_settings(DEBUG=False)
@@ -145,7 +142,7 @@ class FunctionalTest(StaticLiveServerTestCase):
     def switch_to_main(self):
         self.browser.switch_to.window(self.main_window)
 
-    def login_user(self, username, password):
+    def login_user(self, username="USERNAME", password="PASSWORD"):
         """ Helper method for log user in."""
 
         # It is better not to catch IntegrityError as it can happen
@@ -229,11 +226,12 @@ class FunctionalTest(StaticLiveServerTestCase):
         return proj, user
 
     def default_url_robject_list(self):
-        return self.live_server_url + reverse("projects:robjects:robjects_list", kwargs={"project_name": "project_1"})
+        return self.live_server_url + reverse("projects:robjects:robjects_list",
+                                              kwargs={"project_name": "project_1"})
 
     def annonymous_testing_helper(self, requested_url):
         # SET UP
-        proj = Project.objects.create(name="project_1")
+        Project.objects.create(name="project_1")
 
         # KEEP ONLY PATH FROM URL
         requested_path = urlparse(requested_url).path
@@ -252,16 +250,16 @@ class FunctionalTest(StaticLiveServerTestCase):
         proj = Project.objects.create(name="project_1")
         user = User.objects.create_user(
             username="USERNAME", password="PASSWORD")
-        robj = Robject.objects.create(name="robject_1", project=proj)
+        Robject.objects.create(name="robject_1", project=proj)
         self.login_user("USERNAME", "PASSWORD")
 
         self.browser.get(requested_url)
-        h1 = self.browser.find_element_by_css_selector("h1")
+        header1 = self.browser.find_element_by_css_selector("h1")
 
         self.assertFalse(user.has_perm("projects.can_visit_project", proj))
 
         self.assertEqual(
-            h1.text, "User doesn't have permission: can visit project")
+            header1.text, "User doesn't have permission: can visit project")
 
     def not_matching_url_slug_helper(self, requested_url):
         """ Function tests all variations of valid urls with not matching slugs

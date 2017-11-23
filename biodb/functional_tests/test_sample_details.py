@@ -1,16 +1,12 @@
-import time
-from datetime import datetime
-from django.contrib.auth.models import User
 from django.test import tag
 from functional_tests.base import FunctionalTest
 from projects.models import Project
 from robjects.models import Robject
 from samples.models import Sample
-from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException
 from guardian.shortcuts import assign_perm
 
 
+@tag('slow')
 class TestUserVisitsSampleDetails(FunctionalTest):
 
     def create_sample_data(self):
@@ -103,13 +99,13 @@ class TestUserVisitsSampleDetails(FunctionalTest):
         # CREATE SAMPLE ROBJECT.
         robj = Robject.objects.create(name='robject_1', project=proj)
         # CREATE SAMPLE AND DETAILS.
-        samp1 = Sample.objects.create(code='sample_1',
-                                      robject=robj,
-                                      notes='Some Sample Notes',
-                                      form='solid 1px',
-                                      source='SourceCode',
-                                      status=7
-                                      )
+        Sample.objects.create(code='sample_1',
+                              robject=robj,
+                              notes='Some Sample Notes',
+                              form='solid 1px',
+                              source='SourceCode',
+                              status=7
+                              )
 
         # CREATE SECOND SAMPLE AND DETAILS.
         samp2 = Sample.objects.create(code='sample_2',

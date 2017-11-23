@@ -3,14 +3,13 @@ from django.test import tag
 from robjects.models import Robject
 from projects.models import Project
 from django.contrib.auth.models import User
-import time
 from selenium.common.exceptions import NoSuchElementException
 
 
+@tag('slow')
 class SearchEngineTests(FunctionalTest):
     DEFAULT_AUTHOR_USERNAME = "AUTHOR"
 
-    @tag('slow')
     def __init__(self, *args, **kwargs):
         super(SearchEngineTests, self).__init__(*args, **kwargs)
 
@@ -19,16 +18,13 @@ class SearchEngineTests(FunctionalTest):
         self.search_button = lambda: self.browser.find_element_by_id(
             "search_button")
 
-    @tag('slow')
     def send_query(self, query):
         self.search_input().send_keys(query)
         self.search_button().click()
 
-    @tag('slow')
     def look_for_robject_row(self, css):
         self.browser.find_element_by_css_selector(css)
 
-    @tag('slow')
     def create_sample_robject_and_go_to_robjects_page(self,
                                                       project,
                                                       **robject_kwargs):
@@ -40,7 +36,6 @@ class SearchEngineTests(FunctionalTest):
                          f"/projects/{project.name}/robjects/")
         return robj
 
-    @tag('slow')
     def create_sample_robject_then_search_for_him_using_query(self, query,
                                                               robject_kwargs):
         proj, user = self.default_set_up_for_robjects_pages()
@@ -59,7 +54,6 @@ class SearchEngineTests(FunctionalTest):
         # And confirm search success.
         self.look_for_robject_row(f".row.{robj.name}")
 
-    @tag('slow')
     def search_for_robject_using_author_query(self, author_query):
         # create default author
         author = User.objects.create_user(
@@ -69,15 +63,12 @@ class SearchEngineTests(FunctionalTest):
             query=author_query,
             robject_kwargs={"author": author, "name": "robject_1"})
 
-    @tag('slow')
     def test_user_without_visit_perm_gets_search_page(self):
         self.permission_view_testing_helper(self.ROBJECT_SEARCH_URL)
 
-    @tag('slow')
     def test_user_enter_wrong_slug_in_url(self):
         self.not_matching_url_slug_helper(self.ROBJECT_SEARCH_URL)
 
-    @tag('slow')
     def test_user_perform_search_based_on_whole_robj_name_and_find_robject(self):
         project, user = self.default_set_up_for_robjects_pages()
 
@@ -95,7 +86,7 @@ class SearchEngineTests(FunctionalTest):
         self.browser.find_element_by_css_selector(".row.robject_2")
 
         # User wants to test search tool. He looks for search form.
-        search_form = self.browser.find_element_by_id("search_form")
+        # search_form = self.browser.find_element_by_id("search_form")
 
         # User enter name of one robject and expect to see only this robject in
         # table.
@@ -107,7 +98,6 @@ class SearchEngineTests(FunctionalTest):
 
         self.browser.find_elements_by_css_selector(".robject_1")
 
-    @tag('slow')
     def test_user_search_for_one_robject_using_name_fragment(self):
         # Default setup for robjects page.
         proj, user = self.default_set_up_for_robjects_pages()
@@ -136,7 +126,6 @@ class SearchEngineTests(FunctionalTest):
 
         self.browser.find_elements_by_css_selector(".robject_1")
 
-    @tag('slow')
     def test_user_search_for_multiple_robjects_using_name_fragment(self):
         # Make set up for robjects page.
         proj, user = self.default_set_up_for_robjects_pages()
@@ -166,11 +155,9 @@ class SearchEngineTests(FunctionalTest):
 
         self.assertEqual(len(table_rows), 2)
 
-    @tag('slow')
     def test_annonymous_user_cant_request_search_url(self):
         self.annonymous_testing_helper(self.ROBJECT_SEARCH_URL)
 
-    @tag('slow')
     def test_user_search_for_robject_name_using_case_insensitivity(self):
         # User want to search robject using its name, but he dont know what is
         # exact letter case. He knows that name contains letter with both cases
@@ -201,7 +188,6 @@ class SearchEngineTests(FunctionalTest):
         # User looks for results.
         self.browser.find_element_by_css_selector(f".row.{robj.name}")
 
-    @tag('slow')
     def test_user_can_search_robject_using_full_author_username(self):
         # User goes to robjects page where he can see sample robject in table.
         # He search for robject's author full username and looks if robject is
@@ -209,7 +195,6 @@ class SearchEngineTests(FunctionalTest):
         self.search_for_robject_using_author_query(
             self.DEFAULT_AUTHOR_USERNAME)
 
-    @tag('slow')
     def test_user_can_search_robjet_using_fragment_of_athor_username(self):
         # User goes to robjects page where he can see sample robject in table.
         # He search for robject's author username fragment and looks if robject
@@ -217,14 +202,12 @@ class SearchEngineTests(FunctionalTest):
         self.search_for_robject_using_author_query(
             self.DEFAULT_AUTHOR_USERNAME[0:-1])
 
-    @tag('slow')
     def test_user_can_search_robject_using_case_insensitive_full_author_username(self):
         # User goes to robjects page where he can see sample robject in table.
         # He search for robject's author username using mixed case letters and
         # looks if robject is still in table.
         self.search_for_robject_using_author_query("aUtHoR")
 
-    @tag('slow')
     def test_user_can_display_all_robjects_leaving_search_input_empty(self):
         # Make set up for robjects page.
         proj, user = self.default_set_up_for_robjects_pages()
@@ -252,7 +235,6 @@ class SearchEngineTests(FunctionalTest):
         self.look_for_robject_row(f".row.{robj_1.name}")
         self.look_for_robject_row(f".row.{robj_2.name}")
 
-    @tag('slow')
     def test_user_cant_search_robjects_from_outside_project(self):
         # Make set up for robjects page.
         proj, user = self.default_set_up_for_robjects_pages()
@@ -274,18 +256,14 @@ class SearchEngineTests(FunctionalTest):
         with self.assertRaises(NoSuchElementException):
             self.look_for_robject_row(f".row.{searched_robj.name}")
 
-    @tag('slow')
     def test_user_can_search_with_many_words(self):
         # Make set up for robjects page.
         proj, user = self.default_set_up_for_robjects_pages()
 
         # Create sample robjects.
-        robj_1 = Robject.objects.create(
-            name="robj_1", project=proj, create_by=user)
-        robj_2 = Robject.objects.create(
-            name="robj_2", project=proj, create_by=user)
-        robj_3 = Robject.objects.create(
-            name="robj_3", project=proj, create_by=user)
+        Robject.objects.create(name="robj_1", project=proj, create_by=user)
+        Robject.objects.create(name="robj_2", project=proj, create_by=user)
+        Robject.objects.create(name="robj_3", project=proj, create_by=user)
 
         # User goes to robjects page.
         self.browser.get(self.live_server_url +
@@ -307,10 +285,8 @@ class SearchEngineTests(FunctionalTest):
 
         self.assertEqual(len(table_rows), 2)
 
-    @tag('slow')
     def test_user_limits_number_of_fields_to_search(self):
         pass
 
-    @tag('slow')
     def test_user_narrows_the_search_to_the_date_range(self):
         pass
