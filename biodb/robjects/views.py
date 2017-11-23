@@ -67,19 +67,11 @@ class RobjectListView(LoginPermissionRequiredMixin, ListView):
         context["project_name"] = self.kwargs["project_name"]
         return context
 
-    def get_permission_object(self):
-        project = get_object_or_404(Project, name=self.kwargs["project_name"])
-        return project
-
 
 class ExportExcelView(LoginPermissionRequiredMixin, ExportViewMixin, View):
     model = Robject
     queryset = None
     permissions_required = ["can_visit_project"]
-
-    def get_permission_object(self):
-        project = get_object_or_404(Project, name=self.kwargs['project_name'])
-        return project
 
     def get(self, request, project_name, *args, **kwargs):
         robjects_pk = list(request.GET.values())
@@ -104,10 +96,6 @@ class RobjectPDFeView(LoginPermissionRequiredMixin, View, ExportViewMixin):
     css_sufix = '/robjects'
     permissions_required = ["can_visit_project"]
 
-    def get_permission_object(self):
-        project = get_object_or_404(Project, name=self.kwargs['project_name'])
-        return project
-
     def get(self, request, project_name, *args, **kwargs):
         self.object_list = Robject.objects.filter(pk__in=request.GET.values())
         if not self.object_list:
@@ -125,10 +113,6 @@ class SearchRobjectsView(LoginPermissionRequiredMixin, View):
     """View to show filtered list of objects."""
     model = Robject
     permissions_required = ["can_visit_project"]
-
-    def get_permission_object(self):
-        project = get_object_or_404(Project, name=self.kwargs['project_name'])
-        return project
 
     def get(self, request, project_name):
         query = request.GET.get("query")
@@ -248,10 +232,6 @@ class RobjectCreateView(LoginPermissionRequiredMixin, CreateView):
         return reverse("projects:robjects:robjects_list",
                        kwargs={"project_name": self.kwargs["project_name"]})
 
-    def get_permission_object(self):
-        project = get_object_or_404(Project, name=self.kwargs["project_name"])
-        return project
-
     def get(self, request, *args, **kwargs):
         Name.objects.filter(robjects=None).delete()
         return super().get(request, *args, **kwargs)
@@ -331,10 +311,6 @@ class RobjectDeleteView(LoginPermissionRequiredMixin, DeleteView):
     context_object_name = "robjects"
     permissions_required = ["can_visit_project", "can_modify_project"]
 
-    def get_permission_object(self):
-        project = get_object_or_404(Project, name=self.kwargs['project_name'])
-        return project
-
     def get_object(self, queryset=None):
         ids = self.request.GET.values()
         qs = self.model.objects.filter(pk__in=ids)
@@ -366,10 +342,6 @@ class RobjectHistoryView(LoginPermissionRequiredMixin, DetailView):
     template_name = "robjects/robject_history.html"
     permissions_required = ["can_visit_project"]
     pk_url_kwarg = "robject_id"
-
-    def get_permission_object(self):
-        project = get_object_or_404(Project, name=self.kwargs["project_name"])
-        return project
 
     def get_context_data(self, **kwargs):
         """Add CustomHistory objects as versions to context."""
