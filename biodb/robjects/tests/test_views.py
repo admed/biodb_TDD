@@ -319,7 +319,7 @@ class RObjectsListViewTests(FunctionalTest):
         user, proj = self.default_set_up_for_visit_robjects_pages()
         response = self.client.get(self.ROBJECT_LIST_URL)
 
-        self.assertTemplateUsed(response, "projects/robjects_list.html")
+        self.assertTemplateUsed(response, "robjects/robjects_list.html")
 
     def test_view_create_list_of_robjects_and_pass_it_to_context(self):
         user, proj = self.default_set_up_for_visit_robjects_pages()
@@ -346,7 +346,7 @@ class SearchRobjectsViewTests(FunctionalTest):
 
         response = self.client.get(self.ROBJECT_SEARCH_URL,
                                    {"query": ""})
-        self.assertTemplateUsed(response, "projects/robjects_list.html")
+        self.assertTemplateUsed(response, "robjects/robjects_list.html")
 
     def test_view_gets_valid_query_on_get__view_pass_qs_to_template(self):
         user, proj = self.default_set_up_for_visit_robjects_pages()

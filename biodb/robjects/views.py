@@ -48,7 +48,7 @@ def robjects_list_view(request, project_name):
         raise PermissionDenied
     project = Project.objects.get(name=project_name)
     robject_list = Robject.objects.filter(project=project)
-    return render(request, "projects/robjects_list.html",
+    return render(request, "robjects/robjects_list.html",
                   {"robject_list": robject_list, "project_name": project_name})
 
 
@@ -119,7 +119,7 @@ class SearchRobjectsView(LoginPermissionRequiredMixin, View):
 
         queryset = self.perform_search(query, project_name)
 
-        return render(request, "projects/robjects_list.html",
+        return render(request, "robjects/robjects_list.html",
                       {"robject_list": queryset, "project_name": project_name})
 
     def normalize_query(self, query_string,
