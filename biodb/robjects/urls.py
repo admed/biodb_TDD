@@ -4,6 +4,7 @@ from robjects.views import NameCreateView
 from robjects.views import ExportExcelView
 from robjects.views import RobjectCreateView
 from robjects.views import RobjectDeleteView
+from robjects.views import RobjectDetailView
 from robjects.views import RobjectEditView
 from robjects.views import RobjectHistoryView
 from robjects.views import RobjectListView
@@ -29,4 +30,7 @@ urlpatterns = [
     url(r"^tags-create/$", TagCreateView.as_view(), name="tags_create"),
     url(r'^(?P<robject_id>[0-9]+)/samples/$',
         RobjectSamplesList.as_view(), name='robject_samples'),
+    url(r'^(?P<robject_id>[0-9]+)/details/$',
+        RobjectDetailView.as_view(), name='robject_details'),
+
 ]
