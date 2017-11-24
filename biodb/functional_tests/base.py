@@ -47,6 +47,12 @@ class FunctionalTest(StaticLiveServerTestCase):
                     kwargs={"project_name": "project_1"})
 
     @property
+    def ROBJECT_DETAILS_URL(self):
+        return self.live_server_url + \
+            reverse("projects:robjects:robject_details",
+                    kwargs={"project_name": "project_1", "robject_id": 1})
+
+    @property
     def ROBJECT_EXCEL_URL(self):
         return self.live_server_url + reverse("projects:robjects:raport_excel",
                                               kwargs={"project_name": "project_1"})
@@ -214,9 +220,7 @@ class FunctionalTest(StaticLiveServerTestCase):
         return proj, user
 
     def default_set_up_for_projects_pages(self):
-        user = User.objects.create_user(
-            username="USERNAME", password="PASSWORD")
-        self.login_user("USERNAME", "PASSWORD")
+        user = self.login_user("USERNAME", "PASSWORD")
         return user
 
     def default_set_up_for_robjects_pages(self):
