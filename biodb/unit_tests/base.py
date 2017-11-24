@@ -17,6 +17,8 @@ class FunctionalTest(TestCase):
                                "project_name": "project_1"})
     ROBJECT_DELETE_URL = reverse("projects:robjects:robject_delete", kwargs={
                                  "project_name": "project_1"})
+    ROBJECT_DETAILS_URL = reverse("projects:robjects:robject_details", kwargs={
+                                 "project_name": "project_1", "robject_id":1})
     ROBJECT_EXCEL_URL = reverse("projects:robjects:raport_excel", kwargs={
         "project_name": "project_1"})
     ROBJECT_SEARCH_URL = reverse("projects:robjects:search_robjects",
