@@ -1026,20 +1026,23 @@ class RobjectHistoryViewTest(FunctionalTest):
         self.assertEqual(diff_object.old_value, "Robject_1")
         self.assertEqual(diff_object.new_value, "newname")
 
+
 class RobjectDetailViewTest(FunctionalTest):
     def test_view_returns_404_when_slug_not_match(self):
         self.not_matching_url_kwarg_helper(self.ROBJECT_DETAILS_URL)
 
-    def helper_create_data(self, perm_visit=False):
-        """create initial data by admin"""
+    def helper_create_data(self):
+        """Create initial data by admin.
+
+        This method set by defult permission_visit to project
+        """
         user, proj = self.default_set_up_for_visit_robjects_pages()
         robj = Robject.objects.create(name='Robject', project=proj)
-        if perm_visit:
-            assign_perm("projects.can_visit_project", user, proj)
         return(proj, robj, user)
 
     def test_anonymous_user_is_redirected_to_login_page(self):
-        proj, robj = self.helper_create_data()
+        proj = Project.objects.create(name='Project_1')
+        robj = Robject.objects.create(name='Robject', project=proj)
         response = self.client.get(f"/projects/{proj.name}/robjects/{robj.id}/details/")
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response,
@@ -1050,24 +1053,24 @@ class RobjectDetailViewTest(FunctionalTest):
             self.ROBJECT_DETAILS_URL, self.VISIT_PERMISSION_ERROR)
 
     def test_render_template_on_get(self):
-        proj, robj = self.helper_create_data(perm_visit=True)
+        proj, robj, user = self.helper_create_data()
         response = self.client.get(f"/projects/{proj.name}/robjects/{robj.id}/details/")
         self.assertTemplateUsed(response, "robjects/robject_details.html")
 
     def test_view_pass_object_to_context(self):
-        proj, robj = self.helper_create_data(perm_visit=True)
+        proj, robj, user = self.helper_create_data()
         response = self.client.get(f"/projects/{proj.name}/robjects/{robj.id}/details/")
         self.assertEqual(robj, response.context["object"])
 
     def test_view_filter_object_get_in_context(self):
-        proj1, robj1, user1 = self.helper_create_data(perm_visit=True)
+        proj1, robj1, user1 = self.helper_create_data()
         proj2 = Project.objects.create(name='Project_2')
         robj2 = Robject.objects.create(name='Robject2', project=proj2)
 
         response = self.client.get(f"/projects/{proj1.name}/robjects/{robj1.id}/details/")
         response_object = response.context['object']
-        self.assertEqual(responsed_object, robj1)
+        self.assertEqual(response_object, robj1)
 
         response = self.client.get(f"/projects/{proj1.name}/robjects/{robj2.id}/details/")
         response_object = response.context['object']
-        self.assertEqual(responsed_object, robj2)
+        self.assertEqual(response_object, robj2)
