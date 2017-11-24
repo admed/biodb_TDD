@@ -65,3 +65,16 @@ class UserVisitRobjectsPage(FunctionalTest):
             row = self.browser.find_element_by_class_name(robject.name)
             self.assertIn(str(robject.id), row.text)
             self.assertIn(str(robject.author), row.text)
+            # check if name is in right col
+            name_col = row.find_elements_by_tag_name("td")[2]
+            self.assertIn(robject.name, name_col.text)
+            # check if clicking name redirect you to details page
+            expected_url = self.live_server_url + \
+                f"/projects/{proj.name}/robjects/{robject.pk}/details/"
+            # get link
+            details_link = name_col.find_element_by_link_text(robject.name)
+            # click link
+            details_link.click()
+            self.assertEqual(self.browser.current_url, expected_url)
+            # go back to list of robjects
+            self.browser.get(self.live_server_url + "/projects/project_1/robjects")

@@ -78,7 +78,7 @@
           value="{{ robject.id }}">
         </td>
         <td>{{ robject.id }}</td>
-        <td>{{ robject.name }}</td>
+        <td><a href="{% url 'projects:robjects:robject_details' robject.project.name robject.pk%}">{{ robject.name }}</a></td>
         <td>{{ robject.author }}</td>
         <td>{{ robject.create_by }}</td>
         <td>{{ robject.create_date }}</td>

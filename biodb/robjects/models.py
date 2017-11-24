@@ -41,7 +41,7 @@ class Robject(models.Model):
     @staticmethod
     def get_fields(instance, fields=None):
         """
-        Return dictionary with object fields: {field.verbose_name: field class, ...}
+        Return dictionary with object fields: {field.verbose_name: field class}
         Attrs:
         """
         if not fields:
