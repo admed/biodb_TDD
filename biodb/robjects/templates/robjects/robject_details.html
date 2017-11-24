@@ -1,0 +1,22 @@
+{% extends "biodb/base.html" %}
+{% block content %}
+{% load render_table from django_tables2 %}
+{% load static %}
+
+<h1>
+  {{ object.name }}
+</h1>
+<ul class="general-fields">
+    {% for gfield_name, gfield_value in object.get_general_fields %}
+        <li>{{ gfield_name }}: {{ gfield_value }}</li>
+    {% endfor %}
+</ul>
+<ul class="details-fields">
+    {% for dfield_name, dfield_value in object.get_detail_fields %}
+        <li>{{ dfield_name }}: {{ dfield_value }}</li>
+    {% endfor %}
+</ul>
+
+<a class="link_back" href="{% url 'projects:robjects:robjects_list' object.project.name %}">Back to robject table</a>
+
+{% endblock %}
